@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import ApplicationTable from '../components/ApplicationTable';
 import { getApplications, saveApplications, type JobApplication } from '../utils/localStorage';
+import AddJobForm from '../components/AddJobComponent';
 
 const initialColumns = [
     'Position', 'Company', 'Salary', 'Status', 'Application Date', 
@@ -14,6 +15,7 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
   const totalApplications = applications.length;
   const interviews = applications.filter(a => a.interviewDate);
   const offers = applications.filter(a => a.status === 'Offer');
+
   const metrics = [
         { label: 'Applications', value: totalApplications, color: 'border-blue-500' },
         { label: 'Interviews', value: interviews.length, color: 'border-yellow-500' },
@@ -37,33 +39,53 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
 
 const HomePage: React.FC = () => {
   const [applications, setApplications] = useState<JobApplication[]>([]);
+  const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
+  const isFormOpen = currentApplication !== null;
 
   useEffect(() => {
     setApplications(getApplications());
   }, []);
 
-  // Lógica de adición de entrada (simulada)
-  const handleAddEntry = useCallback(() => {
-    // 💡 Asegurar que la nueva entrada incluya los 3 campos extra
-    const newEntry: JobApplication = {
-      id: Date.now().toString(),
-      position: `New Position ${applications.length + 1}`,
-      company: 'Placeholder Co.',
-      salary: '$60k+',
-      status: 'Applied',
-      applicationDate: new Date().toLocaleDateString('en-CA'),
-      interviewDate: '',
-      notes: 'Initial entry.',
-      link: '#',
-      // 💡 Datos de placeholder para los nuevos campos
-      platform: 'LinkedIn', 
-      contactName: 'N/A',
-      followUpDate: '',
-    };
-    const newApplications = [...applications, newEntry];
+  const handleSaveEntry = useCallback((entryData: Omit<JobApplication, 'id'> | JobApplication) => {
+    let newApplications:JobApplication[];
+
+    if ('id' in entryData) {
+      newApplications = applications.map(app => 
+            app.id === entryData.id ? (entryData as JobApplication) : app
+        );
+    }
+    else {
+       const newEntry: JobApplication = {
+      ...entryData,
+      id: Date.now().toString(), // Generar ID único
+    } as JobApplication;
+    newApplications = [...applications, newEntry];
+    }
+   
+
+    setApplications(newApplications);
+    saveApplications(newApplications);
+    setCurrentApplication(null);
+  }, [applications]);
+
+  const handleDeleteEntry = useCallback((id: string) => {
+    const newApplications = applications.filter(app => app.id !== id);
     setApplications(newApplications);
     saveApplications(newApplications);
   }, [applications]);
+
+  const handleEdit = (appToEdit: JobApplication | null) => {
+    setCurrentApplication(appToEdit);
+  }
+
+  const handleCreateNew = () => {
+    setCurrentApplication({} as JobApplication); // Usar un objeto vacío (no nulo) para CREAR
+  }
+  const handleCancel = () => {
+    setCurrentApplication(null);
+  }
+
+  //useKeyboardEscape(handleCancel, isFormOpen);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -78,7 +100,7 @@ const HomePage: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-800">Application Pipeline</h2>
           <button 
             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.05]"
-            onClick={handleAddEntry}
+            onClick={handleCreateNew}
             aria-label="Add new application entry"
             data-testid="add-entry-button"
           >
@@ -87,8 +109,19 @@ const HomePage: React.FC = () => {
         </div>
         
         {/* Application Table */}
-        <ApplicationTable columns={initialColumns} data={applications} />
+        <ApplicationTable
+        columns={initialColumns} 
+        data={applications}
+        onEdit={handleEdit}
+        onDelete={handleDeleteEntry} />
       </main>
+      {isFormOpen && (
+        <AddJobForm 
+          initialData={currentApplication} // Pasar datos para prellenar
+          onSave={handleSaveEntry}
+          onCancel={handleCancel}
+        />
+      )}
     </div>
   );
 };

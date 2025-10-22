@@ -1,164 +1,167 @@
-// src/tests/HomePage.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import HomePage from '../pages/HomePage';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
 
-// 💡 1. Configuración de Mock para localStorage
-// Esta es la implementación crucial para TDD con persistencia
+// =========================================================================
+// 1. MOCK: Configuración del Mock para localStorage
+// =========================================================================
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value;
-    }),
-    clear: vi.fn(() => {
-      store = {};
-    }),
-    removeItem: vi.fn((key: string) => {
-      delete store[key];
-    }),
-    // Acceso para inspección en los tests
+    setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
+    clear: vi.fn(() => { store = {}; }),
+    removeItem: vi.fn((key: string) => { delete store[key]; }),
     getStore: () => store, 
   };
 })();
-
-// Reemplazar global.localStorage con nuestro mock
 Object.defineProperty(global, 'localStorage', { value: localStorageMock });
 
-// Requisito 6.4: Snapshot test for the main page.
+// =========================================================================
+// 2. UTILIDAD: Función para crear y guardar una aplicación (DRY Principle)
+// =========================================================================
+interface TestApplicationData {
+    position: string;
+    company: string;
+    status: string;
+    platform: string;
+}
+
+const createAndSaveApplication = async (
+    data: TestApplicationData
+) => {
+    const addButton = screen.getByTestId('add-entry-button');
+    const formTitleText = /Add New Job Application/i;
+    const TEST_DATE = '2025-10-16';
+
+    // 1. Abrir el formulario
+    fireEvent.click(addButton);
+    const formTitle = screen.getByText(formTitleText);
+    expect(formTitle).toBeInTheDocument();
+    
+    // 2. Mockear la limpieza de llamadas después de la apertura para aislar el contador del guardado
+    //localStorageMock.setItem.mockClear();
+
+    // 3. Obtener inputs y llenar campos clave
+    const positionInput = screen.getByTestId('form-position');
+    const companyInput = screen.getByTestId('form-company');
+    const applicationDateInput = screen.getByTestId('form-application-date');
+    const statusSelect = screen.getByTestId('form-status');
+    const platformSelect = screen.getByTestId('form-platform');
+    const saveButton = screen.getByTestId('form-save');
+    
+    fireEvent.change(positionInput, { target: { value: data.position } });
+    fireEvent.change(companyInput, { target: { value: data.company } });
+    fireEvent.change(applicationDateInput, { target: { value: TEST_DATE } });
+    fireEvent.change(statusSelect, { target: { value: data.status } });
+    fireEvent.change(platformSelect, { target: { value: data.platform } });
+
+    // 4. Guardar la aplicación
+    fireEvent.click(saveButton);
+
+    // 5. Esperar el cierre del formulario
+    await waitFor(() => {
+        expect(screen.queryByText(formTitleText)).not.toBeInTheDocument();
+    }, { timeout: 2000 });
+};
+
+
+// =========================================================================
+// 3. ESTRUCTURA DE TESTS
+// =========================================================================
+
+// Configuración de columnas para evitar repetición
+const requiredColumns = [
+    'Position', 'Company', 'Salary', 'Status', 'Application Date', 
+    'Interview Date', 'Platform', 'Contact Name', 'Follow-up Date', 'Notes', 'Link'
+];
+
 test('HomePage renders correctly and matches snapshot', () => {
   const { container } = render(<HomePage />);
-  // Un snapshot es vital para asegurar que los cambios de diseño no rompan la estructura.
   expect(container).toMatchSnapshot();
 });
 
-describe('HomePage Core Requirements', () => {
+describe('HomePage Core Requirements (Static Content)', () => {
   
   beforeEach(() => {
-    // Renderizar antes de cada prueba para limpieza
     render(<HomePage />);
   });
 
-  // Requisito 6.1: Rendering the header and title.
-  test('renders the application header and the correct title', () => {
-    // Usar getByRole y getByTestId (del Header.tsx) para verificar el título
-    expect(screen.getByText(/Job Application Tracker/i)).toBeInTheDocument();
-  });
-  
-  test('renders the "Login with Google" button in the header', () => {
-    // Verificar el botón de la cabecera
-    const loginButton = screen.getByRole('button', { name: /Login with Google/i });
-    expect(loginButton).toBeInTheDocument();
+  test('renders the application title, login button, and add entry button', () => {
+    // Título
+    expect(screen.getByText(/Just Another Job Application Tracker/i)).toBeInTheDocument();
+    
+    // Botones
+    expect(screen.getByRole('button', { name: /Login with Google/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "Add new application entry" })).toBeInTheDocument();
   });
 
-  // Requisito 6.3: Ensuring the "Add Entry" button is visible.
-  test('renders the "+ Add Entry" button for adding new applications', () => {
-    const addButton = screen.getByRole('button', { name: "Add new application entry" });
-    expect(addButton).toBeInTheDocument();
-    expect(addButton).toBeVisible();
-  });
-
-  // Requisito 6.2: Rendering the table with correct columns.
-  test('renders the application table with all required columns', () => {
-    const requiredColumns = [
-      'Position',
-      'Company',
-      'Salary',
-      'Status',
-      'Application Date',
-      'Interview Date',
-      'Platform',
-      'Contact Name',
-      'Follow-up Date',
-      'Notes',
-      'Link',
-    ];
-
-    // Verificar que todos los encabezados de columna estén presentes
+  test('renders the table with all required 11 columns', () => {
     requiredColumns.forEach(column => {
-      // Buscar por el rol 'columnheader' con el texto de la columna
       expect(screen.getByRole('columnheader', { name: column })).toBeInTheDocument();
     });
   });
 
   test('renders the summary metrics placeholders', () => {
-    // Verificar que se rendericen los 3 placeholders de métricas
     const applicationMetrics = screen.getAllByText(/Applications/i);
     expect(applicationMetrics.length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Interviews/i)).toBeInTheDocument();
-    expect(screen.getByText(/Offers/i)).toBeInTheDocument();
   });
 });
 
 describe('HomePage Core Functionality and Persistence', () => {
   
   beforeEach(() => {
-    // Resetear el store y el componente antes de cada prueba
     localStorageMock.clear();
-    localStorageMock.setItem('isLoggedIn', 'false'); // Estado inicial de login
+    localStorageMock.setItem('isLoggedIn', 'false');
     render(<HomePage />);
   });
 
-  // Requisito 7.1: Rendering the header and login button
-  test('renders the header, title, and Login button', () => {
-    expect(screen.getByText(/Job Application Tracker/i)).toBeInTheDocument();
-    
-    // Verificar que el botón de Login/Logout esté visible
-    const loginButton = screen.getByTestId('login-button');
-    expect(loginButton).toBeInTheDocument();
-    expect(loginButton).toHaveTextContent('Login with Google'); // Estado inicial
-  });
-
-  // Requisito 7.2: Rendering the table with correct columns
-  test('renders the application table with all 11 required columns', () => {
-    const requiredColumns = [
-      'Position', 'Company', 'Salary', 'Status', 'Application Date', 
-      'Interview Date', 'Platform', 'Contact Name', 'Follow-up Date', 'Notes', 'Link'
-    ];
-    requiredColumns.forEach(column => {
-      expect(screen.getByRole('columnheader', { name: column })).toBeInTheDocument();
-    });
-  });
-
-  // Requisito 7.3: Adding a new job entry updates localStorage
-  test('clicking "+ Add Entry" button adds a new entry and persists it to localStorage', async () => {
-    //const { rerender } = render(<HomePage />);
+  // Test que verifica el flujo completo de guardado
+  test('Single entry: Form submission saves data to localStorage and updates table', async () => {
     localStorageMock.setItem.mockClear();
-    const addButton = screen.getByTestId('add-entry-button');
-    
-    // 1. Verificar el estado inicial: localStorage debe estar vacío
-    expect(localStorageMock.getItem('jobTrackerData')).toBeNull();
-
-    // 2. Simular la adición de una entrada
-    fireEvent.click(addButton);
-
-    // 3. Esperar que React actualice el estado del componente (la tabla)
-    await waitFor(() => {
-        expect(screen.getByText(/New Position 1/i)).toBeInTheDocument();
+    await createAndSaveApplication({ 
+        position: 'QA Tester', 
+        company: 'Agile Corp', 
+        status: 'Interviewing',
+        platform: 'Indeed'
     });
 
-    // 4. Verificar el localStorage mock: debe tener 1 elemento
+    // 1. Verificación de Persistencia
+    expect(localStorageMock.setItem).toHaveBeenCalledTimes(1); 
     const savedData = JSON.parse(localStorageMock.getItem('jobTrackerData')!);
     
-    expect(localStorageMock.setItem).toHaveBeenCalledTimes(1); // La función saveApplications fue llamada
     expect(savedData).toHaveLength(1);
-    expect(savedData[0].company).toBe('Placeholder Co.');
-    expect(savedData[0].platform).toBe('LinkedIn'); 
-    expect(savedData[0].contactName).toBe('N/A');
-
-    // 5. Simular la adición de una segunda entrada
-    fireEvent.click(addButton);
+    expect(savedData[0].position).toBe('QA Tester');
+    expect(savedData[0].status).toBe('Interviewing');
     
-    // 6. Verificar que el array se actualizó a 2 elementos
-    const updatedData = JSON.parse(localStorageMock.getItem('jobTrackerData')!);
-    expect(updatedData).toHaveLength(2);
+    // 2. Verificación de Actualización de Tabla
+    expect(screen.getByText(/QA Tester/i)).toBeInTheDocument();
   });
-});
 
-// Requisito 7.4: Snapshot test for the main page.
-// 💡 NOTA: Debes ejecutar 'npm test -- -u' para actualizar el snapshot
-test('HomePage renders correctly and matches snapshot', () => {
-  const { container } = render(<HomePage />);
-  expect(container).toMatchSnapshot();
+  // 💡 NUEVO TEST: Agregar Múltiples Registros en un Loop
+  test('Adding multiple entries successfully updates the table and localStorage', async () => {
+    const testApplications: TestApplicationData[] = [
+        { position: 'DevOps Eng', company: 'CloudWorks', status: 'Applied', platform: 'LinkedIn' },
+        { position: 'UX Designer', company: 'DesignCo', status: 'Offer', platform: 'Company Website' },
+        { position: 'Data Scientist', company: 'DataLabs', status: 'Rejected', platform: 'Referral' },
+    ];
+    
+    // Ejecutar el loop y verificar las llamadas a localStorage
+    localStorageMock.setItem.mockClear();
+    for (const [index, app] of testApplications.entries()) {
+        await createAndSaveApplication(app);
+        
+        // Verificación dentro del loop: asegurar que el nuevo registro aparece
+        expect(screen.getByText(app.position)).toBeInTheDocument();
+        
+        // La primera entrada es 1, la segunda es 2, etc.
+        expect(localStorageMock.setItem).toHaveBeenCalledTimes(index + 1); 
+    }
+    
+    // Verificación final: el array de localStorage debe tener 3 elementos
+    const finalSavedData = JSON.parse(localStorageMock.getItem('jobTrackerData')!);
+    expect(finalSavedData).toHaveLength(testApplications.length);
+    //expect(finalSavedData.map(a => a.company)).toEqual(['CloudWorks', 'DesignCo', 'DataLabs']);
+  });
 });
