@@ -14,14 +14,19 @@ The project is built on the following modern technologies:
 | Testing | Vitest & React Testing Library | Test Runner and Component Testing (TDD) |
 
 # Getting Started: Local Setup
-Follow these instructions to get a copy of the project up and running on your local machine.PrerequisitesNode.js (v18 or higher recommended) and npm (Node Package Manager)InstallationClone the repository:git clone [repository-url]
+Follow these instructions to get a copy of the project up and running on your local machine.
+## Prerequisites
+- Node.js (v18 or higher recommended) and npm (Node Package Manager)
+## Installation
+1. Clone the repository:git clone [[https://github.com/godie/JAJAT.git](https://github.com/godie/JAJAT.git)]
 
-cd job-application-tracker
+2.  cd job-application-tracker
 
-Install project dependencies:npm install
+3. Install project dependencies:
+npm install
 
-Configure Environment Variables:
-Create a file named .env.local in the project root and add your Google Identity Services (GIS) Client ID. This is required for the login functionality.# .env.local
+4. Configure Environment Variables:
+  - Create a file named .env.local in the project root and add your Google Identity Services (GIS) Client ID. This is required for the login functionality.# .env.local
 VITE_GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com"
 
 # Available Scripts
@@ -34,7 +39,9 @@ In the project directory, you can run:
 - npm run buildBuilds the application for production to the dist folder.
 
 # Key Features
-## Development & Architecture 
+
+## Development & Architecture
+
 - Test-Driven Development (TDD): Rigorous testing implemented for all core components and functional flows (CRUD, persistence, and login state).
 - Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable) without modifying core application logic.
 - Vite Environment Variables: Secure management of the Google Client ID using VITE_ prefixed environment variables.
