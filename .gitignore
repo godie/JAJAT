@@ -26,3 +26,8 @@ dist-ssr
 *.sln
 *.sw?
 /src/tests/__snapshots__
+coverage
+
+# PHP
+# Backend files (uncomment if you don't want to commit PHP files)
+# /api/

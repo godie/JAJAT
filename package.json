@@ -1,7 +1,7 @@
 {
   "name": "job-application-tracker",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@googleapis/sheets": "^12.0.0",
+    "@react-oauth/google": "^0.12.2",
     "@tailwindcss/vite": "^4.1.14",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

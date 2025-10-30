@@ -1,44 +1,69 @@
 // src/components/Header.tsx
 import React, { useState, useEffect } from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
 import { checkLoginStatus, setLoginStatus } from '../utils/localStorage';
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+import { setAuthCookie, clearAuthCookie } from '../utils/api';
 
 const Header: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect (() => {
+  useEffect(() => {
     setIsLoggedIn(checkLoginStatus());
-    window.handleCredentialResponse = (response) => {
-      console.log("Token JWT recibido:", response.credential);
-      setLoginStatus(true);
-      setIsLoggedIn(true);
-      alert("Successful Login with Google!");
-    };
+  }, []);
 
-    if (!checkLoginStatus() && window.google) {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID, // Usar tu CLIENT ID real
-        callback: window.handleCredentialResponse, // La función que maneja la respuesta
-        auto_select: false, // Evita login automático
-      });
-    }
-  },[]);
-
-  const handleAuth = () => {
-    if (isLoggedIn) {
-      setLoginStatus(false);
-      setIsLoggedIn(false);
-      alert("Logged out successfully!");
-    }
-    else{
-      if (window.google) {
-        window.google.accounts.id.prompt(); // Muestra el cuadro de diálogo de inicio de sesión
-      } else {
-        alert("Google Identity Services not loaded yet. Please try again.");
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      console.log("Token de acceso recibido:", tokenResponse);
+      setIsLoading(true);
+      
+      try {
+        // Store token in secure cookie via PHP backend
+        await setAuthCookie(tokenResponse.access_token);
+        
+        // Also store login status in localStorage for UI state
+        setLoginStatus(true);
+        setIsLoggedIn(true);
+        alert("Successful Login with Google!");
+      } catch (error) {
+        console.error("Error storing auth cookie:", error);
+        alert("Login successful but failed to store credentials securely.");
+      } finally {
+        setIsLoading(false);
       }
+    },
+    onError: (error) => {
+      console.error("Error en el login:", error);
+      alert("Failed to login with Google. Please try again.");
+    },
+  });
+
+  const handleAuth = async () => {
+    if (isLoggedIn) {
+      setIsLoading(true);
+      
+      try {
+        // Clear cookie via PHP backend
+        await clearAuthCookie();
+        
+        // Clear localStorage
+        setLoginStatus(false);
+        setIsLoggedIn(false);
+        alert("Logged out successfully!");
+      } catch (error) {
+        console.error("Error clearing auth cookie:", error);
+        // Still clear localStorage even if backend call fails
+        setLoginStatus(false);
+        setIsLoggedIn(false);
+        alert("Logged out (some credentials may remain on server).");
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      googleLogin();
     }
-    
   };
+
   return (
     <header className="flex justify-between items-center p-4 border-b border-gray-200 bg-white shadow-sm">
       <h1 className="text-3xl font-extrabold text-indigo-700" data-testid="app-title">
@@ -49,12 +74,13 @@ const Header: React.FC = () => {
           isLoggedIn 
             ? 'bg-red-600 hover:bg-red-700 text-white' 
             : 'bg-blue-600 hover:bg-blue-700 text-white'
-        }`}
+        } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleAuth}
         data-testid="login-button"
         aria-label={isLoggedIn ? "Logout" : "Login with Google"}
+        disabled={isLoading}
       >
-        {isLoggedIn ? "Logout" : "Login with Google"}
+        {isLoading ? 'Loading...' : isLoggedIn ? "Logout" : "Login with Google"}
       </button>
     </header>
   );

@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import HomePage from '../pages/HomePage';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // =========================================================================
 // 1. MOCK: Configuración del Mock para localStorage
@@ -16,6 +17,15 @@ const localStorageMock = (() => {
   };
 })();
 Object.defineProperty(global, 'localStorage', { value: localStorageMock });
+
+// Helper function to render with GoogleOAuthProvider
+const renderWithGoogleProvider = (ui: React.ReactElement) => {
+  return render(
+    <GoogleOAuthProvider clientId="test-client-id">
+      {ui}
+    </GoogleOAuthProvider>
+  );
+};
 
 // =========================================================================
 // 2. UTILIDAD: Función para crear y guardar una aplicación (DRY Principle)
@@ -77,14 +87,14 @@ const requiredColumns = [
 ];
 
 test('HomePage renders correctly and matches snapshot', () => {
-  const { container } = render(<HomePage />);
+  const { container } = renderWithGoogleProvider(<HomePage />);
   expect(container).toMatchSnapshot();
 });
 
 describe('HomePage Core Requirements (Static Content)', () => {
   
   beforeEach(() => {
-    render(<HomePage />);
+    renderWithGoogleProvider(<HomePage />);
   });
 
   test('renders the application title, login button, and add entry button', () => {
@@ -114,7 +124,7 @@ describe('HomePage Core Functionality and Persistence', () => {
   beforeEach(() => {
     localStorageMock.clear();
     localStorageMock.setItem('isLoggedIn', 'false');
-    render(<HomePage />);
+    renderWithGoogleProvider(<HomePage />);
   });
 
   // Test que verifica el flujo completo de guardado
