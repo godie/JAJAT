@@ -12,23 +12,42 @@ The project is built on the following modern technologies:
 | Styling | Tailwind CSS | Utility-First CSS Framework and Responsive Design |
 | Tooling | Vite | Modern Frontend Build Tool |
 | Testing | Vitest & React Testing Library | Test Runner and Component Testing (TDD) |
+| Authentication | @react-oauth/google | Google OAuth Integration |
 
 # Getting Started: Local Setup
 Follow these instructions to get a copy of the project up and running on your local machine.
 ## Prerequisites
-- Node.js (v18 or higher recommended) and npm (Node Package Manager)
+- Node.js (v22 recommended) and npm (Node Package Manager)
+- PHP 7.4+ (for backend cookie handling)
 ## Installation
-1. Clone the repository:git clone [[https://github.com/godie/JAJAT.git](https://github.com/godie/JAJAT.git)]
-
-2.  cd job-application-tracker
+1. Clone the repository:
+```shell
+git clone https://github.com/godie/JAJAT.git job-application-tracker
+```
+2. Enter folder
+```shell
+cd job-application-tracker
+```
 
 3. Install project dependencies:
+```shell 
 npm install
+```
 
 4. Configure Environment Variables:
-  - Create a file named .env.local in the project root and add your Google Identity Services (GIS) Client ID. This is required for the login functionality.# .env.local
+Create a file named `.env.local` in the project root and add your Google OAuth Client ID. This is required for the login functionality.
+
+### .env.local
+```bash
+# Google OAuth Configuration
 VITE_GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com"
 
+# API Base URL (optional - defaults to /api)
+# For production, set this to your full API URL
+VITE_API_BASE_URL="/api"
+```
+
+> **Note:** The `.env.local` file is gitignored and will not be committed to version control.
 # Available Scripts
 In the project directory, you can run:
 - npm run dev
@@ -52,14 +71,45 @@ In the project directory, you can run:
   - Create (Add New Entry)
   - Read (Display in the table)
   - Update (Edit entry via table row click)
-  - Delete (Remove entry via hover button in the table
+  - Delete (Remove entry via hover button in the table)
 -Data Model: Includes comprehensive fields for tracking status, dates, contacts, and source platforms.
 
 ## User Interface & Interactivity
 - Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience.
-- Google Identity Services (GIS): Implements the modern GIS flow for real user authentication (login/logout simulation in the current frontend context).
+- Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage.
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key, enhancing usability
 - Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers).
+
+## Security & Authentication
+- Secure Cookie Storage: Google OAuth tokens are stored in secure, HTTP-only cookies managed by PHP backend.
+- OAuth 2.0 Flow: Full OAuth 2.0 implementation with access token management.
+- Backend Integration: PHP endpoints for secure cookie handling (set and read).
+
+# Backend API Endpoints
+The project includes PHP endpoints for secure cookie management. These endpoints must be deployed to a PHP server with HTTPS enabled.
+
+## Authentication Endpoints
+
+### Set Auth Cookie
+- **Endpoint:** `POST /api/set-auth-cookie.php`
+- **Purpose:** Store Google OAuth access token in a secure, HTTP-only cookie
+- **Request Body:** JSON with `access_token` field
+- **Response:** JSON with success status
+- **Security:** Cookie is set with `HttpOnly`, `Secure`, and `SameSite=Strict` flags
+
+### Get Auth Cookie
+- **Endpoint:** `GET /api/get-auth-cookie.php`
+- **Purpose:** Retrieve the stored OAuth access token from the secure cookie
+- **Response:** JSON with `access_token` field or error message
+- **Security:** Only accessible server-side; JavaScript cannot read HTTP-only cookies
+
+### Clear Auth Cookie (Logout)
+- **Endpoint:** `POST /api/clear-auth-cookie.php`
+- **Purpose:** Remove the authentication cookie when user logs out
+- **Response:** JSON with success status
+- **Security:** Cookie is deleted by setting expiry to past time
+
+> **Note:** Due to browser security restrictions, JavaScript cannot read HTTP-only cookies. The backend PHP endpoints handle all cookie operations securely.
 
 # File Structure
 The project maintains a clean, scalable folder structure based on functional concerns:
@@ -68,7 +118,7 @@ The project maintains a clean, scalable folder structure based on functional con
 job-application-tracker/
 ├── src/
 │   ├── components/
-│   │   ├── Header.tsx           // Application header, login button, and GIS logic.
+│   │   ├── Header.tsx           // Application header, login button, and OAuth logic.
 │   │   ├── ApplicationTable.tsx // Table displaying job entries and handling edit/delete UI.
 │   │   ├── AddJobForm.tsx       // Modal form for creating and editing job entries.
 │   │   └── SheetSyncManager.tsx // [Future] Component for handling external sync (e.g., Sheets).
@@ -83,10 +133,57 @@ job-application-tracker/
 │   │   ├── IAdapter.ts          // Target interface for external data services (Adapter Pattern).
 │   │   └── GoogleSheetAdapter.ts// [Future] Adapter implementation for Google Sheets API.
 │   ├── tests/
-│   │   ├── Header.test.tsx      // Tests for login/logout, GIS initialization, and button states.
+│   │   ├── Header.test.tsx      // Tests for login/logout, OAuth initialization, and button states.
 │   │   └── HomePage.test.tsx    // Tests for CRUD, persistence loops, and table integrity.
-│   ├── App.tsx
+│   ├── App.tsx                  // Main app component with GoogleOAuthProvider wrapper.
 │   └── main.tsx
+├── api/                         // PHP backend endpoints
+│   ├── set-auth-cookie.php      // Secure cookie setting for OAuth tokens
+│   ├── get-auth-cookie.php      // Secure cookie retrieval for OAuth tokens
+│   └── clear-auth-cookie.php    // Secure cookie deletion for logout
 ├── .env.local                   // Stores VITE_GOOGLE_CLIENT_ID (Ignored by Git).
+├── .nvmrc                       // Node version specification (v22)
 └── tailwind.config.js
 ```
+
+## Deployment & Backend Setup
+
+### PHP Backend Configuration
+
+1. Deploy PHP files to your web server:
+   - Ensure the `/api` directory is accessible via HTTPS
+   - PHP version 7.4+ required
+   - PHP must have cookie and JSON support enabled
+
+2. Configure CORS (if needed):
+   - Update `Access-Control-Allow-Origin` headers in PHP files if frontend and backend are on different domains
+   - Adjust CORS settings in the PHP files as needed for your deployment
+
+3. Test the endpoints:
+   ```bash
+   # Test set cookie
+   curl -X POST https://jajat.godieboy.com/api/set-auth-cookie.php \
+     -H "Content-Type: application/json" \
+     -d '{"access_token": "test_token"}'
+   
+   # Test get cookie
+   curl -X GET https://jajat.godieboy.com/api/get-auth-cookie.php \
+     --cookie "google_auth_token=test_token"
+   ```
+
+### Frontend Integration
+
+The React app automatically calls these endpoints when:
+- User logs in: Token is stored in secure cookie via `setAuthCookie()`
+- User logs out: Cookie is cleared via `clearAuthCookie()`
+- App needs token: Backend can retrieve it using `getAuthCookie()`
+
+> **Important:** The cookie is HTTP-only and secure, so JavaScript cannot read it directly. This protects against XSS attacks.
+
+## Contributing
+
+This project follows Test-Driven Development (TDD) principles. All new features should include comprehensive tests.
+
+## License
+
+[Add your license information here]

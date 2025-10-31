@@ -1,12 +1,16 @@
 // src/components/ApplicationTable.tsx (Actualizado para aceptar props)
-import React from 'react';
+import React, { useState } from 'react';
+import type { JobApplication } from '../utils/localStorage';
 
 interface ApplicationTableProps {
     columns: string[];
     data: any[];
+    onEdit: (application: JobApplication) => void;
+    onDelete: (id:string) => void;
 }
 
-const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data }) => {
+const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   return (
     <div className="overflow-x-auto shadow-xl rounded-lg border border-gray-100">
       <table className="min-w-full divide-y divide-gray-200" data-testid="application-table">
@@ -24,31 +28,60 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data }) =>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
-          {data.length === 0 ? (
-            <tr>
-              <td colSpan={columns.length} className="px-6 py-10 text-center text-gray-400 italic">
-                Use the "+ Add Entry" button to start tracking your applications!
-              </td>
-            </tr>
-          ) : (
-            // 💡 Placeholder para la renderización de datos (si hay datos)
-            data.map((item, index) => (
-                <tr key={item.id || index} className="hover:bg-gray-50 transition duration-100">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.position}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.company}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.salary}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.status}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.applicationDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.interviewDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.platform}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.contactName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.followUpDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.notes}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.link}</td>                    
-                </tr>
-            ))
-          )}
-        </tbody>
+                    {data.length === 0 ? (
+                        <tr>
+                            <td colSpan={columns.length + 1} className="px-6 py-10 text-center text-gray-400 italic">
+                                Use the "+ Add Entry" button to start tracking your applications!
+                            </td>
+                        </tr>
+                    ) : (
+                        data.map((item) => (
+                            <tr 
+                                key={item.id} 
+                                className="hover:bg-gray-50 transition duration-100 cursor-pointer group"
+                                onMouseEnter={() => setHoveredRowId(item.id)}
+                                onMouseLeave={() => setHoveredRowId(null)}
+                                data-testid={`row-${item.id}`}
+                            >
+                                {columns.map((column, index) => {
+                                    // Determinar la clave de propiedad para el mapeo (asumiendo que las columnas coinciden con las claves)
+                                    const key = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+                                    const cellContent = (item as any)[key] || item[key as keyof JobApplication] || '';
+                                    
+                                    return (
+                                        // 💡 Habilitar edición al hacer clic en cualquier TD (excepto en el último que es el botón)
+                                        <td 
+                                            key={index}
+                                            onClick={() => onEdit(item)}
+                                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-100 group-hover:bg-indigo-50"
+                                        >
+                                            {cellContent}
+                                        </td>
+                                    );
+                                })}
+
+                                {/* 💡 Columna de Acción (Delete Button) */}
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium w-1">
+                                    {hoveredRowId === item.id && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Evita que se active el evento onEdit del TD
+                                                if (confirm(`Are you sure you want to delete the application for ${item.position}?`)) {
+                                                    onDelete(item.id);
+                                                }
+                                            }}
+                                            className="text-red-600 hover:text-red-900 font-bold p-1 rounded-full bg-white hover:bg-red-100 transition"
+                                            aria-label={`Delete application for ${item.position}`}
+                                            data-testid={`delete-btn-${item.id}`}
+                                        >
+                                            
+                                        </button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
       </table>
     </div>
   );

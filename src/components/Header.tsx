@@ -1,37 +1,86 @@
 // src/components/Header.tsx
 import React, { useState, useEffect } from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
 import { checkLoginStatus, setLoginStatus } from '../utils/localStorage';
+import { setAuthCookie, clearAuthCookie } from '../utils/api';
 
 const Header: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect (() => {
-    const status = checkLoginStatus();
-    setIsLoggedIn(status);
-  },[]);
+  useEffect(() => {
+    setIsLoggedIn(checkLoginStatus());
+  }, []);
 
-  const handleAuth = () => {
-    const newStatus = !isLoggedIn;
-    setLoginStatus(newStatus);
-    setIsLoggedIn(newStatus);
-    alert(newStatus ? "Logged in with Google (Simulated)" : "Logged out (Simulated)");
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      console.log("Token de acceso recibido:", tokenResponse);
+      setIsLoading(true);
+      
+      try {
+        // Store token in secure cookie via PHP backend
+        await setAuthCookie(tokenResponse.access_token);
+        
+        // Also store login status in localStorage for UI state
+        setLoginStatus(true);
+        setIsLoggedIn(true);
+        alert("Successful Login with Google!");
+      } catch (error) {
+        console.error("Error storing auth cookie:", error);
+        alert("Login successful but failed to store credentials securely.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: (error) => {
+      console.error("Error en el login:", error);
+      alert("Failed to login with Google. Please try again.");
+    },
+  });
+
+  const handleAuth = async () => {
+    if (isLoggedIn) {
+      setIsLoading(true);
+      
+      try {
+        // Clear cookie via PHP backend
+        await clearAuthCookie();
+        
+        // Clear localStorage
+        setLoginStatus(false);
+        setIsLoggedIn(false);
+        alert("Logged out successfully!");
+      } catch (error) {
+        console.error("Error clearing auth cookie:", error);
+        // Still clear localStorage even if backend call fails
+        setLoginStatus(false);
+        setIsLoggedIn(false);
+        alert("Logged out (some credentials may remain on server).");
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      googleLogin();
+    }
   };
+
   return (
     <header className="flex justify-between items-center p-4 border-b border-gray-200 bg-white shadow-sm">
       <h1 className="text-3xl font-extrabold text-indigo-700" data-testid="app-title">
-        Job Application Tracker
+        Just Another Job Application Tracker
       </h1>
       <button 
         className={`font-medium py-2 px-4 rounded-lg shadow-md transition duration-150 transform hover:scale-[1.02] ${
           isLoggedIn 
             ? 'bg-red-600 hover:bg-red-700 text-white' 
             : 'bg-blue-600 hover:bg-blue-700 text-white'
-        }`}
+        } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleAuth}
         data-testid="login-button"
         aria-label={isLoggedIn ? "Logout" : "Login with Google"}
+        disabled={isLoading}
       >
-        {isLoggedIn ? "Logout" : "Login with Google"}
+        {isLoading ? 'Loading...' : isLoggedIn ? "Logout" : "Login with Google"}
       </button>
     </header>
   );
