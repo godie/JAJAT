@@ -1,7 +1,9 @@
 // src/components/AddJobForm.tsx
 import React, { useState } from 'react';
-import { type JobApplication } from '../utils/localStorage';
+import type { JobApplication, InterviewEvent, InterviewStageType } from '../utils/localStorage';
+import { generateId } from '../utils/localStorage';
 import useKeyboardEscape from '../hooks/useKeyboardEscape';
+import TimelineEditor from './TimelineEditor';
 
 interface AddJobFormProps {
   onSave: (newEntry: Omit<JobApplication, 'id'>) => void; // Acepta la entrada sin ID
@@ -21,17 +23,59 @@ const initialFormData: Omit<JobApplication, 'id'> = {
   platform: 'LinkedIn',
   contactName: '',
   followUpDate: '',
+  timeline: [],
+};
+
+// Helper to map status to timeline event type
+const mapStatusToStageType = (status: string): InterviewStageType => {
+  const statusMap: Record<string, InterviewStageType> = {
+    'Applied': 'application_submitted',
+    'Interviewing': 'technical_interview',
+    'Offer': 'offer',
+    'Rejected': 'rejected',
+    'Withdrawn': 'withdrawn',
+    'Hold': 'application_submitted',
+  };
+  return statusMap[status] || 'application_submitted';
+};
+
+// Helper to build timeline from form data
+const buildTimeline = (data: Omit<JobApplication, 'id'> | JobApplication): InterviewEvent[] => {
+  const timeline: InterviewEvent[] = [];
+  
+  // Add application submitted event
+  if (data.applicationDate) {
+    timeline.push({
+      id: generateId(),
+      type: 'application_submitted',
+      date: data.applicationDate,
+      status: 'completed',
+    });
+  }
+  
+  // Add interview/status event
+  if (data.interviewDate) {
+    const stageType = mapStatusToStageType(data.status);
+    timeline.push({
+      id: generateId(),
+      type: stageType,
+      date: data.interviewDate,
+      status: data.status === 'Rejected' ? 'cancelled' : 'scheduled',
+    });
+  }
+  
+  return timeline;
 };
 
 const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }) => {
   const isCreationMode = initialData && !initialData.id;
+  const isEditing = !!initialData && !!initialData.id;
+  
   const [formData, setFormData] = useState<Omit<JobApplication, 'id'> | JobApplication>(
     isCreationMode ? initialData : initialData || initialFormData
   );
-
-  const isEditing = !!initialData && !!initialData.id;
+  
   useKeyboardEscape(onCancel, true);
- 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -40,7 +84,15 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    
+    // Use manual timeline if exists, otherwise build from form data
+    let timeline = formData.timeline || [];
+    if (timeline.length === 0) {
+      timeline = buildTimeline(formData);
+    }
+    
+    const finalData = { ...formData, timeline };
+    onSave(finalData);
   };
 
   return (
@@ -203,6 +255,14 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
               />
             </label>
+          </div>
+
+          {/* Timeline Editor */}
+          <div className="col-span-full mt-6">
+            <TimelineEditor 
+              events={formData.timeline || []} 
+              onChange={(events) => setFormData(prev => ({ ...prev, timeline: events }))}
+            />
           </div>
 
           {/* Form Actions */}

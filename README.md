@@ -61,9 +61,11 @@ In the project directory, you can run:
 
 ## Development & Architecture
 
-- Test-Driven Development (TDD): Rigorous testing implemented for all core components and functional flows (CRUD, persistence, and login state).
-- Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable) without modifying core application logic.
-- Vite Environment Variables: Secure management of the Google Client ID using VITE_ prefixed environment variables.
+- Test-Driven Development (TDD): Comprehensive testing with 36+ tests covering all core components, views, and functionality
+- Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable)
+- Modular Component Design: Reusable, tested components with clear separation of concerns
+- Type Safety: Full TypeScript implementation with strict type checking
+- Vite Environment Variables: Secure management of the Google Client ID using VITE_ prefixed environment variables
 
 ## Data Management & Persistence
 - Local Storage Persistence: All job application data is persisted locally in the browser's localStorage for simple, quick data retention.
@@ -72,13 +74,39 @@ In the project directory, you can run:
   - Read (Display in the table)
   - Update (Edit entry via table row click)
   - Delete (Remove entry via hover button in the table)
--Data Model: Includes comprehensive fields for tracking status, dates, contacts, and source platforms.
+- Advanced Data Model: Hybrid approach supporting:
+  - **Timeline-based tracking**: Full interview process with multiple stages (Screener, Technical, System Design, Hiring Manager, etc.)
+  - **Legacy compatibility**: Automatic migration from simple status fields
+  - **Custom fields**: User-defined fields for flexible data tracking
+  - **Event status**: Complete interview tracking with scheduled, completed, cancelled, and pending states
 
 ## User Interface & Interactivity
-- Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience.
-- Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage.
-- Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key, enhancing usability
-- Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers).
+- **Multiple View Modes**: Switch between different visualizations:
+  - **Table View**: Enhanced table with all job application data
+  - **Timeline View**: Chronological visualization of interview process with status indicators
+  - **Kanban View**: Board-style organization (Coming Soon)
+  - **Calendar View**: Date-based interview planning (Coming Soon)
+- **Custom Alert System**: Beautiful, accessible alerts with auto-dismiss (success, error, warning, info) replacing browser alerts
+- **Timeline Editor**: Full-featured editor for managing interview events with stages, statuses, and notes
+- Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience
+- Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage
+- Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
+- Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers)
+
+## Interview Timeline System
+
+The application features a sophisticated timeline system for tracking the complete interview lifecycle:
+
+- **14 Interview Stage Types**: From initial application to final offer/rejection
+- **Event Management**: Add, edit, and delete timeline events with dates, status, notes, and interviewer names
+- **Auto-Generation**: Timeline automatically created from application and interview dates
+- **Visual Indicators**: Color-coded status badges (completed, scheduled, cancelled, pending)
+- **Chronological Sorting**: Events automatically sorted by date
+- **Next Event Highlighting**: Quick view of upcoming interviews
+- **Timeline View**: Beautiful vertical timeline visualization with visual connections
+- **Interviewer Tracking**: Optional interviewer name field for each event
+
+Supported interview stages include: Application Submitted, Screener Call, First Contact, Technical Interview, Code Challenge, Live Coding, Hiring Manager, System Design, Cultural Fit, Final Round, Offer, Rejected, Withdrawn, and Custom.
 
 ## Security & Authentication
 - Secure Cookie Storage: Google OAuth tokens are stored in secure, HTTP-only cookies managed by PHP backend.
@@ -121,11 +149,17 @@ job-application-tracker/
 │   │   ├── Header.tsx           // Application header, login button, and OAuth logic.
 │   │   ├── ApplicationTable.tsx // Table displaying job entries and handling edit/delete UI.
 │   │   ├── AddJobForm.tsx       // Modal form for creating and editing job entries.
+│   │   ├── TimelineView.tsx     // Timeline visualization of interview process.
+│   │   ├── TimelineEditor.tsx   // Editor for managing interview timeline events.
+│   │   ├── ViewSwitcher.tsx     // Component for switching between view modes.
+│   │   ├── Alert.tsx            // Beautiful alert notification component.
+│   │   ├── AlertProvider.tsx    // Context provider for alert management.
 │   │   └── SheetSyncManager.tsx // [Future] Component for handling external sync (e.g., Sheets).
 │   ├── pages/
-│   │   └── HomePage.tsx         // Main container; manages global application state (applications, modal visibility).
+│   │   └── HomePage.tsx         // Main container; manages global state and view switching.
 │   ├── utils/
-│   │   └── localStorage.ts      // Utility functions for data persistence and login status logic.
+│   │   ├── localStorage.ts      // Data persistence, migration, and interview event utilities.
+│   │   └── api.ts               // API utilities for PHP backend communication.
 │   ├── hooks/
 │   │   ├── useKeyboardKey.ts    // Generic hook for listening to any key press.
 │   │   └── useKeyboardEscape.ts // Semantic wrapper for closing modals on 'Escape' key.
@@ -133,8 +167,11 @@ job-application-tracker/
 │   │   ├── IAdapter.ts          // Target interface for external data services (Adapter Pattern).
 │   │   └── GoogleSheetAdapter.ts// [Future] Adapter implementation for Google Sheets API.
 │   ├── tests/
-│   │   ├── Header.test.tsx      // Tests for login/logout, OAuth initialization, and button states.
-│   │   └── HomePage.test.tsx    // Tests for CRUD, persistence loops, and table integrity.
+│   │   ├── Header.test.tsx      // Tests for login/logout, OAuth, and button states.
+│   │   ├── HomePage.test.tsx    // Tests for CRUD, persistence, and table integrity.
+│   │   ├── Alert.test.tsx       // Tests for alert component rendering and behavior.
+│   │   ├── AlertProvider.test.tsx // Tests for alert context and management.
+│   │   └── TimelineEditor.test.tsx // Tests for timeline event editing.
 │   ├── App.tsx                  // Main app component with GoogleOAuthProvider wrapper.
 │   └── main.tsx
 ├── api/                         // PHP backend endpoints
@@ -179,6 +216,17 @@ The React app automatically calls these endpoints when:
 - App needs token: Backend can retrieve it using `getAuthCookie()`
 
 > **Important:** The cookie is HTTP-only and secure, so JavaScript cannot read it directly. This protects against XSS attacks.
+
+## Testing
+
+The project includes comprehensive test coverage:
+
+```
+Test Files: 5 passed (5)
+Tests: 35 passed (35)
+```
+
+All tests can be run with `npm test` or `npm run test:watch` for TDD workflow.
 
 ## Contributing
 

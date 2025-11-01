@@ -3,10 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { checkLoginStatus, setLoginStatus } from '../utils/localStorage';
 import { setAuthCookie, clearAuthCookie } from '../utils/api';
+import { useAlert } from './AlertProvider';
 
 const Header: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { showSuccess, showError } = useAlert();
 
   useEffect(() => {
     setIsLoggedIn(checkLoginStatus());
@@ -24,17 +26,17 @@ const Header: React.FC = () => {
         // Also store login status in localStorage for UI state
         setLoginStatus(true);
         setIsLoggedIn(true);
-        alert("Successful Login with Google!");
+        showSuccess("Successful Login with Google!");
       } catch (error) {
         console.error("Error storing auth cookie:", error);
-        alert("Login successful but failed to store credentials securely.");
+        showError("Login successful but failed to store credentials securely.");
       } finally {
         setIsLoading(false);
       }
     },
     onError: (error) => {
       console.error("Error en el login:", error);
-      alert("Failed to login with Google. Please try again.");
+      showError("Failed to login with Google. Please try again.");
     },
   });
 
@@ -49,13 +51,13 @@ const Header: React.FC = () => {
         // Clear localStorage
         setLoginStatus(false);
         setIsLoggedIn(false);
-        alert("Logged out successfully!");
+        showSuccess("Logged out successfully!");
       } catch (error) {
         console.error("Error clearing auth cookie:", error);
         // Still clear localStorage even if backend call fails
         setLoginStatus(false);
         setIsLoggedIn(false);
-        alert("Logged out (some credentials may remain on server).");
+        showError("Logged out (some credentials may remain on server).");
       } finally {
         setIsLoading(false);
       }

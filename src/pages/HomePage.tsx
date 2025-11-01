@@ -2,7 +2,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import ApplicationTable from '../components/ApplicationTable';
-import { getApplications, saveApplications, type JobApplication } from '../utils/localStorage';
+import TimelineView from '../components/TimelineView';
+import ViewSwitcher, { type ViewType } from '../components/ViewSwitcher';
+import { AlertProvider } from '../components/AlertProvider';
+import { getApplications, saveApplications, generateId, type JobApplication } from '../utils/localStorage';
 import AddJobForm from '../components/AddJobComponent';
 
 const initialColumns = [
@@ -40,6 +43,7 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
 const HomePage: React.FC = () => {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
+  const [currentView, setCurrentView] = useState<ViewType>('table');
   const isFormOpen = currentApplication !== null;
 
   useEffect(() => {
@@ -57,7 +61,9 @@ const HomePage: React.FC = () => {
     else {
        const newEntry: JobApplication = {
       ...entryData,
-      id: Date.now().toString(), // Generar ID único
+      id: generateId(), // Generar ID único
+      // Initialize timeline if not present
+      timeline: 'timeline' in entryData ? entryData.timeline : [],
     } as JobApplication;
     newApplications = [...applications, newEntry];
     }
@@ -87,42 +93,74 @@ const HomePage: React.FC = () => {
 
   //useKeyboardEscape(handleCancel, isFormOpen);
 
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'timeline':
+        return (
+          <TimelineView
+            applications={applications}
+            onEdit={handleEdit}
+            onDelete={handleDeleteEntry}
+          />
+        );
+      case 'table':
+      default:
+        return (
+          <ApplicationTable
+            columns={initialColumns}
+            data={applications}
+            onEdit={handleEdit}
+            onDelete={handleDeleteEntry}
+          />
+        );
+      case 'kanban':
+      case 'calendar':
+        return (
+          <div className="text-center py-20 text-gray-400">
+            <p className="text-lg font-medium">Coming Soon!</p>
+            <p className="text-sm mt-2">{currentView} view is under development</p>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        
-        {/* Summary Section */}
-        <MetricsSummary applications={applications} />
-        
-        {/* Table Header and Add Button */}
-        <div className="flex justify-between items-center mb-6 mt-10">
-          <h2 className="text-2xl font-bold text-gray-800">Application Pipeline</h2>
-          <button 
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.05]"
-            onClick={handleCreateNew}
-            aria-label="Add new application entry"
-            data-testid="add-entry-button"
-          >
-            + Add Entry
-          </button>
-        </div>
-        
-        {/* Application Table */}
-        <ApplicationTable
-        columns={initialColumns} 
-        data={applications}
-        onEdit={handleEdit}
-        onDelete={handleDeleteEntry} />
-      </main>
-      {isFormOpen && (
-        <AddJobForm 
-          initialData={currentApplication} // Pasar datos para prellenar
-          onSave={handleSaveEntry}
-          onCancel={handleCancel}
-        />
-      )}
-    </div>
+    <AlertProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          
+          {/* Summary Section */}
+          <MetricsSummary applications={applications} />
+          
+          {/* View Switcher, Header and Add Button */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 mt-10">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <h2 className="text-2xl font-bold text-gray-800">Application Pipeline</h2>
+              <ViewSwitcher currentView={currentView} onViewChange={setCurrentView} />
+            </div>
+            <button 
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.05]"
+              onClick={handleCreateNew}
+              aria-label="Add new application entry"
+              data-testid="add-entry-button"
+            >
+              + Add Entry
+            </button>
+          </div>
+          
+          {/* Current View */}
+          {renderCurrentView()}
+        </main>
+        {isFormOpen && (
+          <AddJobForm 
+            initialData={currentApplication} // Pasar datos para prellenar
+            onSave={handleSaveEntry}
+            onCancel={handleCancel}
+          />
+        )}
+      </div>
+    </AlertProvider>
   );
 };
 
