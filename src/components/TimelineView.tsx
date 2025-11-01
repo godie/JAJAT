@@ -145,6 +145,11 @@ const TimelineView: React.FC<TimelineViewProps> = ({ applications, onEdit, onDel
                                 {getStageDisplayName(event.type)}
                               </h4>
                               <p className="text-sm text-gray-600 mt-1">{formatDate(event.date)}</p>
+                              {event.interviewerName && (
+                                <p className="text-sm text-indigo-700 mt-1 font-medium">
+                                  👤 {event.interviewerName}
+                                </p>
+                              )}
                               {event.notes && (
                                 <p className="text-sm text-gray-700 mt-2 italic">"{event.notes}"</p>
                               )}

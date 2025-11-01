@@ -60,6 +60,7 @@ const Alert: React.FC<AlertProps> = ({ type, message, onClose, duration = 5000 }
 
   return (
     <div
+      role="alert"
       className={`
         ${styles[type]} 
         border-l-4 

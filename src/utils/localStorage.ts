@@ -33,6 +33,7 @@ export interface InterviewEvent {
   notes?: string;
   status: EventStatus;
   customTypeName?: string; // For custom types
+  interviewerName?: string; // Name of the interviewer
 }
 
 /**

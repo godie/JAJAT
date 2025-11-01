@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
 import Header from '../components/Header';
+import { AlertProvider } from '../components/AlertProvider';
 import * as localStorageUtils from '../utils/localStorage';
 
 
@@ -16,6 +17,11 @@ vi.mock('../utils/api', () => ({
   clearAuthCookie: vi.fn(() => Promise.resolve({ success: true })),
   getAuthCookie: vi.fn(),
 }));
+
+// Helper function to render with AlertProvider
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(<AlertProvider>{ui}</AlertProvider>);
+};
 
 // Mock the module that provides the utility functions
 vi.mock('../utils/localStorage', () => {
@@ -46,9 +52,6 @@ vi.mock('@react-oauth/google', () => ({
   GoogleOAuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-// Mock global alert to prevent test runner interruption
-const alertMock = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
 // =========================================================================
 // TEST SUITE
 // =========================================================================
@@ -65,7 +68,7 @@ describe('Header Component', () => {
   });
 
   test('should render the application title', () => {
-    render(<Header />);
+    renderWithProviders(<Header />);
     expect(screen.getByText(/Just Another Job Application Tracker/i)).toBeInTheDocument();
   });
 
@@ -73,7 +76,7 @@ describe('Header Component', () => {
 
   test('should render Login button when initially logged out', () => {
     (localStorageUtils.checkLoginStatus as any).mockReturnValue(false);
-    render(<Header />);
+    renderWithProviders(<Header />);
     const loginButton = screen.getByTestId('login-button');
     expect(loginButton).toHaveTextContent('Login with Google');
     expect(loginButton).toHaveAttribute('aria-label', 'Login with Google');
@@ -81,7 +84,7 @@ describe('Header Component', () => {
 
   test('should render Logout button when initially logged in', () => {
     (localStorageUtils.checkLoginStatus as any).mockReturnValue(true);
-    render(<Header />);
+    renderWithProviders(<Header />);
     const logoutButton = screen.getByTestId('login-button');
     expect(logoutButton).toHaveTextContent('Logout');
     expect(logoutButton).toHaveAttribute('aria-label', 'Logout');
@@ -89,9 +92,9 @@ describe('Header Component', () => {
 
   // --- Login/Logout Logic Tests ---
 
-  test('Logout action should call setLoginStatus(false) and alert', async () => {
+  test('Logout action should call setLoginStatus(false)', async () => {
     (localStorageUtils.checkLoginStatus as any).mockReturnValue(true);
-    render(<Header />);
+    renderWithProviders(<Header />);
     
     const logoutButton = screen.getByTestId('login-button');
     fireEvent.click(logoutButton);
@@ -99,13 +102,12 @@ describe('Header Component', () => {
     // Wait for async operations to complete
     await waitFor(() => {
       expect(localStorageUtils.setLoginStatus).toHaveBeenCalledWith(false);
-      expect(alertMock).toHaveBeenCalledWith('Logged out successfully!');
     });
   });
 
   test('Login action should call googleLogin function', () => {
     (localStorageUtils.checkLoginStatus as any).mockReturnValue(false);
-    render(<Header />);
+    renderWithProviders(<Header />);
     
     const loginButton = screen.getByTestId('login-button');
     fireEvent.click(loginButton);

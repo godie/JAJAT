@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import type { JobApplication, InterviewEvent, InterviewStageType } from '../utils/localStorage';
 import { generateId } from '../utils/localStorage';
 import useKeyboardEscape from '../hooks/useKeyboardEscape';
+import TimelineEditor from './TimelineEditor';
 
 interface AddJobFormProps {
   onSave: (newEntry: Omit<JobApplication, 'id'>) => void; // Acepta la entrada sin ID
@@ -84,9 +85,13 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Always build timeline from form data to keep dates/status in sync
-    // This ensures timeline is always current with the form fields
-    const finalData = { ...formData, timeline: buildTimeline(formData) };
+    // Use manual timeline if exists, otherwise build from form data
+    let timeline = formData.timeline || [];
+    if (timeline.length === 0) {
+      timeline = buildTimeline(formData);
+    }
+    
+    const finalData = { ...formData, timeline };
     onSave(finalData);
   };
 
@@ -250,6 +255,14 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
               />
             </label>
+          </div>
+
+          {/* Timeline Editor */}
+          <div className="col-span-full mt-6">
+            <TimelineEditor 
+              events={formData.timeline || []} 
+              onChange={(events) => setFormData(prev => ({ ...prev, timeline: events }))}
+            />
           </div>
 
           {/* Form Actions */}
