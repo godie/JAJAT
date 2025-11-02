@@ -175,13 +175,6 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
   const [customType, setCustomType] = useState(event?.customTypeName || '');
   const [interviewerName, setInterviewerName] = useState(event?.interviewerName || '');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    console.log('handleSubmit', type, date, status, notes, interviewerName);  
-    e.preventDefault();
-    e.stopPropagation(); // Prevent event from bubbling to parent form
-    onSave(type, date, status, notes, interviewerName);
-  };
-
   const handleSave = () => {
     console.log('handleSave', type, date, status, notes, interviewerName);  
     onSave(type, date, status, notes, interviewerName);
