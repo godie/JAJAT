@@ -176,12 +176,19 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
   const [interviewerName, setInterviewerName] = useState(event?.interviewerName || '');
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log('handleSubmit', type, date, status, notes, interviewerName);  
     e.preventDefault();
+    e.stopPropagation(); // Prevent event from bubbling to parent form
+    onSave(type, date, status, notes, interviewerName);
+  };
+
+  const handleSave = () => {
+    console.log('handleSave', type, date, status, notes, interviewerName);  
     onSave(type, date, status, notes, interviewerName);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="space-y-3" role="group" aria-label="Timeline event form">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
           <label htmlFor="stage-type" className="block text-xs font-medium text-gray-700 mb-1">Stage Type</label>
@@ -270,13 +277,14 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
           Cancel
         </button>
         <button
-          type="submit"
+          type="button"
+          onClick={handleSave}
           className="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
         >
           Save
         </button>
       </div>
-    </form>
+    </div>
   );
 };
 
