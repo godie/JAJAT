@@ -46,34 +46,31 @@ jobs:
           name: production-files
           path: ./dist
 
-      - name: Setup SSH agent and add key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Move api/ into dist/
+        run: mv api dist/api
 
       - name: Write SSH key to file
         run: |
-            mkdir -p ~/.ssh
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
 
       - name: Add remote host to known_hosts
         run: |
-          mkdir -p ~/.ssh
           ssh-keyscan -p ${{ secrets.REMOTE_PORT }} ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
       - name: Ensure rsync is available
         run: sudo apt-get update && sudo apt-get install -y rsync
-    
+
       - name: Test SSH connectivity (debug)
         env:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
         run: |
-          ssh  -v -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} "whoami; pwd"
-      
+          ssh -v -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} "whoami; pwd"
+
       - name: Deploy with rsync and retries
         env:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
@@ -84,11 +81,8 @@ jobs:
           RSYNC_SSH="ssh -i ~/.ssh/deploy_key -p ${REMOTE_PORT} -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           SRC="dist/"
           DEST="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_TARGET}"
-
-          # rsync options: -a verbose, preserve links/owners, compress, delete remote files not present locally
           ARGS="-az --delete --chmod=Du=rwx,Dg=rx,Fu=rw,Fg=r --partial --progress"
 
-          # Try rsync up to 5 times with delay to tolerate transient "too many requests" or network flakiness
           max_attempts=5
           attempt=1
           until rsync $ARGS -e "$RSYNC_SSH" "$SRC" "$DEST"; do
@@ -101,3 +95,7 @@ jobs:
             attempt=$((attempt + 1))
             sleep $((attempt * 5))
           done
+
+      - name: Clean up SSH key
+        if: always()
+        run: shred -u ~/.ssh/deploy_key || rm -f ~/.ssh/deploy_key
