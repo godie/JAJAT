@@ -51,6 +51,14 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Write SSH key to file
+        run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+            chmod 600 ~/.ssh/deploy_key
+            echo "Clave pública derivada:"
+            ssh-keygen -y -f ~/.ssh/deploy_key
+
       - name: Add remote host to known_hosts
         run: |
           mkdir -p ~/.ssh
@@ -66,7 +74,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
         run: |
-          ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} "whoami; pwd" -v
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} "whoami; pwd" -v
       
       - name: Deploy with rsync and retries
         env:
@@ -75,7 +83,7 @@ jobs:
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
           REMOTE_TARGET: ${{ secrets.REMOTE_TARGET }}
         run: |
-          RSYNC_SSH="ssh -p ${REMOTE_PORT} -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          RSYNC_SSH="ssh -i ~/.ssh/deploy_key -p ${REMOTE_PORT} -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
           SRC="dist/"
           DEST="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_TARGET}"
 
