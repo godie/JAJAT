@@ -26,7 +26,13 @@ jobs:
         run: npm ci
 
       - name: Build project
+        env:
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
         run: npm run build
+    
+      - name: Move api/ into dist/
+        run: mv api dist/api
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v4
@@ -45,9 +51,6 @@ jobs:
         with:
           name: production-files
           path: ./dist
-
-      - name: Move api/ into dist/
-        run: mv api dist/api
 
       - name: Write SSH key to file
         run: |

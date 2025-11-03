@@ -185,6 +185,28 @@ job-application-tracker/
 
 ## Deployment & Backend Setup
 
+### GitHub Actions CI/CD Configuration
+
+This project uses GitHub Actions for automated deployment. To configure the workflow:
+
+1. Go to your GitHub repository
+2. Navigate to **Settings** → **Secrets and variables** → **Actions**
+3. Add the following **Repository Secrets**:
+
+#### Required Secrets:
+
+| Secret Name | Description | Example |
+|-------------|-------------|---------|
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth Client ID for production | `YOUR_CLIENT_ID.apps.googleusercontent.com` |
+| `VITE_API_BASE_URL` | API base URL for production | `/api` or `https://yourdomain.com/api` |
+| `SSH_PRIVATE_KEY` | Private SSH key for deployment | Your SSH private key content |
+| `REMOTE_USER` | SSH username for deployment | `username` |
+| `REMOTE_HOST` | Server hostname/IP | `example.com` or `192.168.1.100` |
+| `REMOTE_PORT` | SSH port | `22` or `2022` |
+| `REMOTE_TARGET` | Deployment path on server | `/var/www/html` or `/home/user/public_html` |
+
+> **Security Note:** Never commit these secrets to version control. They are only stored in GitHub Secrets.
+
 ### PHP Backend Configuration
 
 1. Deploy PHP files to your web server:
