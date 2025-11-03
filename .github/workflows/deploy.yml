@@ -56,8 +56,6 @@ jobs:
             mkdir -p ~/.ssh
             echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
             chmod 600 ~/.ssh/deploy_key
-            echo "Clave pública derivada:"
-            ssh-keygen -y -f ~/.ssh/deploy_key
 
       - name: Add remote host to known_hosts
         run: |
@@ -74,7 +72,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
         run: |
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} "whoami; pwd" -v
+          ssh  -v -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p ${REMOTE_PORT} ${REMOTE_USER}@${REMOTE_HOST} "whoami; pwd"
       
       - name: Deploy with rsync and retries
         env:
