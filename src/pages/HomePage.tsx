@@ -1,12 +1,28 @@
 // src/pages/HomePage.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import ApplicationTable from '../components/ApplicationTable';
 import TimelineView from '../components/TimelineView';
+import KanbanView from '../components/KanbanView';
+import CalendarView from '../components/CalendarView';
 import ViewSwitcher, { type ViewType } from '../components/ViewSwitcher';
-import { AlertProvider } from '../components/AlertProvider';
+import FiltersBar, { type Filters } from '../components/FiltersBar';
+import { AlertProvider, useAlert } from '../components/AlertProvider';
 import { getApplications, saveApplications, generateId, type JobApplication } from '../utils/localStorage';
 import AddJobForm from '../components/AddJobComponent';
+import packageJson from '../../package.json';
+
+const VIEW_STORAGE_KEY = 'preferredView';
+const FILTERS_STORAGE_KEY = 'applicationFilters';
+
+const defaultFilters: Filters = {
+  search: '',
+  status: '',
+  platform: '',
+  dateFrom: '',
+  dateTo: '',
+};
 
 const initialColumns = [
     'Position', 'Company', 'Salary', 'Status', 'Application Date', 
@@ -26,7 +42,7 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
     ];
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-8" data-testid="metrics-summary">
+    <section className="grid grid-cols-1 gap-4 my-8 sm:grid-cols-2 lg:grid-cols-3" data-testid="metrics-summary">
       {metrics.map((metric) => (
         <div 
           key={metric.label} 
@@ -40,14 +56,55 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
   );
 };
 
-const HomePage: React.FC = () => {
+const HomePageContent: React.FC = () => {
+  const { showSuccess } = useAlert();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
   const [currentView, setCurrentView] = useState<ViewType>('table');
+  const [filters, setFilters] = useState<Filters>(defaultFilters);
   const isFormOpen = currentApplication !== null;
 
   useEffect(() => {
     setApplications(getApplications());
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedView = window.localStorage.getItem(VIEW_STORAGE_KEY) as ViewType | null;
+      if (storedView) {
+        setCurrentView(storedView);
+      }
+      const storedFilters = window.localStorage.getItem(FILTERS_STORAGE_KEY);
+      if (storedFilters) {
+        try {
+          const parsed = JSON.parse(storedFilters) as Filters;
+          setFilters({ ...defaultFilters, ...parsed });
+        } catch {
+          // ignore JSON parse errors
+        }
+      }
+    }
+  }, []);
+
+  const handleViewChange = useCallback((view: ViewType) => {
+    setCurrentView(view);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(VIEW_STORAGE_KEY, view);
+    }
+  }, []);
+
+  const handleFiltersChange = useCallback((nextFilters: Filters) => {
+    setFilters(nextFilters);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify(nextFilters));
+    }
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setFilters(defaultFilters);
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(FILTERS_STORAGE_KEY);
+    }
   }, []);
 
   const handleSaveEntry = useCallback((entryData: Omit<JobApplication, 'id'> | JobApplication) => {
@@ -75,10 +132,16 @@ const HomePage: React.FC = () => {
   }, [applications]);
 
   const handleDeleteEntry = useCallback((id: string) => {
-    const newApplications = applications.filter(app => app.id !== id);
+    const appToDelete = applications.find(app => app.id === id);
+    const newApplications = applications.map(app => 
+      app.id === id ? { ...app, status: 'Deleted' } : app
+    );
     setApplications(newApplications);
     saveApplications(newApplications);
-  }, [applications]);
+    if (appToDelete) {
+      showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
+    }
+  }, [applications, showSuccess]);
 
   const handleEdit = (appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
@@ -93,54 +156,142 @@ const HomePage: React.FC = () => {
 
   //useKeyboardEscape(handleCancel, isFormOpen);
 
+  const availableStatuses = useMemo(() => {
+    const set = new Set<string>();
+    applications.forEach((app) => {
+      if (app.status) {
+        set.add(app.status);
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [applications]);
+
+  const availablePlatforms = useMemo(() => {
+    const set = new Set<string>();
+    applications.forEach((app) => {
+      if (app.platform) {
+        set.add(app.platform);
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [applications]);
+
+  const filteredApplications = useMemo(() => {
+    const normalizedSearch = filters.search.trim().toLowerCase();
+    const fromDate = filters.dateFrom ? new Date(filters.dateFrom) : null;
+    const toDate = filters.dateTo ? new Date(filters.dateTo) : null;
+
+    return applications.filter(app => {
+      // Exclude deleted applications by default
+      if (app.status === 'Deleted') {
+        return false;
+      }
+
+      const position = app.position?.toLowerCase() || '';
+      const company = app.company?.toLowerCase() || '';
+      const contact = app.contactName?.toLowerCase() || '';
+      const notes = app.notes?.toLowerCase() || '';
+      const timelineNotes = app.timeline?.map(event => `${event.notes ?? ''} ${event.customTypeName ?? ''} ${event.interviewerName ?? ''}`.toLowerCase()).join(' ') || '';
+
+      const matchesSearch = normalizedSearch
+        ? [position, company, contact, notes, timelineNotes].some(value => value.includes(normalizedSearch))
+        : true;
+
+      const matchesStatus = filters.status ? app.status === filters.status : true;
+      const matchesPlatform = filters.platform ? app.platform === filters.platform : true;
+
+      let matchesDateFrom = true;
+      let matchesDateTo = true;
+
+      if (fromDate) {
+        if (!app.applicationDate) {
+          matchesDateFrom = false;
+        } else {
+          matchesDateFrom = new Date(app.applicationDate) >= fromDate;
+        }
+      }
+
+      if (toDate) {
+        if (!app.applicationDate) {
+          matchesDateTo = false;
+        } else {
+          const appDate = new Date(app.applicationDate);
+          matchesDateTo = appDate <= toDate;
+        }
+      }
+
+      return matchesSearch && matchesStatus && matchesPlatform && matchesDateFrom && matchesDateTo;
+    });
+  }, [applications, filters]);
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'timeline':
         return (
           <TimelineView
-            applications={applications}
+            applications={filteredApplications}
             onEdit={handleEdit}
             onDelete={handleDeleteEntry}
+          />
+        );
+      case 'kanban':
+        return (
+          <KanbanView
+            applications={filteredApplications}
+            onEdit={handleEdit}
+            onDelete={handleDeleteEntry}
+          />
+        );
+      case 'calendar':
+        return (
+          <CalendarView
+            applications={filteredApplications}
+            onEdit={handleEdit}
           />
         );
       case 'table':
       default:
         return (
           <ApplicationTable
-            columns={initialColumns}
-            data={applications}
+            columns={initialColumns} 
+            data={filteredApplications}
             onEdit={handleEdit}
-            onDelete={handleDeleteEntry}
-          />
-        );
-      case 'kanban':
-      case 'calendar':
-        return (
-          <div className="text-center py-20 text-gray-400">
-            <p className="text-lg font-medium">Coming Soon!</p>
-            <p className="text-sm mt-2">{currentView} view is under development</p>
-          </div>
+            onDelete={handleDeleteEntry} />
         );
     }
   };
 
   return (
-    <AlertProvider>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <Header />
-        <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           
           {/* Summary Section */}
-          <MetricsSummary applications={applications} />
+          <MetricsSummary applications={filteredApplications} />
+
+          <div className="space-y-4">
+            <FiltersBar
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              availableStatuses={availableStatuses}
+              availablePlatforms={availablePlatforms}
+              onClear={handleClearFilters}
+            />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs sm:text-sm text-gray-500">
+                Showing <span className="font-semibold text-gray-700">{filteredApplications.length}</span> of {applications.length} applications
+              </p>
+            </div>
+          </div>
           
           {/* View Switcher, Header and Add Button */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 mt-10">
-            <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="flex flex-col gap-4 mb-6 mt-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:flex-1">
               <h2 className="text-2xl font-bold text-gray-800">Application Pipeline</h2>
-              <ViewSwitcher currentView={currentView} onViewChange={setCurrentView} />
+              <ViewSwitcher currentView={currentView} onViewChange={handleViewChange} />
             </div>
             <button 
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.05]"
+              className="self-start sm:self-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.02]"
               onClick={handleCreateNew}
               aria-label="Add new application entry"
               data-testid="add-entry-button"
@@ -152,6 +303,7 @@ const HomePage: React.FC = () => {
           {/* Current View */}
           {renderCurrentView()}
         </main>
+        <Footer version={packageJson.version} />
         {isFormOpen && (
           <AddJobForm 
             initialData={currentApplication} // Pasar datos para prellenar
@@ -160,6 +312,13 @@ const HomePage: React.FC = () => {
           />
         )}
       </div>
+  );
+};
+
+const HomePage: React.FC = () => {
+  return (
+    <AlertProvider>
+      <HomePageContent />
     </AlertProvider>
   );
 };

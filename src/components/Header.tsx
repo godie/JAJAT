@@ -67,12 +67,12 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="flex justify-between items-center p-4 border-b border-gray-200 bg-white shadow-sm">
-      <h1 className="text-3xl font-extrabold text-indigo-700" data-testid="app-title">
+    <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 border-b border-gray-200 bg-white shadow-sm">
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-indigo-700" data-testid="app-title">
         Just Another Job Application Tracker
       </h1>
       <button 
-        className={`font-medium py-2 px-4 rounded-lg shadow-md transition duration-150 transform hover:scale-[1.02] ${
+        className={`self-start sm:self-auto font-medium py-2 px-5 rounded-lg shadow-md transition duration-150 transform hover:scale-[1.02] ${
           isLoggedIn 
             ? 'bg-red-600 hover:bg-red-700 text-white' 
             : 'bg-blue-600 hover:bg-blue-700 text-white'
