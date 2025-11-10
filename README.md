@@ -61,7 +61,7 @@ In the project directory, you can run:
 
 ## Development & Architecture
 
-- Test-Driven Development (TDD): Comprehensive testing with 36+ tests covering all core components, views, and functionality
+- Test-Driven Development (TDD): Comprehensive testing with 40+ tests covering all core components, views, and functionality
 - Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable)
 - Modular Component Design: Reusable, tested components with clear separation of concerns
 - Type Safety: Full TypeScript implementation with strict type checking
@@ -73,7 +73,7 @@ In the project directory, you can run:
   - Create (Add New Entry)
   - Read (Display in the table)
   - Update (Edit entry via table row click)
-  - Delete (Remove entry via hover button in the table)
+  - Soft Delete (Mark as deleted with confirmation dialog)
 - Advanced Data Model: Hybrid approach supporting:
   - **Timeline-based tracking**: Full interview process with multiple stages (Screener, Technical, System Design, Hiring Manager, etc.)
   - **Legacy compatibility**: Automatic migration from simple status fields
@@ -84,14 +84,19 @@ In the project directory, you can run:
 - **Multiple View Modes**: Switch between different visualizations:
   - **Table View**: Enhanced table with all job application data
   - **Timeline View**: Chronological visualization of interview process with status indicators
-  - **Kanban View**: Board-style organization (Coming Soon)
-  - **Calendar View**: Date-based interview planning (Coming Soon)
+  - **Kanban View**: Board-style organization grouped by status with quick summaries
+  - **Calendar View**: Monthly calendar highlighting upcoming interview events
+- **Smart Filters & Search**: Persisted search, status, platform, and date filters with real-time results
 - **Custom Alert System**: Beautiful, accessible alerts with auto-dismiss (success, error, warning, info) replacing browser alerts
 - **Timeline Editor**: Full-featured editor for managing interview events with stages, statuses, and notes
-- Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience
+- **Soft Delete with Confirmation**: Applications are marked as "Deleted" instead of being removed, with a custom confirmation dialog to prevent accidental deletions
+- **Kanban Sub-Status Grouping**: Applications in "Interviewing" status are automatically grouped by their current timeline stage (e.g., "Interviewing - First Contact", "Interviewing - Code Challenge")
+- **Calendar Enhancements**: Today's date is highlighted, and events show relative time indicators ("Today", "in 2 days", "3 days ago")
+- Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience with improved spacing on small screens
 - Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
 - Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers)
+- Footer: Displays version information and attribution
 
 ## Interview Timeline System
 
@@ -148,13 +153,17 @@ job-application-tracker/
 │   ├── components/
 │   │   ├── Header.tsx           // Application header, login button, and OAuth logic.
 │   │   ├── ApplicationTable.tsx // Table displaying job entries and handling edit/delete UI.
-│   │   ├── AddJobForm.tsx       // Modal form for creating and editing job entries.
+│   │   ├── AddJobComponent.tsx  // Modal form for creating and editing job entries.
 │   │   ├── TimelineView.tsx     // Timeline visualization of interview process.
 │   │   ├── TimelineEditor.tsx   // Editor for managing interview timeline events.
+│   │   ├── KanbanView.tsx       // Kanban board grouping applications by status.
+│   │   ├── CalendarView.tsx     // Monthly calendar visualization of interview timeline events.
+│   │   ├── FiltersBar.tsx       // Search and filter controls with persisted state.
 │   │   ├── ViewSwitcher.tsx     // Component for switching between view modes.
 │   │   ├── Alert.tsx            // Beautiful alert notification component.
 │   │   ├── AlertProvider.tsx    // Context provider for alert management.
-│   │   └── SheetSyncManager.tsx // [Future] Component for handling external sync (e.g., Sheets).
+│   │   ├── ConfirmDialog.tsx   // Confirmation modal for delete actions.
+│   │   └── Footer.tsx          // Application footer with version info.
 │   ├── pages/
 │   │   └── HomePage.tsx         // Main container; manages global state and view switching.
 │   ├── utils/
@@ -167,11 +176,14 @@ job-application-tracker/
 │   │   ├── IAdapter.ts          // Target interface for external data services (Adapter Pattern).
 │   │   └── GoogleSheetAdapter.ts// [Future] Adapter implementation for Google Sheets API.
 │   ├── tests/
-│   │   ├── Header.test.tsx      // Tests for login/logout, OAuth, and button states.
-│   │   ├── HomePage.test.tsx    // Tests for CRUD, persistence, and table integrity.
-│   │   ├── Alert.test.tsx       // Tests for alert component rendering and behavior.
-│   │   ├── AlertProvider.test.tsx // Tests for alert context and management.
-│   │   └── TimelineEditor.test.tsx // Tests for timeline event editing.
+│   │   ├── Header.test.tsx         // Tests for login/logout, OAuth, and button states.
+│   │   ├── HomePage.test.tsx       // Tests for CRUD, persistence, views, and filters.
+│   │   ├── Alert.test.tsx          // Tests for alert component rendering and behavior.
+│   │   ├── AlertProvider.test.tsx  // Tests for alert context and management.
+│   │   ├── TimelineEditor.test.tsx // Tests for timeline event editing.
+│   │   ├── KanbanView.test.tsx     // Tests for Kanban board grouping and actions.
+│   │   ├── CalendarView.test.tsx   // Tests for calendar event rendering and callbacks.
+│   │   └── FiltersBar.test.tsx     // Tests for filter control interactions.
 │   ├── App.tsx                  // Main app component with GoogleOAuthProvider wrapper.
 │   └── main.tsx
 ├── api/                         // PHP backend endpoints
@@ -244,8 +256,8 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 5 passed (5)
-Tests: 35 passed (35)
+Test Files: 8 passed (8)
+Tests: 44+ passed (44+)
 ```
 
 All tests can be run with `npm test` or `npm run test:watch` for TDD workflow.
@@ -254,6 +266,8 @@ All tests can be run with `npm test` or `npm run test:watch` for TDD workflow.
 
 This project follows Test-Driven Development (TDD) principles. All new features should include comprehensive tests.
 
-## License
+## License 
 
-[Add your license information here]
+[MIT LICENSE](LICENSE)
+
+

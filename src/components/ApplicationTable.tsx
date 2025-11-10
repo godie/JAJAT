@@ -1,6 +1,7 @@
 // src/components/ApplicationTable.tsx (Actualizado para aceptar props)
 import React, { useState } from 'react';
 import type { JobApplication } from '../utils/localStorage';
+import ConfirmDialog from './ConfirmDialog';
 
 interface ApplicationTableProps {
     columns: string[];
@@ -11,16 +12,20 @@ interface ApplicationTableProps {
 
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
+    isOpen: false,
+    application: null,
+  });
   return (
-    <div className="overflow-x-auto shadow-xl rounded-lg border border-gray-100">
-      <table className="min-w-full divide-y divide-gray-200" data-testid="application-table">
+    <div className="overflow-x-auto shadow-xl rounded-lg border border-gray-100 bg-white">
+      <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm" data-testid="application-table">
         <thead className="bg-gray-50">
           <tr>
             {columns.map((column) => (
               <th
                 key={column}
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
               >
                 {column}
               </th>
@@ -30,7 +35,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
         <tbody className="bg-white divide-y divide-gray-100">
                     {data.length === 0 ? (
                         <tr>
-                            <td colSpan={columns.length + 1} className="px-6 py-10 text-center text-gray-400 italic">
+                            <td colSpan={columns.length + 1} className="px-4 sm:px-6 py-10 text-center text-gray-400 italic text-sm">
                                 Use the "+ Add Entry" button to start tracking your applications!
                             </td>
                         </tr>
@@ -53,28 +58,26 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
                                         <td 
                                             key={index}
                                             onClick={() => onEdit(item)}
-                                            className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-r border-gray-100 group-hover:bg-indigo-50"
+                                            className="px-4 sm:px-6 py-3 whitespace-nowrap text-gray-900 border-r border-gray-100 group-hover:bg-indigo-50"
                                         >
-                                            {cellContent}
+                                            <span className="block truncate max-w-[180px] sm:max-w-none">{cellContent}</span>
                                         </td>
                                     );
                                 })}
 
                                 {/* 💡 Columna de Acción (Delete Button) */}
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium w-1">
+                                <td className="px-4 sm:px-6 py-3 whitespace-nowrap text-right text-sm font-medium w-1">
                                     {hoveredRowId === item.id && (
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation(); // Evita que se active el evento onEdit del TD
-                                                if (confirm(`Are you sure you want to delete the application for ${item.position}?`)) {
-                                                    onDelete(item.id);
-                                                }
+                                                setDeleteConfirm({ isOpen: true, application: item });
                                             }}
-                                            className="text-red-600 hover:text-red-900 font-bold p-1 rounded-full bg-white hover:bg-red-100 transition"
+                                            className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-800 bg-red-50 px-3 py-1 rounded-full transition"
                                             aria-label={`Delete application for ${item.position}`}
                                             data-testid={`delete-btn-${item.id}`}
                                         >
-                                            
+                                            <span>Delete</span>
                                         </button>
                                     )}
                                 </td>
@@ -83,6 +86,21 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
                     )}
                 </tbody>
       </table>
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Application"
+        message={`Are you sure you want to delete the application for "${deleteConfirm.application?.position}" at ${deleteConfirm.application?.company}? This action will mark it as deleted.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="warning"
+        onConfirm={() => {
+          if (deleteConfirm.application) {
+            onDelete(deleteConfirm.application.id);
+          }
+          setDeleteConfirm({ isOpen: false, application: null });
+        }}
+        onCancel={() => setDeleteConfirm({ isOpen: false, application: null })}
+      />
     </div>
   );
 };

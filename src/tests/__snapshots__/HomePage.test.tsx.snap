@@ -6,27 +6,27 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
     class="min-h-screen bg-gray-50"
   >
     <header
-      class="flex justify-between items-center p-4 border-b border-gray-200 bg-white shadow-sm"
+      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 border-b border-gray-200 bg-white shadow-sm"
     >
       <h1
-        class="text-3xl font-extrabold text-indigo-700"
+        class="text-2xl sm:text-3xl font-extrabold text-indigo-700"
         data-testid="app-title"
       >
         Just Another Job Application Tracker
       </h1>
       <button
         aria-label="Login with Google"
-        class="font-medium py-2 px-4 rounded-lg shadow-md transition duration-150 transform hover:scale-[1.02] bg-blue-600 hover:bg-blue-700 text-white "
+        class="self-start sm:self-auto font-medium py-2 px-5 rounded-lg shadow-md transition duration-150 transform hover:scale-[1.02] bg-blue-600 hover:bg-blue-700 text-white "
         data-testid="login-button"
       >
         Login with Google
       </button>
     </header>
     <main
-      class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8"
+      class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
     >
       <section
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-8"
+        class="grid grid-cols-1 gap-4 my-8 sm:grid-cols-2 lg:grid-cols-3"
         data-testid="metrics-summary"
       >
         <div
@@ -73,10 +73,138 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
         </div>
       </section>
       <div
-        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 mt-10"
+        class="space-y-4"
       >
         <div
-          class="flex items-center gap-4 w-full sm:w-auto"
+          class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 space-y-3 md:space-y-0 md:flex md:flex-wrap md:items-end md:gap-4"
+        >
+          <div
+            class="flex-1 min-w-[180px]"
+          >
+            <label
+              class="block text-xs font-semibold text-gray-600 mb-1"
+              for="search"
+            >
+              Search
+            </label>
+            <input
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              id="search"
+              placeholder="Search by position, company, notes..."
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="min-w-[160px]"
+          >
+            <label
+              class="block text-xs font-semibold text-gray-600 mb-1"
+              for="status-filter"
+            >
+              Status
+            </label>
+            <select
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white"
+              id="status-filter"
+            >
+              <option
+                value=""
+              >
+                All
+              </option>
+            </select>
+          </div>
+          <div
+            class="min-w-[160px]"
+          >
+            <label
+              class="block text-xs font-semibold text-gray-600 mb-1"
+              for="platform-filter"
+            >
+              Platform
+            </label>
+            <select
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white"
+              id="platform-filter"
+            >
+              <option
+                value=""
+              >
+                All
+              </option>
+            </select>
+          </div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-end gap-2"
+          >
+            <div
+              class="min-w-[140px]"
+            >
+              <label
+                class="block text-xs font-semibold text-gray-600 mb-1"
+                for="date-from"
+              >
+                From
+              </label>
+              <input
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                id="date-from"
+                type="date"
+                value=""
+              />
+            </div>
+            <div
+              class="min-w-[140px]"
+            >
+              <label
+                class="block text-xs font-semibold text-gray-600 mb-1"
+                for="date-to"
+              >
+                To
+              </label>
+              <input
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                id="date-to"
+                type="date"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-2 mt-2 md:mt-0"
+          >
+            <button
+              class="px-3 py-2 text-xs font-semibold text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+              type="button"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p
+            class="text-xs sm:text-sm text-gray-500"
+          >
+            Showing 
+            <span
+              class="font-semibold text-gray-700"
+            >
+              0
+            </span>
+             of 
+            0
+             applications
+          </p>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-4 mb-6 mt-6 lg:flex-row lg:items-center lg:justify-between"
+      >
+        <div
+          class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:flex-1"
         >
           <h2
             class="text-2xl font-bold text-gray-800"
@@ -84,16 +212,19 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
             Application Pipeline
           </h2>
           <div
-            class="flex items-center space-x-2 bg-white rounded-lg shadow-sm border border-gray-200 p-2"
+            class="flex items-center flex-wrap gap-2 bg-white rounded-lg shadow-sm border border-gray-200 p-2"
           >
             <button
+              aria-label="Enhanced table with filters"
+              aria-pressed="true"
               class="
-              flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-150
-              bg-indigo-100 text-indigo-700 font-semibold shadow-sm
+              flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-150 text-sm
+              bg-indigo-100 text-indigo-700 font-semibold shadow
             "
-              title="Enhanced table with filters"
+              type="button"
             >
               <svg
+                aria-hidden="true"
                 class="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
@@ -107,19 +238,22 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
                 />
               </svg>
               <span
-                class="hidden sm:inline"
+                class="text-xs sm:text-sm"
               >
                 Table
               </span>
             </button>
             <button
+              aria-label="Chronological interview flow"
+              aria-pressed="false"
               class="
-              flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-150
+              flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-150 text-sm
               text-gray-600 hover:bg-gray-100 hover:text-gray-900
             "
-              title="Chronological interview flow"
+              type="button"
             >
               <svg
+                aria-hidden="true"
                 class="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
@@ -133,20 +267,22 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
                 />
               </svg>
               <span
-                class="hidden sm:inline"
+                class="text-xs sm:text-sm"
               >
                 Timeline
               </span>
             </button>
             <button
+              aria-label="Board view grouped by status"
+              aria-pressed="false"
               class="
-              flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-150
-              text-gray-400 cursor-not-allowed opacity-50
+              flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-150 text-sm
+              text-gray-600 hover:bg-gray-100 hover:text-gray-900
             "
-              disabled=""
-              title="Board view [Coming Soon]"
+              type="button"
             >
               <svg
+                aria-hidden="true"
                 class="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
@@ -160,20 +296,22 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
                 />
               </svg>
               <span
-                class="hidden sm:inline"
+                class="text-xs sm:text-sm"
               >
                 Kanban
               </span>
             </button>
             <button
+              aria-label="Monthly calendar of interviews"
+              aria-pressed="false"
               class="
-              flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-150
-              text-gray-400 cursor-not-allowed opacity-50
+              flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-150 text-sm
+              text-gray-600 hover:bg-gray-100 hover:text-gray-900
             "
-              disabled=""
-              title="Calendar view [Coming Soon]"
+              type="button"
             >
               <svg
+                aria-hidden="true"
                 class="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
@@ -187,7 +325,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
                 />
               </svg>
               <span
-                class="hidden sm:inline"
+                class="text-xs sm:text-sm"
               >
                 Calendar
               </span>
@@ -196,17 +334,17 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
         </div>
         <button
           aria-label="Add new application entry"
-          class="bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.05]"
+          class="self-start sm:self-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.02]"
           data-testid="add-entry-button"
         >
           + Add Entry
         </button>
       </div>
       <div
-        class="overflow-x-auto shadow-xl rounded-lg border border-gray-100"
+        class="overflow-x-auto shadow-xl rounded-lg border border-gray-100 bg-white"
       >
         <table
-          class="min-w-full divide-y divide-gray-200"
+          class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm"
           data-testid="application-table"
         >
           <thead
@@ -214,67 +352,67 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
           >
             <tr>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Position
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Company
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Salary
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Status
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Application Date
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Interview Date
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Platform
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Contact Name
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Follow-up Date
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Notes
               </th>
               <th
-                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
                 scope="col"
               >
                 Link
@@ -286,7 +424,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
           >
             <tr>
               <td
-                class="px-6 py-10 text-center text-gray-400 italic"
+                class="px-4 sm:px-6 py-10 text-center text-gray-400 italic text-sm"
                 colspan="12"
               >
                 Use the "+ Add Entry" button to start tracking your applications!
@@ -296,6 +434,32 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
         </table>
       </div>
     </main>
+    <footer
+      class="bg-white border-t border-gray-200 py-4 mt-8"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <p
+          class="text-center text-sm text-gray-600"
+        >
+          Vibecoded with love ❤️ by 
+          <a
+            class="text-blue-500 hover:text-blue-700"
+            href="https://github.com/godie"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            godie
+          </a>
+           with cursor v
+          1.1.1
+           (
+          2025
+          )
+        </p>
+      </div>
+    </footer>
   </div>
   <div
     class="fixed top-4 right-4 z-50 w-full max-w-md space-y-2 pointer-events-none"

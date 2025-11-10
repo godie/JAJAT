@@ -176,7 +176,6 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
   const [interviewerName, setInterviewerName] = useState(event?.interviewerName || '');
 
   const handleSave = () => {
-    console.log('handleSave', type, date, status, notes, interviewerName);  
     onSave(type, date, status, notes, interviewerName);
   };
 

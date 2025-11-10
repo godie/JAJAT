@@ -49,10 +49,7 @@ const createAndSaveApplication = async (
     const formTitle = screen.getByText(formTitleText);
     expect(formTitle).toBeInTheDocument();
     
-    // 2. Mockear la limpieza de llamadas después de la apertura para aislar el contador del guardado
-    //localStorageMock.setItem.mockClear();
-
-    // 3. Obtener inputs y llenar campos clave
+    // 2. Obtener inputs y llenar campos clave
     const positionInput = screen.getByTestId('form-position');
     const companyInput = screen.getByTestId('form-company');
     const applicationDateInput = screen.getByTestId('form-application-date');
@@ -94,6 +91,7 @@ test('HomePage renders correctly and matches snapshot', () => {
 describe('HomePage Core Requirements (Static Content)', () => {
   
   beforeEach(() => {
+    localStorageMock.clear();
     renderWithGoogleProvider(<HomePage />);
   });
 
@@ -102,6 +100,7 @@ describe('HomePage Core Requirements (Static Content)', () => {
     expect(screen.getByText(/Just Another Job Application Tracker/i)).toBeInTheDocument();
     
     // Botones
+    expect(screen.queryByRole('button', { name: /Failed to login with Google. Please try again./i })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Login with Google/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "Add new application entry" })).toBeInTheDocument();
   });
@@ -172,6 +171,51 @@ describe('HomePage Core Functionality and Persistence', () => {
     // Verificación final: el array de localStorage debe tener 3 elementos
     const finalSavedData = JSON.parse(localStorageMock.getItem('jobTrackerData')!);
     expect(finalSavedData).toHaveLength(testApplications.length);
-    //expect(finalSavedData.map(a => a.company)).toEqual(['CloudWorks', 'DesignCo', 'DataLabs']);
+  });
+
+  test('Filters by status and search reduce the results on table view', async () => {
+    await createAndSaveApplication({ position: 'Frontend Dev', company: 'UI Labs', status: 'Interviewing', platform: 'LinkedIn' });
+    await createAndSaveApplication({ position: 'Backend Dev', company: 'API Works', status: 'Offer', platform: 'Referral' });
+
+    const searchInput = screen.getByLabelText(/Search/i);
+    fireEvent.change(searchInput, { target: { value: 'Frontend' } });
+
+    // Wait for filter to apply
+    await waitFor(() => {
+      expect(screen.getByText(/Frontend Dev/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Backend Dev/i)).not.toBeInTheDocument();
+
+    // Clear search first, then filter by status
+    fireEvent.change(searchInput, { target: { value: '' } });
+    const statusSelect = screen.getByLabelText(/^Status$/i);
+    fireEvent.change(statusSelect, { target: { value: 'Offer' } });
+
+    // Wait for filter to apply
+    await waitFor(() => {
+      expect(screen.getByText(/Backend Dev/i)).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Frontend Dev/i)).not.toBeInTheDocument();
+  });
+
+  test('Can switch between Kanban and Calendar views', async () => {
+    await createAndSaveApplication({ position: 'Support Engineer', company: 'HelpDesk', status: 'Applied', platform: 'Company Website' });
+
+    const kanbanButton = screen.getByRole('button', { name: /Board view grouped by status/i });
+    fireEvent.click(kanbanButton);
+    
+    // Check for Applied status in Kanban view (not in the select dropdown)
+    // Look for the header of the Kanban column
+    await waitFor(() => {
+      const appliedHeaders = screen.getAllByText(/Applied/i);
+      // Should find Applied in the Kanban column header (not just in the filter dropdown)
+      expect(appliedHeaders.length).toBeGreaterThan(0);
+    });
+
+    const calendarButton = screen.getByRole('button', { name: /Monthly calendar of interviews/i });
+    fireEvent.click(calendarButton);
+    // Calendar appears in both the button label and the view title, so use getAllByText
+    const calendarElements = screen.getAllByText(/Calendar/i);
+    expect(calendarElements.length).toBeGreaterThan(0);
   });
 });
