@@ -61,9 +61,8 @@ describe('Header Component', () => {
   beforeEach(() => {
     // Clear mocks and reset state before each test
     vi.clearAllMocks();
+    Object.keys(localStorageStore).forEach(key => delete localStorageStore[key]);
     localStorageStore['isLoggedIn'] = 'false'; // Default to logged out
-    (localStorageUtils.checkLoginStatus as any).mockClear();
-    (localStorageUtils.setLoginStatus as any).mockClear();
     mockGoogleLogin.mockClear();
   });
 
@@ -75,7 +74,7 @@ describe('Header Component', () => {
   // --- Initial State Tests ---
 
   test('should render Login button when initially logged out', () => {
-    (localStorageUtils.checkLoginStatus as any).mockReturnValue(false);
+    localStorageStore['isLoggedIn'] = 'false';
     renderWithProviders(<Header />);
     const loginButton = screen.getByTestId('login-button');
     expect(loginButton).toHaveTextContent('Login with Google');
@@ -83,7 +82,7 @@ describe('Header Component', () => {
   });
 
   test('should render Logout button when initially logged in', () => {
-    (localStorageUtils.checkLoginStatus as any).mockReturnValue(true);
+    localStorageStore['isLoggedIn'] = 'true';
     renderWithProviders(<Header />);
     const logoutButton = screen.getByTestId('login-button');
     expect(logoutButton).toHaveTextContent('Logout');
@@ -93,7 +92,7 @@ describe('Header Component', () => {
   // --- Login/Logout Logic Tests ---
 
   test('Logout action should call setLoginStatus(false)', async () => {
-    (localStorageUtils.checkLoginStatus as any).mockReturnValue(true);
+    localStorageStore['isLoggedIn'] = 'true';
     renderWithProviders(<Header />);
     
     const logoutButton = screen.getByTestId('login-button');
@@ -106,7 +105,7 @@ describe('Header Component', () => {
   });
 
   test('Login action should call googleLogin function', () => {
-    (localStorageUtils.checkLoginStatus as any).mockReturnValue(false);
+    localStorageStore['isLoggedIn'] = 'false';
     renderWithProviders(<Header />);
     
     const loginButton = screen.getByTestId('login-button');

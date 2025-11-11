@@ -112,7 +112,7 @@ describe('CalendarView', () => {
       },
     ];
 
-    const { container } = render(<CalendarView applications={applications} />);
+    render(<CalendarView applications={applications} />);
 
     // Check for relative time indicators
     // Use getAllByText since "Today" appears in both the button and the position name
