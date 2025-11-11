@@ -147,8 +147,8 @@ export const migrateApplicationData = (legacyApp: LegacyJobApplication): JobAppl
 /**
  * Check if an application is in legacy format
  */
-const isLegacyApplication = (app: any): app is LegacyJobApplication => {
-  return app && !app.timeline;
+const isLegacyApplication = (app: unknown): app is LegacyJobApplication => {
+  return typeof app === 'object' && app !== null && !('timeline' in app);
 };
 
 /**

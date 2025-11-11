@@ -76,6 +76,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAlert = (): AlertContextType => {
   const context = useContext(AlertContext);
   if (!context) {

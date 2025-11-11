@@ -5,10 +5,25 @@ import ConfirmDialog from './ConfirmDialog';
 
 interface ApplicationTableProps {
     columns: string[];
-    data: any[];
+    data: JobApplication[];
     onEdit: (application: JobApplication) => void;
     onDelete: (id:string) => void;
 }
+
+// Map column names to JobApplication properties
+const columnToKeyMap: Record<string, keyof JobApplication> = {
+  'position': 'position',
+  'company': 'company',
+  'salary': 'salary',
+  'status': 'status',
+  'applicationdate': 'applicationDate',
+  'interviewdate': 'interviewDate',
+  'platform': 'platform',
+  'contactname': 'contactName',
+  'followupdate': 'followUpDate',
+  'notes': 'notes',
+  'link': 'link',
+};
 
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
@@ -49,9 +64,9 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
                                 data-testid={`row-${item.id}`}
                             >
                                 {columns.map((column, index) => {
-                                    // Determinar la clave de propiedad para el mapeo (asumiendo que las columnas coinciden con las claves)
-                                    const key = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
-                                    const cellContent = (item as any)[key] || item[key as keyof JobApplication] || '';
+                                    const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+                                    const key = columnToKeyMap[normalizedColumn];
+                                    const cellContent = key ? String(item[key] ?? '') : '';
                                     
                                     return (
                                         // 💡 Habilitar edición al hacer clic en cualquier TD (excepto en el último que es el botón)
