@@ -145,7 +145,7 @@ describe('Google Sheets Utilities', () => {
         spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/test-id-123',
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -162,7 +162,7 @@ describe('Google Sheets Utilities', () => {
     });
 
     test('should handle API errors', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
         status: 401,
         json: async () => ({ error: 'Unauthorized' }),
@@ -172,7 +172,7 @@ describe('Google Sheets Utilities', () => {
     });
 
     test('should handle network errors', async () => {
-      (global.fetch as any).mockRejectedValueOnce(new Error('Network error'));
+      vi.mocked(global.fetch).mockRejectedValueOnce(new Error('Network error'));
 
       await expect(createSpreadsheet('Test Sheet')).rejects.toThrow('Network error');
     });
@@ -184,7 +184,7 @@ describe('Google Sheets Utilities', () => {
         spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/test-id',
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -221,7 +221,7 @@ describe('Google Sheets Utilities', () => {
         rowsSynced: 1,
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -250,7 +250,7 @@ describe('Google Sheets Utilities', () => {
         rowsSynced: 1,
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -268,7 +268,7 @@ describe('Google Sheets Utilities', () => {
     test('should handle sync errors', async () => {
       localStorageMock.setItem('googleSheetsSpreadsheetId', 'test-id');
 
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
         status: 500,
         json: async () => ({ error: 'Server error' }),
@@ -285,7 +285,7 @@ describe('Google Sheets Utilities', () => {
         rowsSynced: 1,
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
       });
@@ -301,7 +301,7 @@ describe('Google Sheets Utilities', () => {
     test('should update sync status on error', async () => {
       localStorageMock.setItem('googleSheetsSpreadsheetId', 'test-id');
 
-      (global.fetch as any).mockResolvedValueOnce({
+      vi.mocked(global.fetch).mockResolvedValueOnce({
         ok: false,
         status: 500,
         json: async () => ({ error: 'Server error' }),
