@@ -34,7 +34,13 @@ cd job-application-tracker
 npm install
 ```
 
-4. Configure Environment Variables:
+4. Setup Git pre-commit hook (optional but recommended):
+```shell
+./setup-hook.sh
+```
+This will install a pre-commit hook that runs ESLint before each commit to ensure code quality and prevent build errors.
+
+5. Configure Environment Variables:
 Create a file named `.env.local` in the project root and add your Google OAuth Client ID. This is required for the login functionality.
 
 ### .env.local
@@ -330,9 +336,53 @@ Tests: 92 passed (92)
 
 All tests can be run with `npm test` or `npm run test:watch` for TDD workflow.
 
+## Git Pre-Commit Hook
+
+This project includes a pre-commit hook that automatically runs ESLint before each commit. This ensures:
+- Code quality is maintained
+- Build errors are caught early
+- Consistent code style across the project
+
+### Installation
+
+Run the setup script:
+```bash
+./setup-hook.sh
+```
+
+### How It Works
+
+When you attempt to commit code:
+1. The hook automatically runs `npm run lint`
+2. If linting passes: commit proceeds normally
+3. If linting fails: commit is blocked with error details
+
+### Bypassing the Hook (Not Recommended)
+
+If you need to bypass the hook for a specific commit (e.g., WIP commits):
+```bash
+git commit --no-verify -m "your message"
+```
+
+**Warning:** Only bypass the hook when absolutely necessary. The hook prevents build failures in production.
+
+### Manual Linting
+
+You can manually run linting at any time:
+```bash
+npm run lint          # Check for errors
+npm run lint:fix      # Automatically fix fixable issues
+```
+
 ## Contributing
 
 This project follows Test-Driven Development (TDD) principles. All new features should include comprehensive tests.
+
+### Before Committing
+
+1. Run tests: `npm test`
+2. Run linter: `npm run lint` (or let the pre-commit hook do it)
+3. Ensure build passes: `npm run build`
 
 ## License 
 
