@@ -15,8 +15,8 @@ const Header: React.FC = () => {
   }, []);
 
   const googleLogin = useGoogleLogin({
+    scope: 'openid email profile https://www.googleapis.com/auth/spreadsheets',
     onSuccess: async (tokenResponse) => {
-      console.log("Token de acceso recibido:", tokenResponse);
       setIsLoading(true);
       
       try {
