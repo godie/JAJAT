@@ -11,6 +11,7 @@ import FiltersBar, { type Filters } from '../components/FiltersBar';
 import { AlertProvider, useAlert } from '../components/AlertProvider';
 import { getApplications, saveApplications, generateId, type JobApplication } from '../utils/localStorage';
 import AddJobForm from '../components/AddJobComponent';
+import GoogleSheetsSync from '../components/GoogleSheetsSync';
 import packageJson from '../../package.json';
 
 const VIEW_STORAGE_KEY = 'preferredView';
@@ -268,6 +269,15 @@ const HomePageContent: React.FC = () => {
           
           {/* Summary Section */}
           <MetricsSummary applications={filteredApplications} />
+
+          {/* Google Sheets Sync */}
+          <GoogleSheetsSync 
+            applications={applications.filter(app => app.status !== 'Deleted')}
+            onSyncComplete={() => {
+              // Refresh applications after sync if needed
+              setApplications(getApplications());
+            }}
+          />
 
           <div className="space-y-4">
             <FiltersBar

@@ -61,7 +61,7 @@ In the project directory, you can run:
 
 ## Development & Architecture
 
-- Test-Driven Development (TDD): Comprehensive testing with 40+ tests covering all core components, views, and functionality
+- Test-Driven Development (TDD): Comprehensive testing with 90+ tests covering all core components, views, and functionality
 - Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable)
 - Modular Component Design: Reusable, tested components with clear separation of concerns
 - Type Safety: Full TypeScript implementation with strict type checking
@@ -94,6 +94,7 @@ In the project directory, you can run:
 - **Calendar Enhancements**: Today's date is highlighted, and events show relative time indicators ("Today", "in 2 days", "3 days ago")
 - Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience with improved spacing on small screens
 - Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage
+- **Google Sheets Integration**: One-way sync to Google Sheets with automatic spreadsheet creation, sync status tracking, and error handling
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
 - Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers)
 - Footer: Displays version information and attribution
@@ -117,6 +118,31 @@ Supported interview stages include: Application Submitted, Screener Call, First 
 - Secure Cookie Storage: Google OAuth tokens are stored in secure, HTTP-only cookies managed by PHP backend.
 - OAuth 2.0 Flow: Full OAuth 2.0 implementation with access token management.
 - Backend Integration: PHP endpoints for secure cookie handling (set and read).
+- Google Sheets API Scope: OAuth includes Google Sheets API scope for spreadsheet synchronization.
+
+## Google Sheets Integration
+
+The application includes full Google Sheets integration for syncing job application data:
+
+### Features
+- **One-Way Sync**: Sync all job applications from the app to Google Sheets
+- **Automatic Spreadsheet Creation**: Create a new Google Sheet with predefined structure
+- **Sync Status Tracking**: Real-time sync status with last sync time and error handling
+- **Secure API Proxy**: PHP backend proxy ensures secure API calls using HTTP-only cookies
+- **Timeline Events Export**: Complete interview timeline events are formatted and exported to Sheets
+
+### How to Use
+1. **Login with Google**: Ensure you're logged in with Google (includes Sheets API scope)
+2. **Create Spreadsheet**: Click "Create Sheet" to create a new Google Sheet
+3. **Sync Data**: Click "Sync Now" to sync all your job applications to the spreadsheet
+4. **Open Spreadsheet**: Click "Open Spreadsheet →" to view your data in Google Sheets
+
+### Spreadsheet Structure
+The created spreadsheet includes the following columns:
+- ID, Position, Company, Salary, Status
+- Application Date, Interview Date, Platform
+- Contact Name, Follow-up Date, Link, Notes
+- Timeline Events (formatted with all interview stages, dates, statuses, and notes)
 
 # Backend API Endpoints
 The project includes PHP endpoints for secure cookie management. These endpoints must be deployed to a PHP server with HTTPS enabled.
@@ -142,7 +168,33 @@ The project includes PHP endpoints for secure cookie management. These endpoints
 - **Response:** JSON with success status
 - **Security:** Cookie is deleted by setting expiry to past time
 
-> **Note:** Due to browser security restrictions, JavaScript cannot read HTTP-only cookies. The backend PHP endpoints handle all cookie operations securely.
+## Google Sheets Endpoints
+
+### Create Spreadsheet
+- **Endpoint:** `POST /api/google-sheets.php`
+- **Action:** `create_sheet`
+- **Purpose:** Create a new Google Sheet with predefined structure for job applications
+- **Request Body:** JSON with `action: "create_sheet"` and optional `title` field
+- **Response:** JSON with `spreadsheetId`, `spreadsheetUrl`, and success status
+- **Security:** Uses OAuth token from secure HTTP-only cookie
+
+### Sync Data to Spreadsheet
+- **Endpoint:** `POST /api/google-sheets.php`
+- **Action:** `sync_data`
+- **Purpose:** Sync job applications data to an existing Google Sheet
+- **Request Body:** JSON with `action: "sync_data"`, `spreadsheetId`, and `applications` array
+- **Response:** JSON with `rowsSynced` count and success status
+- **Security:** Uses OAuth token from secure HTTP-only cookie
+
+### Get Spreadsheet Info
+- **Endpoint:** `POST /api/google-sheets.php`
+- **Action:** `get_sheet_info`
+- **Purpose:** Retrieve information about a Google Sheet
+- **Request Body:** JSON with `action: "get_sheet_info"` and `spreadsheetId`
+- **Response:** JSON with spreadsheet metadata
+- **Security:** Uses OAuth token from secure HTTP-only cookie
+
+> **Note:** Due to browser security restrictions, JavaScript cannot read HTTP-only cookies. The backend PHP endpoints handle all cookie operations securely and act as a proxy for Google Sheets API calls.
 
 # File Structure
 The project maintains a clean, scalable folder structure based on functional concerns:
@@ -163,12 +215,14 @@ job-application-tracker/
 │   │   ├── Alert.tsx            // Beautiful alert notification component.
 │   │   ├── AlertProvider.tsx    // Context provider for alert management.
 │   │   ├── ConfirmDialog.tsx   // Confirmation modal for delete actions.
+│   │   ├── GoogleSheetsSync.tsx // Google Sheets sync component with UI controls.
 │   │   └── Footer.tsx          // Application footer with version info.
 │   ├── pages/
 │   │   └── HomePage.tsx         // Main container; manages global state and view switching.
 │   ├── utils/
 │   │   ├── localStorage.ts      // Data persistence, migration, and interview event utilities.
-│   │   └── api.ts               // API utilities for PHP backend communication.
+│   │   ├── api.ts               // API utilities for PHP backend communication.
+│   │   └── googleSheets.ts      // Google Sheets integration utilities and sync functions.
 │   ├── hooks/
 │   │   ├── useKeyboardKey.ts    // Generic hook for listening to any key press.
 │   │   └── useKeyboardEscape.ts // Semantic wrapper for closing modals on 'Escape' key.
@@ -183,13 +237,16 @@ job-application-tracker/
 │   │   ├── TimelineEditor.test.tsx // Tests for timeline event editing.
 │   │   ├── KanbanView.test.tsx     // Tests for Kanban board grouping and actions.
 │   │   ├── CalendarView.test.tsx   // Tests for calendar event rendering and callbacks.
-│   │   └── FiltersBar.test.tsx     // Tests for filter control interactions.
+│   │   ├── FiltersBar.test.tsx     // Tests for filter control interactions.
+│   │   ├── GoogleSheetsSync.test.tsx // Tests for Google Sheets sync component.
+│   │   └── googleSheets.test.ts     // Tests for Google Sheets utility functions.
 │   ├── App.tsx                  // Main app component with GoogleOAuthProvider wrapper.
 │   └── main.tsx
 ├── api/                         // PHP backend endpoints
 │   ├── set-auth-cookie.php      // Secure cookie setting for OAuth tokens
 │   ├── get-auth-cookie.php      // Secure cookie retrieval for OAuth tokens
-│   └── clear-auth-cookie.php    // Secure cookie deletion for logout
+│   ├── clear-auth-cookie.php    // Secure cookie deletion for logout
+│   └── google-sheets.php        // Google Sheets API proxy for secure operations
 ├── .env.local                   // Stores VITE_GOOGLE_CLIENT_ID (Ignored by Git).
 ├── .nvmrc                       // Node version specification (v22)
 └── tailwind.config.js
@@ -256,9 +313,20 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 8 passed (8)
-Tests: 44+ passed (44+)
+Test Files: 10 passed (10)
+Tests: 92 passed (92)
 ```
+
+### Test Coverage Includes:
+- Component rendering and interactions
+- User interface functionality
+- Data persistence and CRUD operations
+- Google OAuth authentication flow
+- Google Sheets integration (create, sync, error handling)
+- Timeline event management
+- View switching (Table, Timeline, Kanban, Calendar)
+- Filter and search functionality
+- Alert system and notifications
 
 All tests can be run with `npm test` or `npm run test:watch` for TDD workflow.
 
