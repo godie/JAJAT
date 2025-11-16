@@ -5,7 +5,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
 import GoogleSheetsSync from '../components/GoogleSheetsSync';
 import { AlertProvider } from '../components/AlertProvider';
-import * as localStorageUtils from '../utils/localStorage';
 import * as googleSheetsUtils from '../utils/googleSheets';
 import type { JobApplication } from '../utils/localStorage';
 
@@ -110,7 +109,7 @@ describe('GoogleSheetsSync Component', () => {
 
     test('should show sync status when spreadsheet exists', () => {
       localStorageStore['googleSheetsSpreadsheetId'] = 'test-id-123';
-      (googleSheetsUtils.getSyncStatus as any).mockReturnValue({
+      vi.mocked(googleSheetsUtils.getSyncStatus).mockReturnValue({
         isSyncing: false,
         lastSyncTime: null,
         lastSyncError: null,
@@ -125,7 +124,7 @@ describe('GoogleSheetsSync Component', () => {
 
     test('should show last sync time when available', () => {
       localStorageStore['googleSheetsSpreadsheetId'] = 'test-id-123';
-      (googleSheetsUtils.getSyncStatus as any).mockReturnValue({
+      vi.mocked(googleSheetsUtils.getSyncStatus).mockReturnValue({
         isSyncing: false,
         lastSyncTime: '2024-01-01T00:00:00Z',
         lastSyncError: null,
@@ -139,7 +138,7 @@ describe('GoogleSheetsSync Component', () => {
 
     test('should show error message when sync error exists', () => {
       localStorageStore['googleSheetsSpreadsheetId'] = 'test-id-123';
-      (googleSheetsUtils.getSyncStatus as any).mockReturnValue({
+      vi.mocked(googleSheetsUtils.getSyncStatus).mockReturnValue({
         isSyncing: false,
         lastSyncTime: null,
         lastSyncError: 'Failed to sync',
@@ -177,8 +176,8 @@ describe('GoogleSheetsSync Component', () => {
         title: 'Job Application Tracker',
       };
 
-      (googleSheetsUtils.createSpreadsheet as any).mockResolvedValue(mockSheetInfo);
-      (googleSheetsUtils.syncToGoogleSheets as any).mockResolvedValue({ rowsSynced: 1 });
+      vi.mocked(googleSheetsUtils.createSpreadsheet).mockResolvedValue(mockSheetInfo);
+      vi.mocked(googleSheetsUtils.syncToGoogleSheets).mockResolvedValue({ rowsSynced: 1 });
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -191,7 +190,7 @@ describe('GoogleSheetsSync Component', () => {
     });
 
     test('should show error when createSpreadsheet fails', async () => {
-      (googleSheetsUtils.createSpreadsheet as any).mockRejectedValue(new Error('API Error'));
+      vi.mocked(googleSheetsUtils.createSpreadsheet).mockRejectedValue(new Error('API Error'));
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -210,8 +209,8 @@ describe('GoogleSheetsSync Component', () => {
         title: 'Job Application Tracker',
       };
 
-      (googleSheetsUtils.createSpreadsheet as any).mockResolvedValue(mockSheetInfo);
-      (googleSheetsUtils.syncToGoogleSheets as any).mockResolvedValue({ rowsSynced: 1 });
+      vi.mocked(googleSheetsUtils.createSpreadsheet).mockResolvedValue(mockSheetInfo);
+      vi.mocked(googleSheetsUtils.syncToGoogleSheets).mockResolvedValue({ rowsSynced: 1 });
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -227,12 +226,12 @@ describe('GoogleSheetsSync Component', () => {
     });
 
     test('should disable button while creating', async () => {
-      let resolveCreate: (value: any) => void;
-      const createPromise = new Promise((resolve) => {
+      let resolveCreate: (value: googleSheetsUtils.SheetInfo) => void;
+      const createPromise = new Promise<googleSheetsUtils.SheetInfo>((resolve) => {
         resolveCreate = resolve;
       });
 
-      (googleSheetsUtils.createSpreadsheet as any).mockReturnValue(createPromise);
+      vi.mocked(googleSheetsUtils.createSpreadsheet).mockReturnValue(createPromise);
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -259,7 +258,7 @@ describe('GoogleSheetsSync Component', () => {
     });
 
     test('should call syncToGoogleSheets when sync button is clicked', async () => {
-      (googleSheetsUtils.syncToGoogleSheets as any).mockResolvedValue({ rowsSynced: 2 });
+      vi.mocked(googleSheetsUtils.syncToGoogleSheets).mockResolvedValue({ rowsSynced: 2 });
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -275,7 +274,7 @@ describe('GoogleSheetsSync Component', () => {
     });
 
     test('should show success message after successful sync', async () => {
-      (googleSheetsUtils.syncToGoogleSheets as any).mockResolvedValue({ rowsSynced: 1 });
+      vi.mocked(googleSheetsUtils.syncToGoogleSheets).mockResolvedValue({ rowsSynced: 1 });
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -288,7 +287,7 @@ describe('GoogleSheetsSync Component', () => {
     });
 
     test('should show error message when sync fails', async () => {
-      (googleSheetsUtils.syncToGoogleSheets as any).mockRejectedValue(new Error('Sync failed'));
+      vi.mocked(googleSheetsUtils.syncToGoogleSheets).mockRejectedValue(new Error('Sync failed'));
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -302,7 +301,7 @@ describe('GoogleSheetsSync Component', () => {
 
     test('should call onSyncComplete callback after successful sync', async () => {
       const onSyncComplete = vi.fn();
-      (googleSheetsUtils.syncToGoogleSheets as any).mockResolvedValue({ rowsSynced: 1 });
+      vi.mocked(googleSheetsUtils.syncToGoogleSheets).mockResolvedValue({ rowsSynced: 1 });
 
       renderWithProviders(
         <GoogleSheetsSync 
@@ -320,12 +319,12 @@ describe('GoogleSheetsSync Component', () => {
     });
 
     test('should disable button while syncing', async () => {
-      let resolveSync: (value: any) => void;
-      const syncPromise = new Promise((resolve) => {
+      let resolveSync: (value: { rowsSynced: number }) => void;
+      const syncPromise = new Promise<{ rowsSynced: number }>((resolve) => {
         resolveSync = resolve;
       });
 
-      (googleSheetsUtils.syncToGoogleSheets as any).mockReturnValue(syncPromise);
+      vi.mocked(googleSheetsUtils.syncToGoogleSheets).mockReturnValue(syncPromise);
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -342,7 +341,7 @@ describe('GoogleSheetsSync Component', () => {
 
     test('should show error when no spreadsheet ID exists', async () => {
       delete localStorageStore['googleSheetsSpreadsheetId'];
-      (googleSheetsUtils.getStoredSpreadsheetId as any).mockReturnValue(null);
+      vi.mocked(googleSheetsUtils.getStoredSpreadsheetId).mockReturnValue(null);
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
@@ -356,13 +355,13 @@ describe('GoogleSheetsSync Component', () => {
       localStorageStore['isLoggedIn'] = 'true';
       localStorageStore['googleSheetsSpreadsheetId'] = 'test-id-123';
       // Clear any error state and ensure URL is set
-      (googleSheetsUtils.getSyncStatus as any).mockReturnValue({
+      vi.mocked(googleSheetsUtils.getSyncStatus).mockReturnValue({
         isSyncing: false,
         lastSyncTime: null,
         lastSyncError: null,
         spreadsheetId: 'test-id-123',
       });
-      (googleSheetsUtils.getStoredSpreadsheetId as any).mockReturnValue('test-id-123');
+      vi.mocked(googleSheetsUtils.getStoredSpreadsheetId).mockReturnValue('test-id-123');
     });
 
     test('should open spreadsheet URL when link is clicked', async () => {
