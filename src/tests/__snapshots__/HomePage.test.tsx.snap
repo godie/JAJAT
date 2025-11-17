@@ -14,13 +14,17 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
       >
         Just Another Job Application Tracker
       </h1>
-      <button
-        aria-label="Login with Google"
-        class="self-start sm:self-auto font-medium py-2 px-5 rounded-lg shadow-md transition duration-150 transform hover:scale-[1.02] bg-blue-600 hover:bg-blue-700 text-white "
-        data-testid="login-button"
+      <div
+        class="flex items-center gap-3"
       >
-        Login with Google
-      </button>
+        <button
+          aria-label="Login with Google"
+          class="self-start sm:self-auto font-medium py-2 px-5 rounded-lg shadow-md transition duration-150 transform hover:scale-[1.02] bg-blue-600 hover:bg-blue-700 text-white "
+          data-testid="login-button"
+        >
+          Login with Google
+        </button>
+      </div>
     </header>
     <main
       class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
@@ -465,7 +469,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
             godie
           </a>
            with cursor v
-          1.1.1
+          1.2.0
            (
           2025
           )

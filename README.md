@@ -56,12 +56,16 @@ VITE_API_BASE_URL="/api"
 > **Note:** The `.env.local` file is gitignored and will not be committed to version control.
 # Available Scripts
 In the project directory, you can run:
-- npm run dev
+- `npm run dev`
     - Runs the app in development mode using Vite. Open http://localhost:5173 to view it in the browser. The page will reload upon edits.
-- npm test
+- `npm test`
     - Runs all unit and component tests via Vitest in one pass.
-- npm run test:watchStarts the Vitest test runner in watch mode (recommended for TDD).
-- npm run buildBuilds the application for production to the dist folder.
+- `npm run test:watch`
+    - Starts the Vitest test runner in watch mode (recommended for TDD).
+- `npm run build`
+    - Builds the application for production to the dist folder.
+- `npm run build:extension`
+    - Builds the Chrome extension to the chrome-extension/dist folder.
 
 # Key Features
 
@@ -101,6 +105,8 @@ In the project directory, you can run:
 - Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience with improved spacing on small screens
 - Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage
 - **Google Sheets Integration**: One-way sync to Google Sheets with automatic spreadsheet creation, sync status tracking, and error handling
+- **Chrome Extension**: Capture job opportunities from LinkedIn with automatic data extraction and sync with the web app
+- **Opportunities Page**: Separate view for managing captured job opportunities before converting them to applications
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
 - Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers)
 - Footer: Displays version information and attribution
@@ -125,6 +131,23 @@ Supported interview stages include: Application Submitted, Screener Call, First 
 - OAuth 2.0 Flow: Full OAuth 2.0 implementation with access token management.
 - Backend Integration: PHP endpoints for secure cookie handling (set and read).
 - Google Sheets API Scope: OAuth includes Google Sheets API scope for spreadsheet synchronization.
+
+## Chrome Extension - LinkedIn Job Capture
+
+The project includes a Chrome extension for capturing job opportunities directly from LinkedIn. This allows you to quickly save interesting job postings before applying.
+
+### Features
+- **One-click capture**: Automatically extracts job details from LinkedIn job postings
+- **Editable form**: Review and edit captured data before saving
+- **Sync with web app**: Automatically syncs with the web application when open
+- **Offline storage**: Uses Chrome's storage API for reliable data persistence
+
+### Quick Start
+1. Build the extension: `npm run build:extension`
+2. Load it in Chrome: Go to `chrome://extensions/`, enable Developer mode, and load the `chrome-extension/dist` folder
+3. Visit a LinkedIn job posting and click the extension icon to capture it
+
+For detailed installation and usage instructions, see [CHROME_EXTENSION.md](./CHROME_EXTENSION.md).
 
 ## Google Sheets Integration
 
@@ -224,7 +247,8 @@ job-application-tracker/
 │   │   ├── GoogleSheetsSync.tsx // Google Sheets sync component with UI controls.
 │   │   └── Footer.tsx          // Application footer with version info.
 │   ├── pages/
-│   │   └── HomePage.tsx         // Main container; manages global state and view switching.
+│   │   ├── HomePage.tsx         // Main container; manages global state and view switching.
+│   │   └── OpportunitiesPage.tsx // Page for managing captured job opportunities.
 │   ├── utils/
 │   │   ├── localStorage.ts      // Data persistence, migration, and interview event utilities.
 │   │   ├── api.ts               // API utilities for PHP backend communication.
@@ -253,8 +277,16 @@ job-application-tracker/
 │   ├── get-auth-cookie.php      // Secure cookie retrieval for OAuth tokens
 │   ├── clear-auth-cookie.php    // Secure cookie deletion for logout
 │   └── google-sheets.php        // Google Sheets API proxy for secure operations
+├── chrome-extension/            // Chrome extension for LinkedIn job capture
+│   ├── manifest.json            // Extension manifest
+│   ├── popup.html               // Popup HTML container
+│   ├── popup.tsx                // React popup component
+│   ├── content.ts               // Content script for LinkedIn pages
+│   ├── background.ts            // Background service worker
+│   └── dist/                    // Built extension files (generated)
 ├── .env.local                   // Stores VITE_GOOGLE_CLIENT_ID (Ignored by Git).
 ├── .nvmrc                       // Node version specification (v22)
+├── CHROME_EXTENSION.md          // Chrome extension documentation
 └── tailwind.config.js
 ```
 

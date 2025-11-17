@@ -9,6 +9,7 @@ import {
   getSyncStatus,
   getStoredSpreadsheetId,
   formatLastSyncTime,
+  setSpreadsheetId,
   type SyncStatus,
 } from '../utils/googleSheets';
 import type { JobApplication } from '../utils/localStorage';
@@ -25,6 +26,9 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
   const [isCreatingSheet, setIsCreatingSheet] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [spreadsheetUrl, setSpreadsheetUrl] = useState<string | null>(null);
+  const [showSelectSheet, setShowSelectSheet] = useState(false);
+  const [sheetIdInput, setSheetIdInput] = useState('');
+  const [isSettingSheet, setIsSettingSheet] = useState(false);
 
   useEffect(() => {
     const updateStatus = () => {
@@ -123,6 +127,38 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
     }
   };
 
+  const handleSelectExistingSheet = async () => {
+    if (!sheetIdInput.trim()) {
+      showError('Please enter a spreadsheet ID or URL');
+      return;
+    }
+
+    setIsSettingSheet(true);
+    try {
+      const sheetInfo = await setSpreadsheetId(sheetIdInput);
+      setSpreadsheetUrl(sheetInfo.spreadsheetUrl);
+      setShowSelectSheet(false);
+      setSheetIdInput('');
+      showSuccess(`Spreadsheet "${sheetInfo.title}" selected successfully!`);
+      
+      // Auto-sync after selection
+      setTimeout(() => {
+        handleSync();
+      }, 1000);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to set spreadsheet';
+      showError(errorMessage);
+      console.error('Error setting spreadsheet:', error);
+    } finally {
+      setIsSettingSheet(false);
+    }
+  };
+
+  const handleChangeSheet = () => {
+    setShowSelectSheet(true);
+    setSheetIdInput('');
+  };
+
   if (!isLoggedIn) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
@@ -134,7 +170,7 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
   }
 
   const hasSpreadsheet = !!getStoredSpreadsheetId();
-  const isLoading = isCreatingSheet || isSyncing;
+  const isLoading = isCreatingSheet || isSyncing || isSettingSheet;
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4 shadow-sm">
@@ -155,13 +191,22 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
                 )}
               </p>
               {spreadsheetUrl && (
-                <button
-                  onClick={handleOpenSheet}
-                  className="text-sm text-blue-600 hover:text-blue-800 underline"
-                  type="button"
-                >
-                  Open Spreadsheet →
-                </button>
+                <div className="flex gap-3 items-center">
+                  <button
+                    onClick={handleOpenSheet}
+                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                    type="button"
+                  >
+                    Open Spreadsheet →
+                  </button>
+                  <button
+                    onClick={handleChangeSheet}
+                    className="text-sm text-gray-600 hover:text-gray-800 underline"
+                    type="button"
+                  >
+                    Change Sheet
+                  </button>
+                </div>
               )}
             </div>
           ) : (
@@ -173,18 +218,32 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
 
         <div className="flex gap-2">
           {!hasSpreadsheet ? (
-            <button
-              onClick={handleCreateSheet}
-              disabled={isLoading}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                isLoading
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-              type="button"
-            >
-              {isCreatingSheet ? 'Creating...' : 'Create Sheet'}
-            </button>
+            <>
+              <button
+                onClick={handleCreateSheet}
+                disabled={isLoading}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  isLoading
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+                type="button"
+              >
+                {isCreatingSheet ? 'Creating...' : 'Create Sheet'}
+              </button>
+              <button
+                onClick={() => setShowSelectSheet(true)}
+                disabled={isLoading}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors border ${
+                  isLoading
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed border-gray-300'
+                    : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300'
+                }`}
+                type="button"
+              >
+                Select Existing
+              </button>
+            </>
           ) : (
             <button
               onClick={handleSync}
@@ -201,6 +260,60 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
           )}
         </div>
       </div>
+
+      {showSelectSheet && (
+        <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+          <h4 className="text-sm font-semibold text-gray-900 mb-2">Select Existing Spreadsheet</h4>
+          <p className="text-xs text-gray-600 mb-3">
+            Enter the spreadsheet ID or full URL from Google Sheets
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={sheetIdInput}
+              onChange={(e) => setSheetIdInput(e.target.value)}
+              placeholder="Spreadsheet ID or URL"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSelectExistingSheet();
+                } else if (e.key === 'Escape') {
+                  setShowSelectSheet(false);
+                  setSheetIdInput('');
+                }
+              }}
+            />
+            <button
+              onClick={handleSelectExistingSheet}
+              disabled={isSettingSheet || !sheetIdInput.trim()}
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                isSettingSheet || !sheetIdInput.trim()
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+              type="button"
+            >
+              {isSettingSheet ? 'Setting...' : 'Set'}
+            </button>
+            <button
+              onClick={() => {
+                setShowSelectSheet(false);
+                setSheetIdInput('');
+              }}
+              disabled={isSettingSheet}
+              className="px-4 py-2 rounded-lg font-medium text-sm bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 transition-colors"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Example: <code className="bg-gray-200 px-1 rounded">1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms</code>
+            <br />
+            Or: <code className="bg-gray-200 px-1 rounded">https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms</code>
+          </p>
+        </div>
+      )}
 
       {syncStatus.lastSyncError && (
         <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800">

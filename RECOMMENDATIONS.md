@@ -331,6 +331,33 @@ export const migrateApplicationData = (oldApp: any): JobApplication => {
 - [x] Auto-filter deleted applications from all views
 - [x] Success notifications on delete actions
 
+### Phase 8 (Completed): Chrome Extension - LinkedIn Job Capture ✅
+- [x] Create Chrome extension manifest (Manifest V3)
+- [x] Implement content script for LinkedIn job data extraction
+- [x] Build React popup component for reviewing/editing captured data
+- [x] Create background service worker for cross-tab communication
+- [x] Implement chrome.storage.local for data persistence
+- [x] Add sync functionality with web application
+- [x] Create Opportunities page in web app
+- [x] Implement conversion from opportunity to application
+- [x] Add navigation between Applications and Opportunities views
+- [x] Create comprehensive unit tests for extension components
+- [x] Document extension architecture and usage
+
+**Future Enhancements for Chrome Extension:**
+- [ ] Support for additional job boards:
+  - [ ] Lever (lever.co)
+  - [ ] Workday (workday.com)
+  - [ ] Greenhouse (greenhouse.io)
+  - [ ] Indeed
+  - [ ] Glassdoor
+  - [ ] Other ATS/HR systems
+- [ ] Batch capture (save multiple jobs at once)
+- [ ] Direct application from extension
+- [ ] Custom field mapping per site
+- [ ] Notification when new opportunities are captured
+- [ ] Export/import opportunities
+
 ---
 
 ## 7. Technical Considerations
@@ -381,6 +408,9 @@ export const PreferencesContext = createContext<{
 11. ✅ Google Sheets integration with one-way sync
 12. ✅ Secure PHP proxy for Google Sheets API
 13. ✅ Sync status tracking and error handling
+14. ✅ Chrome Extension for LinkedIn job capture
+15. ✅ Opportunities page for managing captured jobs
+16. ✅ Unit tests for Chrome extension components
 
 **Immediate Next Steps:**
 1. Configurable fields system
@@ -393,6 +423,8 @@ export const PreferencesContext = createContext<{
 - Mobile app version
 - Real-time collaboration
 - Email notifications for upcoming interviews
-- Integration with job boards (LinkedIn, Indeed, etc.)
+- Chrome Extension support for additional job boards (Lever, Workday, Greenhouse, Indeed, Glassdoor, etc.)
+- Batch job capture from multiple sources
+- Direct application submission from extension
 
 Your application is well-structured for these enhancements. The modular design makes it easy to add these features incrementally.

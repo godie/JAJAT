@@ -57,7 +57,11 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
   );
 };
 
-const HomePageContent: React.FC = () => {
+interface HomePageContentProps {
+  onNavigate?: (page: 'applications' | 'opportunities') => void;
+}
+
+const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
   const { showSuccess } = useAlert();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
@@ -67,7 +71,22 @@ const HomePageContent: React.FC = () => {
 
   useEffect(() => {
     setApplications(getApplications());
-  }, []);
+    
+    // Listen for new opportunities from Chrome extension
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'JOB_OPPORTUNITY_SYNC') {
+        // New opportunity added from extension
+        // Refresh applications count in header will be handled automatically
+        showSuccess('New job opportunity captured from LinkedIn!');
+      }
+    };
+    
+    window.addEventListener('message', handleMessage);
+    
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [showSuccess]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -264,7 +283,7 @@ const HomePageContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-        <Header />
+        <Header onNavigate={onNavigate} currentPage="applications" />
         <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           
           {/* Summary Section */}
@@ -325,10 +344,14 @@ const HomePageContent: React.FC = () => {
   );
 };
 
-const HomePage: React.FC = () => {
+interface HomePageProps {
+  onNavigate?: (page: 'applications' | 'opportunities') => void;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   return (
     <AlertProvider>
-      <HomePageContent />
+      <HomePageContent onNavigate={onNavigate} />
     </AlertProvider>
   );
 };

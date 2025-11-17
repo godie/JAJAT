@@ -192,6 +192,50 @@ export const syncToGoogleSheets = async (
 };
 
 /**
+ * Set spreadsheet ID manually (for selecting existing spreadsheet)
+ */
+export const setSpreadsheetId = async (spreadsheetIdOrUrl: string): Promise<SheetInfo> => {
+  // Extract ID from URL if full URL is provided
+  let spreadsheetId = spreadsheetIdOrUrl.trim();
+  
+  // Check if it's a full URL
+  const urlMatch = spreadsheetId.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (urlMatch) {
+    spreadsheetId = urlMatch[1];
+  }
+  
+  // Validate format (Google Sheets IDs are alphanumeric with dashes/underscores)
+  if (!/^[a-zA-Z0-9-_]+$/.test(spreadsheetId)) {
+    throw new Error('Invalid spreadsheet ID or URL format');
+  }
+  
+  try {
+    // Verify the spreadsheet exists and is accessible
+    const info = await getSpreadsheetInfo(spreadsheetId);
+    
+    // Store the spreadsheet ID
+    storeSpreadsheetId(spreadsheetId);
+    saveSyncStatus({
+      lastSyncError: null,
+      spreadsheetId,
+    });
+    
+    const spreadsheetInfo = info as { properties?: { title?: string } };
+    return {
+      spreadsheetId,
+      spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      title: spreadsheetInfo.properties?.title || 'Unknown',
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    saveSyncStatus({
+      lastSyncError: errorMessage,
+    });
+    throw new Error(`Failed to access spreadsheet: ${errorMessage}`);
+  }
+};
+
+/**
  * Get spreadsheet information
  */
 export const getSpreadsheetInfo = async (spreadsheetId: string): Promise<Record<string, unknown>> => {

@@ -14,7 +14,10 @@ const TimelineView: React.FC<TimelineViewProps> = ({ applications, onEdit, onDel
     isOpen: false,
     application: null,
   });
-  const getStageDisplayName = (type: string): string => {
+  const getStageDisplayName = (type: string, customTypeName?: string): string => {
+    if (type === 'custom' && customTypeName) {
+      return customTypeName;
+    }
     const names: Record<string, string> = {
       'application_submitted': 'Application Submitted',
       'screener_call': 'Screener Call',
@@ -147,7 +150,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ applications, onEdit, onDel
                             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                               <div className="space-y-1">
                                 <h4 className="font-semibold text-gray-900 text-sm sm:text-base">
-                                  {getStageDisplayName(event.type)}
+                                  {getStageDisplayName(event.type, event.customTypeName)}
                                 </h4>
                                 <p className="text-xs sm:text-sm text-gray-600">{formatDate(event.date)}</p>
                                 {event.interviewerName && (
