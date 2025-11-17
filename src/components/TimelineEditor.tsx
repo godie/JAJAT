@@ -36,7 +36,7 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
     { value: 'cancelled', label: 'Cancelled' },
   ];
 
-  const handleAddEvent = (type: InterviewStageType, date: string, status: EventStatus, notes: string, interviewerName: string) => {
+  const handleAddEvent = (type: InterviewStageType, date: string, status: EventStatus, notes: string, interviewerName: string, customTypeName?: string) => {
     const newEvent: InterviewEvent = {
       id: generateId(),
       type,
@@ -44,14 +44,24 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
       status,
       notes: notes || undefined,
       interviewerName: interviewerName || undefined,
+      customTypeName: type === 'custom' && customTypeName ? customTypeName : undefined,
     };
     onChange([...events, newEvent]);
     setIsAdding(false);
   };
 
-  const handleUpdateEvent = (id: string, type: InterviewStageType, date: string, status: EventStatus, notes: string, interviewerName: string) => {
+  const handleUpdateEvent = (id: string, type: InterviewStageType, date: string, status: EventStatus, notes: string, interviewerName: string, customTypeName?: string) => {
     const updated = events.map(event =>
-      event.id === id ? { ...event, type, date, status, notes: notes || undefined, interviewerName: interviewerName || undefined } : event
+      event.id === id ? { 
+        ...event, 
+        type, 
+        date, 
+        status, 
+        notes: notes || undefined, 
+        interviewerName: interviewerName || undefined,
+        // Only include customTypeName if type is 'custom' and customTypeName is provided
+        customTypeName: type === 'custom' && customTypeName ? customTypeName : undefined,
+      } : event
     );
     onChange(updated);
     setEditingId(null);
@@ -89,7 +99,7 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
                 event={event}
                 stageOptions={stageOptions}
                 statusOptions={statusOptions}
-                onSave={(type, date, status, notes, interviewerName) => handleUpdateEvent(event.id, type, date, status, notes, interviewerName)}
+                onSave={(type, date, status, notes, interviewerName, customTypeName) => handleUpdateEvent(event.id, type, date, status, notes, interviewerName, customTypeName)}
                 onCancel={() => setEditingId(null)}
               />
             ) : (
@@ -97,7 +107,9 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <span className="font-medium text-gray-900">
-                      {stageOptions.find(opt => opt.value === event.type)?.label || event.type}
+                      {event.type === 'custom' && event.customTypeName 
+                        ? event.customTypeName 
+                        : stageOptions.find(opt => opt.value === event.type)?.label || event.type}
                     </span>
                     <span className="text-sm text-gray-600">{event.date}</span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
@@ -144,7 +156,7 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
           <EventForm
             stageOptions={stageOptions}
             statusOptions={statusOptions}
-            onSave={(type, date, status, notes, interviewerName) => handleAddEvent(type, date, status, notes, interviewerName)}
+            onSave={(type, date, status, notes, interviewerName, customTypeName) => handleAddEvent(type, date, status, notes, interviewerName, customTypeName)}
             onCancel={() => setIsAdding(false)}
           />
         )}
@@ -163,7 +175,7 @@ interface EventFormProps {
   event?: InterviewEvent;
   stageOptions: { value: InterviewStageType; label: string }[];
   statusOptions: { value: EventStatus; label: string }[];
-  onSave: (type: InterviewStageType, date: string, status: EventStatus, notes: string, interviewerName: string) => void;
+  onSave: (type: InterviewStageType, date: string, status: EventStatus, notes: string, interviewerName: string, customTypeName?: string) => void;
   onCancel: () => void;
 }
 
@@ -175,8 +187,16 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
   const [customType, setCustomType] = useState(event?.customTypeName || '');
   const [interviewerName, setInterviewerName] = useState(event?.interviewerName || '');
 
+  // Reset customType when type changes away from 'custom'
+  const handleTypeChange = (newType: InterviewStageType) => {
+    setType(newType);
+    if (newType !== 'custom') {
+      setCustomType('');
+    }
+  };
+
   const handleSave = () => {
-    onSave(type, date, status, notes, interviewerName);
+    onSave(type, date, status, notes, interviewerName, customType);
   };
 
   return (
@@ -187,7 +207,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
           <select
             id="stage-type"
             value={type}
-            onChange={(e) => setType(e.target.value as InterviewStageType)}
+            onChange={(e) => handleTypeChange(e.target.value as InterviewStageType)}
             className="w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
           >
             {stageOptions.map(opt => (

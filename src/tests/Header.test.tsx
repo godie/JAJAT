@@ -36,12 +36,13 @@ vi.mock('../utils/localStorage', () => {
       delete localStorageStore['isLoggedIn'];
     }
   });
-  
+
   return {
     checkLoginStatus,
     setLoginStatus,
     getApplications: vi.fn(() => []),
     saveApplications: vi.fn(),
+    getOpportunities: vi.fn(() => []),
   };
 });
 

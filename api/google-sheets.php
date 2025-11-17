@@ -130,7 +130,14 @@ function handleCreateSheet($accessToken, $data) {
     if ($response && isset($response['spreadsheetId'])) {
         // Format header row
         $spreadsheetId = $response['spreadsheetId'];
-        formatHeaderRow($accessToken, $spreadsheetId);
+        
+        // Get the actual sheetId from the response
+        $sheetId = 0; // Default to 0
+        if (isset($response['sheets']) && is_array($response['sheets']) && count($response['sheets']) > 0) {
+            $sheetId = $response['sheets'][0]['properties']['sheetId'] ?? 0;
+        }
+        
+        formatHeaderRow($accessToken, $spreadsheetId, $sheetId);
         
         echo json_encode([
             'success' => true,
@@ -265,13 +272,13 @@ function handleGetSheetInfo($accessToken, $data) {
 /**
  * Format header row with bold text
  */
-function formatHeaderRow($accessToken, $spreadsheetId) {
+function formatHeaderRow($accessToken, $spreadsheetId, $sheetId = 0) {
     $formatData = [
         'requests' => [
             [
                 'repeatCell' => [
                     'range' => [
-                        'sheetId' => 0,
+                        'sheetId' => $sheetId,
                         'startRowIndex' => 0,
                         'endRowIndex' => 1,
                         'startColumnIndex' => 0,
