@@ -48,7 +48,9 @@ export default defineConfig({
     outDir: process.env.BUILD_EXTENSION === 'true' ? 'chrome-extension/dist' : 'dist',
     rollupOptions: process.env.BUILD_EXTENSION === 'true' ? {
       input: {
+        popup: resolve(__dirname, 'chrome-extension/popup.tsx'),
         content: resolve(__dirname, 'chrome-extension/content.ts'),
+        'webapp-content': resolve(__dirname, 'chrome-extension/webapp-content.ts'),
         background: resolve(__dirname, 'chrome-extension/background.ts'),
       },
       output: {

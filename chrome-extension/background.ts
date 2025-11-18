@@ -22,6 +22,7 @@ if (typeof chrome !== 'undefined' && chrome.runtime) {
         tabs.forEach((tab) => {
           if (tab.id && tab.url && (
             tab.url.includes('localhost') || 
+            tab.url.includes('jajat.godieboy.com') || 
             tab.url.includes('127.0.0.1') || 
             tab.url.includes('job-application-tracker')
           )) {

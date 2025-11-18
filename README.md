@@ -107,6 +107,8 @@ In the project directory, you can run:
 - **Google Sheets Integration**: One-way sync to Google Sheets with automatic spreadsheet creation, sync status tracking, and error handling
 - **Chrome Extension**: Capture job opportunities from LinkedIn with automatic data extraction and sync with the web app
 - **Opportunities Page**: Separate view for managing captured job opportunities before converting them to applications
+- **Manual Opportunity Creation**: Add opportunities directly from the web app with a full-featured form
+- **Bidirectional Extension Sync**: Real-time synchronization between Chrome extension and web app
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
 - Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers)
 - Footer: Displays version information and attribution
@@ -141,11 +143,22 @@ The project includes a Chrome extension for capturing job opportunities directly
 - **Editable form**: Review and edit captured data before saving
 - **Sync with web app**: Automatically syncs with the web application when open
 - **Offline storage**: Uses Chrome's storage API for reliable data persistence
+- **Manual creation**: Add opportunities directly from the web app without the extension
+- **Bidirectional sync**: Real-time synchronization between extension and web app
+- **Memory efficient**: Proper cleanup prevents memory leaks in single-page applications
 
 ### Quick Start
 1. Build the extension: `npm run build:extension`
 2. Load it in Chrome: Go to `chrome://extensions/`, enable Developer mode, and load the `chrome-extension/dist` folder
 3. Visit a LinkedIn job posting and click the extension icon to capture it
+4. Or add opportunities manually from the Opportunities page in the web app
+
+### Manual Opportunity Creation
+You don't need the extension to add opportunities! Simply:
+1. Navigate to the Opportunities page in the web app
+2. Click "+ Add Opportunity"
+3. Fill in the job details
+4. Save - it will sync with the extension if installed
 
 For detailed installation and usage instructions, see [CHROME_EXTENSION.md](./CHROME_EXTENSION.md).
 
@@ -282,7 +295,12 @@ job-application-tracker/
 │   ├── popup.html               // Popup HTML container
 │   ├── popup.tsx                // React popup component
 │   ├── content.ts               // Content script for LinkedIn pages
+│   ├── webapp-content.ts       // Content script for web app sync
 │   ├── background.ts            // Background service worker
+│   ├── job-extractors/          // Job extraction system
+│   │   ├── JobExtractor.ts      // Extractor interface
+│   │   ├── LinkedInJobExtractor.ts  // LinkedIn extractor
+│   │   └── index.ts             // Extractor registry
 │   └── dist/                    // Built extension files (generated)
 ├── .env.local                   // Stores VITE_GOOGLE_CLIENT_ID (Ignored by Git).
 ├── .nvmrc                       // Node version specification (v22)
@@ -351,8 +369,8 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 10 passed (10)
-Tests: 92 passed (92)
+Test Files: 16 passed (16)
+Tests: 153 passed (153)
 ```
 
 ### Test Coverage Includes:
@@ -365,6 +383,9 @@ Tests: 92 passed (92)
 - View switching (Table, Timeline, Kanban, Calendar)
 - Filter and search functionality
 - Alert system and notifications
+- Chrome Extension components (content script, background, popup, webapp-content)
+- Opportunity management (creation, deletion, conversion)
+- Manual opportunity form validation and submission
 
 All tests can be run with `npm test` or `npm run test:watch` for TDD workflow.
 

@@ -5,12 +5,14 @@ import Footer from '../components/Footer';
 import { AlertProvider, useAlert } from '../components/AlertProvider';
 import { 
   getOpportunities, 
+  addOpportunity,
   deleteOpportunity, 
   convertOpportunityToApplication,
   saveApplications,
   getApplications,
   type JobOpportunity 
 } from '../utils/localStorage';
+import OpportunityForm from '../components/OpportunityForm';
 import packageJson from '../../package.json';
 
 interface OpportunitiesPageContentProps {
@@ -21,6 +23,7 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
   const { showSuccess, showError } = useAlert();
   const [opportunities, setOpportunities] = useState<JobOpportunity[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     loadOpportunities();
@@ -32,7 +35,13 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
       }
     };
     
+        // Listen for custom event from webapp-content script
+        const handleOpportunitiesUpdate = () => {
+          loadOpportunities();
+        };
+    
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('jobOpportunitiesUpdated', handleOpportunitiesUpdate as EventListener);
     
     // Also poll for changes (in case extension uses chrome.storage.local)
     const interval = setInterval(() => {
@@ -41,6 +50,7 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('jobOpportunitiesUpdated', handleOpportunitiesUpdate as EventListener);
       clearInterval(interval);
     };
   }, []);
@@ -73,8 +83,45 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
   const handleDelete = (opportunity: JobOpportunity) => {
     if (window.confirm(`Are you sure you want to delete "${opportunity.position}" at ${opportunity.company}?`)) {
       deleteOpportunity(opportunity.id);
+      
+      // Also delete from chrome.storage.local via content script
+      // Use window.postMessage to send to content script
+      // Send to same origin for security, but content script will receive it
+      try {
+        console.log('[Web App] Sending DELETE_OPPORTUNITY message to extension:', opportunity.id);
+        window.postMessage({
+          type: 'DELETE_OPPORTUNITY',
+          opportunityId: opportunity.id,
+        }, window.location.origin);
+      } catch (error) {
+        console.error('Error sending delete message to extension:', error);
+      }
+      
       loadOpportunities();
       showSuccess(`Opportunity "${opportunity.position}" has been deleted.`);
+    }
+  };
+
+  const handleAddOpportunity = (opportunityData: Omit<JobOpportunity, 'id' | 'capturedDate'>) => {
+    try {
+      const newOpportunity = addOpportunity(opportunityData);
+      loadOpportunities();
+      showSuccess(`Opportunity "${opportunityData.position}" at ${opportunityData.company} has been added!`);
+      
+      // Also sync to chrome.storage.local if extension is available
+      // Use window.postMessage to send to content script
+      try {
+        window.postMessage({
+          type: 'SYNC_OPPORTUNITY',
+          data: newOpportunity,
+        }, window.location.origin);
+      } catch (error) {
+        // Ignore if extension is not available
+        console.debug('Extension not available for sync:', error);
+      }
+    } catch (error) {
+      console.error('Error adding opportunity:', error);
+      showError('Failed to add opportunity. Please try again.');
     }
   };
 
@@ -104,11 +151,19 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
     <div className="min-h-screen bg-gray-50">
       <Header onNavigate={onNavigate} currentPage="opportunities" />
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Interesting Opportunities</h2>
-          <p className="text-sm text-gray-600">
-            Job opportunities captured from LinkedIn. Click "Apply" to convert them into applications.
-          </p>
+        <div className="mb-6 flex justify-between items-start">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Interesting Opportunities</h2>
+            <p className="text-sm text-gray-600">
+              Job opportunities captured from LinkedIn or added manually. Click "Apply" to convert them into applications.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsFormOpen(true)}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 transition duration-150"
+          >
+            + Add Opportunity
+          </button>
         </div>
 
         {opportunities.length === 0 ? (
@@ -222,6 +277,11 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
         )}
       </main>
       <Footer version={packageJson.version} />
+      <OpportunityForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSave={handleAddOpportunity}
+      />
     </div>
   );
 };

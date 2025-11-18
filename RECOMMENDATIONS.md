@@ -357,6 +357,22 @@ export const migrateApplicationData = (oldApp: any): JobApplication => {
 - [ ] Custom field mapping per site
 - [ ] Notification when new opportunities are captured
 - [ ] Export/import opportunities
+- [ ] Extension detection and installation prompt:
+  - [ ] Detect when Chrome extension is not installed
+  - [ ] Show banner/notification in web app suggesting installation
+  - [ ] Provide direct link to Chrome Web Store (when published)
+  - [ ] Show installation instructions for development/testing
+  - [ ] Display helpful message explaining benefits of the extension
+- [ ] Video mini-tutorial:
+  - [ ] Create short video tutorial (2-3 minutes) demonstrating:
+    - How to install the extension
+    - How to capture a job from LinkedIn
+    - How to review/edit captured data in popup
+    - How to sync with web application
+    - How to convert opportunity to application
+  - [ ] Embed video in Opportunities page or dedicated help section
+  - [ ] Add video link to extension popup for first-time users
+  - [ ] Include step-by-step screenshots as alternative to video
 
 ---
 
@@ -415,8 +431,11 @@ export const PreferencesContext = createContext<{
 **Immediate Next Steps:**
 1. Configurable fields system
 2. ~~Google Sheets integration~~ ✅ Completed
-3. Analytics dashboard
-4. Export/import functionality
+3. Chrome Extension enhancements:
+   - Extension detection and installation prompt
+   - Video mini-tutorial for extension usage
+4. Analytics dashboard
+5. Export/import functionality
 
 **Future Enhancements:**
 - Advanced analytics and insights

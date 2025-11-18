@@ -34,8 +34,13 @@ export const chrome = {
   },
   storage: {
     local: {
-      get: vi.fn((keys: string[] | null, callback: (items: { [key: string]: unknown }) => void) => {
-        callback({});
+      get: vi.fn((keys: string[] | null, callback?: (items: { [key: string]: unknown }) => void) => {
+        const result = {};
+        if (callback) {
+          callback(result);
+        }
+        // Also return a Promise for async/await support
+        return Promise.resolve(result);
       }),
       set: vi.fn((items: { [key: string]: unknown }, callback?: () => void) => {
         if (callback) {
