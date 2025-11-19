@@ -27,6 +27,7 @@ dist-ssr
 *.sw?
 /src/tests/__snapshots__
 coverage
+PR_MESSAGE.md
 
 # Git hooks (keep the directory but ignore custom hooks if needed)
 # .git/hooks/pre-commit is tracked and should be committed

@@ -36,10 +36,26 @@ declare namespace chrome {
   namespace storage {
     interface StorageArea {
       get(keys: string[] | null, callback: (items: { [key: string]: unknown }) => void): void;
+      get(keys: string[] | null): Promise<{ [key: string]: unknown }>;
       set(items: { [key: string]: unknown }, callback?: () => void): void;
+      set(items: { [key: string]: unknown }): Promise<void>;
+    }
+    
+    interface StorageChange {
+      oldValue?: unknown;
+      newValue?: unknown;
+    }
+    
+    interface StorageChangeDict {
+      [key: string]: StorageChange;
+    }
+    
+    interface StorageChangedEvent {
+      addListener(callback: (changes: StorageChangeDict, areaName: string) => void): void;
     }
     
     const local: StorageArea;
+    const onChanged: StorageChangedEvent;
   }
 }
 
