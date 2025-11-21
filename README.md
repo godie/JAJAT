@@ -2,6 +2,18 @@
 # Project Overview
 This is a modern Job Application Tracker built using React, TypeScript, and Tailwind CSS. The project follows Test-Driven Development (TDD) principles, utilizing Vitest and React Testing Library for comprehensive unit and component testing.The application manages job applications locally, with an architecture designed for seamless integration with external services like Google Sheets.
 
+# Project Status
+**Completion: 76%**
+
+This project is feature-complete for its core functionality. Based on the project [recommendations](./RECOMMENDATIONS.md), 16 out of 21 planned features have been implemented and are fully tested.
+
+## Next Steps
+- Configurable fields system
+- Analytics dashboard
+- Export/import functionality
+
+For a detailed feature breakdown, please see the [recommendations document](./RECOMMENDATIONS.md).
+
 # Technology Stack
 The project is built on the following modern technologies:
 
@@ -71,7 +83,7 @@ In the project directory, you can run:
 
 ## Development & Architecture
 
-- Test-Driven Development (TDD): Comprehensive testing with 90+ tests covering all core components, views, and functionality
+- Test-Driven Development (TDD): Comprehensive testing with 150+ tests covering all core components, views, and functionality
 - Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable)
 - Modular Component Design: Reusable, tested components with clear separation of concerns
 - Type Safety: Full TypeScript implementation with strict type checking
@@ -110,7 +122,6 @@ In the project directory, you can run:
 - **Manual Opportunity Creation**: Add opportunities directly from the web app with a full-featured form
 - **Bidirectional Extension Sync**: Real-time synchronization between Chrome extension and web app
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
-- Metrics Summary: Provides a dashboard view of key application statistics (Applications, Interviews, Offers)
 - Footer: Displays version information and attribution
 
 ## Interview Timeline System

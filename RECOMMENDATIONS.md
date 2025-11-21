@@ -430,8 +430,7 @@ export const PreferencesContext = createContext<{
 
 **Immediate Next Steps:**
 1. Configurable fields system
-2. ~~Google Sheets integration~~ ✅ Completed
-3. Chrome Extension enhancements:
+2. Chrome Extension enhancements:
    - Extension detection and installation prompt
    - Video mini-tutorial for extension usage
 4. Analytics dashboard
