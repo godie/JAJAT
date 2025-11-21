@@ -157,9 +157,9 @@ const KanbanView: React.FC<KanbanViewProps> = ({ applications, onEdit, onDelete 
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="flex overflow-x-auto space-x-4">
       {grouped.map(({ status, items }) => (
-        <section key={status} className="bg-gray-50 border border-gray-200 rounded-xl shadow-sm flex flex-col">
+        <section key={status} className="bg-gray-50 border border-gray-200 rounded-xl shadow-sm flex flex-col w-80 flex-shrink-0">
           <header className="px-4 py-3 border-b border-gray-200 bg-white rounded-t-xl">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-600 flex items-center justify-between">
               <span>{status}</span>
