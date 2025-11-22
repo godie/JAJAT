@@ -145,6 +145,8 @@ Supported interview stages include: Application Submitted, Screener Call, First 
 - Backend Integration: PHP endpoints for secure cookie handling (set and read).
 - Google Sheets API Scope: OAuth includes Google Sheets API scope for spreadsheet synchronization.
 
+For more details on the security measures implemented in this project, please see the [SECURITY.md](./SECURITY.md) file.
+
 ## Chrome Extension - LinkedIn Job Capture
 
 The project includes a Chrome extension for capturing job opportunities directly from LinkedIn. This allows you to quickly save interesting job postings before applying.
@@ -451,5 +453,3 @@ This project follows Test-Driven Development (TDD) principles. All new features 
 ## License 
 
 [MIT LICENSE](LICENSE)
-
-
