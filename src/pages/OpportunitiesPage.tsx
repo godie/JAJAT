@@ -16,7 +16,7 @@ import OpportunityForm from '../components/OpportunityForm';
 import packageJson from '../../package.json';
 
 interface OpportunitiesPageContentProps {
-  onNavigate?: (page: 'applications' | 'opportunities') => void;
+  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
 }
 
 const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onNavigate }) => {
@@ -287,7 +287,7 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
 };
 
 interface OpportunitiesPageProps {
-  onNavigate?: (page: 'applications' | 'opportunities') => void;
+  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
 }
 
 const OpportunitiesPage: React.FC<OpportunitiesPageProps> = ({ onNavigate }) => {

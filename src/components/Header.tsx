@@ -128,6 +128,16 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage = 'applications
                 </span>
               )}
             </button>
+            <button
+              onClick={() => onNavigate('settings')}
+              className={`px-4 py-2 rounded-lg font-medium transition duration-150 ${
+                currentPage === 'settings'
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Settings
+            </button>
           </nav>
         )}
         <button 

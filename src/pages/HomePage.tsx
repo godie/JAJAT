@@ -9,7 +9,15 @@ import CalendarView from '../components/CalendarView';
 import ViewSwitcher, { type ViewType } from '../components/ViewSwitcher';
 import FiltersBar, { type Filters } from '../components/FiltersBar';
 import { AlertProvider, useAlert } from '../components/AlertProvider';
-import { getApplications, saveApplications, generateId, type JobApplication } from '../utils/localStorage';
+import {
+  getApplications,
+  saveApplications,
+  generateId,
+  getPreferences,
+  DEFAULT_FIELDS,
+  type JobApplication,
+  type UserPreferences,
+} from '../utils/localStorage';
 import AddJobForm from '../components/AddJobComponent';
 import GoogleSheetsSync from '../components/GoogleSheetsSync';
 import packageJson from '../../package.json';
@@ -24,11 +32,6 @@ const defaultFilters: Filters = {
   dateFrom: '',
   dateTo: '',
 };
-
-const initialColumns = [
-    'Position', 'Company', 'Salary', 'Status', 'Application Date', 
-    'Interview Date', 'Platform', 'Contact Name', 'Follow-up Date', 'Notes', 'Link'
-];
 
 // Componente Placeholder para la sección de métricas
 const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applications }) => {
@@ -58,7 +61,7 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
 };
 
 interface HomePageContentProps {
-  onNavigate?: (page: 'applications' | 'opportunities') => void;
+  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
 }
 
 const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
@@ -67,10 +70,12 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
   const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
   const [currentView, setCurrentView] = useState<ViewType>('table');
   const [filters, setFilters] = useState<Filters>(defaultFilters);
+  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const isFormOpen = currentApplication !== null;
 
   useEffect(() => {
     setApplications(getApplications());
+    setPreferences(getPreferences());
     
     // Listen for new opportunities from Chrome extension
     const handleMessage = (event: MessageEvent) => {
@@ -90,10 +95,19 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedView = window.localStorage.getItem(VIEW_STORAGE_KEY) as ViewType | null;
-      if (storedView) {
-        setCurrentView(storedView);
+      // Use default view from preferences, fallback to localStorage for backward compatibility
+      const prefs = getPreferences();
+      if (prefs.defaultView) {
+        setCurrentView(prefs.defaultView);
+        // Also update localStorage for backward compatibility
+        window.localStorage.setItem(VIEW_STORAGE_KEY, prefs.defaultView);
+      } else {
+        const storedView = window.localStorage.getItem(VIEW_STORAGE_KEY) as ViewType | null;
+        if (storedView) {
+          setCurrentView(storedView);
+        }
       }
+      
       const storedFilters = window.localStorage.getItem(FILTERS_STORAGE_KEY);
       if (storedFilters) {
         try {
@@ -105,6 +119,14 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
       }
     }
   }, []);
+  
+  // Update view when preferences change
+  useEffect(() => {
+    if (preferences?.defaultView) {
+      setCurrentView(preferences.defaultView);
+      window.localStorage.setItem(VIEW_STORAGE_KEY, preferences.defaultView);
+    }
+  }, [preferences?.defaultView]);
 
   const handleViewChange = useCallback((view: ViewType) => {
     setCurrentView(view);
@@ -244,6 +266,28 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
     });
   }, [applications, filters]);
 
+  const tableColumns = useMemo(() => {
+    if (!preferences) {
+      return DEFAULT_FIELDS.map((field) => field.label);
+    }
+
+    const enabledSet = new Set(preferences.enabledFields);
+
+    // Map from id to label using DEFAULT_FIELDS first, then custom fields
+    const fieldById = new Map<string, string>();
+    DEFAULT_FIELDS.forEach((field) => {
+      fieldById.set(field.id, field.label);
+    });
+    preferences.customFields.forEach((field) => {
+      fieldById.set(field.id, field.label);
+    });
+
+    return preferences.columnOrder
+      .filter((id) => enabledSet.has(id))
+      .map((id) => fieldById.get(id))
+      .filter((label): label is string => Boolean(label));
+  }, [preferences]);
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'timeline':
@@ -273,7 +317,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
       default:
         return (
           <ApplicationTable
-            columns={initialColumns} 
+            columns={tableColumns} 
             data={filteredApplications}
             onEdit={handleEdit}
             onDelete={handleDeleteEntry} />
@@ -345,7 +389,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
 };
 
 interface HomePageProps {
-  onNavigate?: (page: 'applications' | 'opportunities') => void;
+  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
