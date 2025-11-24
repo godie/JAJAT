@@ -3,12 +3,11 @@
 This is a modern Job Application Tracker built using React, TypeScript, and Tailwind CSS. The project follows Test-Driven Development (TDD) principles, utilizing Vitest and React Testing Library for comprehensive unit and component testing.The application manages job applications locally, with an architecture designed for seamless integration with external services like Google Sheets.
 
 # Project Status
-**Completion: 76%**
+**Completion: 85%**
 
-This project is feature-complete for its core functionality. Based on the project [recommendations](./RECOMMENDATIONS.md), 16 out of 21 planned features have been implemented and are fully tested.
+This project is feature-complete for its core functionality. Based on the project [recommendations](./RECOMMENDATIONS.md), 19 out of 21 planned features have been implemented and are fully tested.
 
 ## Next Steps
-- Configurable fields system
 - Analytics dashboard
 - Export/import functionality
 
@@ -83,7 +82,7 @@ In the project directory, you can run:
 
 ## Development & Architecture
 
-- Test-Driven Development (TDD): Comprehensive testing with 150+ tests covering all core components, views, and functionality
+- Test-Driven Development (TDD): Comprehensive testing with 190+ tests covering all core components, views, and functionality
 - Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable)
 - Modular Component Design: Reusable, tested components with clear separation of concerns
 - Type Safety: Full TypeScript implementation with strict type checking
@@ -121,6 +120,11 @@ In the project directory, you can run:
 - **Opportunities Page**: Separate view for managing captured job opportunities before converting them to applications
 - **Manual Opportunity Creation**: Add opportunities directly from the web app with a full-featured form
 - **Bidirectional Extension Sync**: Real-time synchronization between Chrome extension and web app
+- **Configurable Settings Page**: Comprehensive settings with multiple sections:
+  - **Table Fields Configuration**: Show/hide and reorder columns in the applications table
+  - **Default View Selection**: Choose your preferred view (Table, Timeline, Kanban, Calendar) when opening the app
+  - **Date Format Preferences**: Select date format (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD) for consistent display
+  - **Custom Fields Management**: Create, edit, and delete custom fields with support for multiple field types (text, date, number, select, checkbox, URL)
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
 - Footer: Displays version information and attribution
 
@@ -382,8 +386,8 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 16 passed (16)
-Tests: 153 passed (153)
+Test Files: 17 passed (17)
+Tests: 190+ passed (190+)
 ```
 
 ### Test Coverage Includes:

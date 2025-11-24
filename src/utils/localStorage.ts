@@ -2,6 +2,7 @@
 import DOMPurify from 'dompurify';
 
 export const STORAGE_KEY = 'jobTrackerData';
+const PREFERENCES_STORAGE_KEY = 'jobTrackerPreferences';
 
 /**
  * Recursively sanitizes all string properties of an object.
@@ -102,6 +103,142 @@ export interface JobApplication {
   // User-defined custom fields
   customFields?: Record<string, string>;
 }
+
+/**
+ * Configurable field definitions for applications table & forms
+ */
+export type FieldType = 'text' | 'date' | 'number' | 'select' | 'checkbox' | 'url';
+
+export interface FieldDefinition {
+  /**
+   * Internal identifier, also used to map against JobApplication keys.
+   * Example: "position", "company", "applicationdate"
+   */
+  id: string;
+  /** Human readable label shown in UI */
+  label: string;
+  type: FieldType;
+  required: boolean;
+  options?: string[];
+}
+
+export type DateFormat = 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD';
+export type ViewType = 'table' | 'timeline' | 'kanban' | 'calendar';
+
+export interface UserPreferences {
+  /** IDs of fields that should be visible/enabled in the table */
+  enabledFields: string[];
+  /** User defined additional fields (stored for future expansion) */
+  customFields: FieldDefinition[];
+  /** Order of columns in the table (references field IDs) */
+  columnOrder: string[];
+  /** Default view to show when opening the applications page */
+  defaultView: ViewType;
+  /** Date format preference */
+  dateFormat: DateFormat;
+}
+
+export const DEFAULT_FIELDS: FieldDefinition[] = [
+  { id: 'position', label: 'Position', type: 'text', required: true },
+  { id: 'company', label: 'Company', type: 'text', required: true },
+  { id: 'salary', label: 'Salary', type: 'text', required: false },
+  { id: 'status', label: 'Status', type: 'text', required: false },
+  { id: 'applicationdate', label: 'Application Date', type: 'date', required: false },
+  { id: 'interviewdate', label: 'Interview Date', type: 'date', required: false },
+  { id: 'platform', label: 'Platform', type: 'text', required: false },
+  { id: 'contactname', label: 'Contact Name', type: 'text', required: false },
+  { id: 'followupdate', label: 'Follow-up Date', type: 'date', required: false },
+  { id: 'notes', label: 'Notes', type: 'text', required: false },
+  { id: 'link', label: 'Link', type: 'url', required: false },
+];
+
+export const DEFAULT_PREFERENCES: UserPreferences = {
+  enabledFields: DEFAULT_FIELDS.map((field) => field.id),
+  customFields: [],
+  columnOrder: DEFAULT_FIELDS.map((field) => field.id),
+  defaultView: 'table',
+  dateFormat: 'YYYY-MM-DD',
+};
+
+export const getPreferences = (): UserPreferences => {
+  try {
+    const stored = localStorage.getItem(PREFERENCES_STORAGE_KEY);
+    if (!stored) {
+      return DEFAULT_PREFERENCES;
+    }
+    const parsed = JSON.parse(stored) as Partial<UserPreferences>;
+
+    // Merge with defaults to be resilient to schema changes
+    const enabledFields = parsed.enabledFields && parsed.enabledFields.length > 0
+      ? parsed.enabledFields
+      : DEFAULT_PREFERENCES.enabledFields;
+
+    const columnOrder = parsed.columnOrder && parsed.columnOrder.length > 0
+      ? parsed.columnOrder
+      : DEFAULT_PREFERENCES.columnOrder;
+
+    const customFields = parsed.customFields ?? DEFAULT_PREFERENCES.customFields;
+    
+    const defaultView = (parsed.defaultView && ['table', 'timeline', 'kanban', 'calendar'].includes(parsed.defaultView))
+      ? parsed.defaultView
+      : DEFAULT_PREFERENCES.defaultView;
+    
+    const dateFormat = (parsed.dateFormat && ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'].includes(parsed.dateFormat))
+      ? parsed.dateFormat
+      : DEFAULT_PREFERENCES.dateFormat;
+
+    return {
+      enabledFields,
+      columnOrder,
+      customFields,
+      defaultView,
+      dateFormat,
+    };
+  } catch (error) {
+    console.error('Error loading preferences from localStorage:', error);
+    return DEFAULT_PREFERENCES;
+  }
+};
+
+export const savePreferences = (preferences: UserPreferences): void => {
+  try {
+    localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
+  } catch (error) {
+    console.error('Error saving preferences to localStorage:', error);
+  }
+};
+
+/**
+ * Format a date string according to user's date format preference
+ * @param dateString - ISO date string (YYYY-MM-DD) or any date string
+ * @param format - Date format preference
+ * @returns Formatted date string
+ */
+export const formatDate = (dateString: string, format: DateFormat = 'YYYY-MM-DD'): string => {
+  if (!dateString) return '';
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original if invalid
+    
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    switch (format) {
+      case 'DD/MM/YYYY':
+        return `${day}/${month}/${year}`;
+      case 'MM/DD/YYYY':
+        return `${month}/${day}/${year}`;
+      case 'YYYY-MM-DD':
+      default:
+        return `${year}-${month}-${day}`;
+    }
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString;
+  }
+};
 
 /**
  * Legacy JobApplication for backward compatibility during migration
