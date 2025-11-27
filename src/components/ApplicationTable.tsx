@@ -1,6 +1,7 @@
 // src/components/ApplicationTable.tsx
 import React, { useState } from 'react';
 import type { JobApplication } from '../utils/localStorage';
+import { sanitizeUrl } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
 import DOMPurify from 'dompurify';
 
@@ -87,7 +88,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
                     >
                       {key === 'link' ? (
                         <a
-                          href={cellContent}
+                          href={sanitizeUrl(cellContent)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-indigo-600 hover:underline"
