@@ -54,7 +54,7 @@ const sanitizeObject = <T extends Record<string, unknown>>(obj: T): T => {
         // Recursively sanitize items in arrays
         sanitizedObj[key] = value.map(item => {
           if (typeof item === 'object' && item !== null) {
-            return sanitizeObject(item);
+            return sanitizeObject(item as Record<string, unknown>);
           }
           if (typeof item === 'string') {
             return DOMPurify.sanitize(item);
@@ -63,7 +63,7 @@ const sanitizeObject = <T extends Record<string, unknown>>(obj: T): T => {
         });
       } else if (typeof value === 'object' && value !== null) {
         // Recursively sanitize nested objects
-        sanitizedObj[key] = sanitizeObject(value);
+        sanitizedObj[key] = sanitizeObject(value as Record<string, unknown>);
       } else {
         // Keep non-string, non-object, non-array values as is
         sanitizedObj[key] = value;
@@ -372,10 +372,10 @@ export const getApplications = (): JobApplication[] => {
     if (!Array.isArray(apps)) return [];
 
     // Sanitize every field to prevent XSS from previously stored data
-    apps = apps.map(app => sanitizeObject(app));
+    apps = apps.map((app: unknown) => sanitizeObject(app as Record<string, unknown>));
     
     // Migrate legacy applications if needed
-    const migrated = apps.map((app) => {
+    const migrated = apps.map((app: unknown) => {
       if (isLegacyApplication(app)) {
         const migratedApp = migrateApplicationData(app);
         // Save migrated data back
@@ -403,7 +403,7 @@ export const getApplications = (): JobApplication[] => {
  */
 export const saveApplications = (applications: JobApplication[]): void => {
   try {
-    const sanitizedApplications = applications.map(app => sanitizeObject(app));
+    const sanitizedApplications = applications.map(app => sanitizeObject(app as unknown as Record<string, unknown>));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitizedApplications));
   } catch (error) {
     console.error("Error saving data to localStorage:", error);
@@ -473,7 +473,7 @@ export const getOpportunities = (): JobOpportunity[] => {
  */
 export const saveOpportunities = (opportunities: JobOpportunity[]): void => {
   try {
-    const sanitizedOpportunities = opportunities.map(opp => sanitizeObject(opp));
+    const sanitizedOpportunities = opportunities.map(opp => sanitizeObject(opp as unknown as Record<string, unknown>));
     localStorage.setItem(OPPORTUNITIES_STORAGE_KEY, JSON.stringify(sanitizedOpportunities));
   } catch (error) {
     console.error("Error saving opportunities to localStorage:", error);
