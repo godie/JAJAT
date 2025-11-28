@@ -30,6 +30,7 @@ vi.mock('../utils/localStorage', () => ({
   })),
   saveApplications: vi.fn(),
   getApplications: vi.fn(() => []),
+  sanitizeUrl: vi.fn((url: string) => url),
 }));
 
 // Mock Header and Footer
@@ -49,6 +50,7 @@ describe('OpportunitiesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue([]);
+    (localStorageUtils.sanitizeUrl as ReturnType<typeof vi.fn>).mockImplementation((url: string) => url);
   });
 
   it('should render empty state when no opportunities', () => {
@@ -162,7 +164,7 @@ describe('OpportunitiesPage', () => {
     expect(localStorageUtils.deleteOpportunity).toHaveBeenCalledWith('1');
   });
 
-  it('should handle deleting opportunity', () => {
+  it('should handle deleting opportunity', async () => {
     const mockOpportunities = [
       {
         id: '1',
@@ -175,16 +177,69 @@ describe('OpportunitiesPage', () => {
 
     (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue(mockOpportunities);
 
-    // Mock window.confirm
-    window.confirm = vi.fn(() => true);
+    render(<OpportunitiesPage />);
+    
+    const deleteButton = screen.getByText('Delete');
+    fireEvent.click(deleteButton);
+
+    // Wait for ConfirmDialog to appear
+    await waitFor(() => {
+      expect(screen.getByText('Delete Opportunity')).toBeInTheDocument();
+    });
+
+    // Wait for the message to appear
+    await waitFor(() => {
+      expect(screen.getByText(/Are you sure you want to delete "Software Engineer"/i)).toBeInTheDocument();
+    });
+
+    // Find and click the confirm button in the dialog (the one in the dialog, not the table row)
+    const confirmButtons = screen.getAllByText('Delete');
+    // The last one should be in the dialog
+    const dialogConfirmButton = confirmButtons[confirmButtons.length - 1];
+    fireEvent.click(dialogConfirmButton);
+
+    await waitFor(() => {
+      expect(localStorageUtils.deleteOpportunity).toHaveBeenCalledWith('1');
+    }, { timeout: 3000 });
+  });
+
+  it('should not delete opportunity when cancel is clicked', async () => {
+    const mockOpportunities = [
+      {
+        id: '1',
+        position: 'Software Engineer',
+        company: 'Google',
+        link: 'https://linkedin.com/jobs/view/123',
+        capturedDate: new Date().toISOString(),
+      },
+    ];
+
+    (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue(mockOpportunities);
 
     render(<OpportunitiesPage />);
     
     const deleteButton = screen.getByText('Delete');
     fireEvent.click(deleteButton);
 
-    expect(window.confirm).toHaveBeenCalled();
-    expect(localStorageUtils.deleteOpportunity).toHaveBeenCalledWith('1');
+    // Wait for ConfirmDialog to appear - use a more flexible query
+    await waitFor(() => {
+      const dialogTitle = screen.queryByText('Delete Opportunity');
+      expect(dialogTitle).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Verify dialog message is present
+    await waitFor(() => {
+      expect(screen.getByText(/Are you sure you want to delete/i)).toBeInTheDocument();
+    });
+
+    // Cancel deletion - find Cancel button by role or text
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+
+    // Wait a bit to ensure delete was not called
+    await waitFor(() => {
+      expect(localStorageUtils.deleteOpportunity).not.toHaveBeenCalled();
+    }, { timeout: 1000 });
   });
 
   it('should filter opportunities by search term', () => {
