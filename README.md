@@ -85,6 +85,7 @@ In the project directory, you can run:
 - Test-Driven Development (TDD): Comprehensive testing with 190+ tests covering all core components, views, and functionality
 - Clean Architecture: Utilizes the Adapter pattern to prepare for pluggable external data sources (e.g., Google Sheets, Airtable)
 - Modular Component Design: Reusable, tested components with clear separation of concerns
+- Modular Code Organization: Separated concerns with dedicated modules for types (`src/types/`), storage logic (`src/storage/`), and utilities, ensuring maintainability and scalability
 - Type Safety: Full TypeScript implementation with strict type checking
 - Vite Environment Variables: Secure management of the Google Client ID using VITE_ prefixed environment variables
 
@@ -276,11 +277,26 @@ job-application-tracker/
 │   │   └── Footer.tsx          // Application footer with version info.
 │   ├── pages/
 │   │   ├── HomePage.tsx         // Main container; manages global state and view switching.
-│   │   └── OpportunitiesPage.tsx // Page for managing captured job opportunities.
+│   │   ├── OpportunitiesPage.tsx // Page for managing captured job opportunities.
+│   │   └── SettingsPage.tsx     // Settings page for configuring fields, views, and preferences.
+│   ├── types/                   // TypeScript type definitions organized by domain
+│   │   ├── applications.ts      // Job application and interview event types
+│   │   ├── opportunities.ts     // Job opportunity types
+│   │   ├── preferences.ts       // User preferences and field types
+│   │   └── index.ts             // Barrel file for type exports
+│   ├── storage/                 // Data persistence and localStorage operations
+│   │   ├── applications.ts      // Job application CRUD and migration logic
+│   │   ├── opportunities.ts     // Opportunity management operations
+│   │   ├── preferences.ts       // User preferences storage
+│   │   ├── auth.ts              // Authentication state management
+│   │   └── index.ts             // Barrel file for storage exports
 │   ├── utils/
-│   │   ├── localStorage.ts      // Data persistence, migration, and interview event utilities.
-│   │   ├── api.ts               // API utilities for PHP backend communication.
-│   │   └── googleSheets.ts      // Google Sheets integration utilities and sync functions.
+│   │   ├── localStorage.ts      // Legacy barrel file for backward compatibility
+│   │   ├── id.ts                // ID generation utilities
+│   │   ├── date.ts              // Date formatting utilities
+│   │   ├── constants.ts         // Application constants and defaults
+│   │   ├── api.ts               // API utilities for PHP backend communication
+│   │   └── googleSheets.ts      // Google Sheets integration utilities and sync functions
 │   ├── hooks/
 │   │   ├── useKeyboardKey.ts    // Generic hook for listening to any key press.
 │   │   └── useKeyboardEscape.ts // Semantic wrapper for closing modals on 'Escape' key.
@@ -297,6 +313,12 @@ job-application-tracker/
 │   │   ├── CalendarView.test.tsx   // Tests for calendar event rendering and callbacks.
 │   │   ├── FiltersBar.test.tsx     // Tests for filter control interactions.
 │   │   ├── GoogleSheetsSync.test.tsx // Tests for Google Sheets sync component.
+│   │   ├── OpportunitiesPage.test.tsx // Tests for opportunities page functionality.
+│   │   ├── OpportunityForm.test.tsx // Tests for opportunity form component.
+│   │   ├── SettingsPage.test.tsx    // Tests for settings page configuration.
+│   │   ├── ConfirmDialog.test.tsx   // Tests for confirmation dialog component.
+│   │   ├── ApplicationTable.test.tsx // Tests for application table rendering.
+│   │   ├── localStorage.test.ts     // Tests for localStorage utilities.
 │   │   └── googleSheets.test.ts     // Tests for Google Sheets utility functions.
 │   ├── App.tsx                  // Main app component with GoogleOAuthProvider wrapper.
 │   └── main.tsx
