@@ -433,6 +433,16 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
               >
                 Link
               </th>
+              <th
+                class="relative px-4 sm:px-6 py-3 w-1"
+                scope="col"
+              >
+                <span
+                  class="sr-only"
+                >
+                  Actions
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody
@@ -469,7 +479,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
             godie
           </a>
            with cursor v
-          1.3.0
+          1.5.0
            (
           2025
           )

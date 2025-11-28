@@ -10,13 +10,15 @@ import {
   convertOpportunityToApplication,
   saveApplications,
   getApplications,
+  sanitizeUrl,
   type JobOpportunity 
 } from '../utils/localStorage';
 import OpportunityForm from '../components/OpportunityForm';
+import ConfirmDialog from '../components/ConfirmDialog';
 import packageJson from '../../package.json';
 
 interface OpportunitiesPageContentProps {
-  onNavigate?: (page: 'applications' | 'opportunities') => void;
+  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
 }
 
 const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onNavigate }) => {
@@ -24,6 +26,13 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
   const [opportunities, setOpportunities] = useState<JobOpportunity[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    isOpen: boolean;
+    opportunity: JobOpportunity | null;
+  }>({
+    isOpen: false,
+    opportunity: null,
+  });
 
   useEffect(() => {
     loadOpportunities();
@@ -81,7 +90,12 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
   };
 
   const handleDelete = (opportunity: JobOpportunity) => {
-    if (window.confirm(`Are you sure you want to delete "${opportunity.position}" at ${opportunity.company}?`)) {
+    setDeleteConfirm({ isOpen: true, opportunity });
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm.opportunity) {
+      const opportunity = deleteConfirm.opportunity;
       deleteOpportunity(opportunity.id);
       
       // Also delete from chrome.storage.local via content script
@@ -99,6 +113,7 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
       
       loadOpportunities();
       showSuccess(`Opportunity "${opportunity.position}" has been deleted.`);
+      setDeleteConfirm({ isOpen: false, opportunity: null });
     }
   };
 
@@ -245,7 +260,7 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex justify-end gap-2">
                             <a
-                              href={opp.link}
+                              href={sanitizeUrl(opp.link)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-indigo-600 hover:text-indigo-900"
@@ -282,12 +297,22 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
         onClose={() => setIsFormOpen(false)}
         onSave={handleAddOpportunity}
       />
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Opportunity"
+        message={`Are you sure you want to delete "${deleteConfirm.opportunity?.position}" at ${deleteConfirm.opportunity?.company}?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteConfirm({ isOpen: false, opportunity: null })}
+      />
     </div>
   );
 };
 
 interface OpportunitiesPageProps {
-  onNavigate?: (page: 'applications' | 'opportunities') => void;
+  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
 }
 
 const OpportunitiesPage: React.FC<OpportunitiesPageProps> = ({ onNavigate }) => {
