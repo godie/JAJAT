@@ -14,4 +14,5 @@ export * from '../storage';
 // Re-export utilities
 export { generateId } from './id';
 export { formatDate } from './date';
+export { sanitizeUrl, sanitizeObject } from './url';
 export { DEFAULT_FIELDS, DEFAULT_PREFERENCES, STORAGE_KEY } from './constants';

@@ -1,7 +1,7 @@
 // src/tests/GoogleSheetsSync.test.tsx
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
 import GoogleSheetsSync from '../components/GoogleSheetsSync';
 import { AlertProvider } from '../components/AlertProvider';
@@ -147,9 +147,7 @@ describe('GoogleSheetsSync Component', () => {
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
-      // Check for sync error section (more specific)
       expect(screen.getByText(/Sync Error:/i)).toBeInTheDocument();
-      // Check that error message appears (use getAllByText since it appears in multiple places)
       const errorTexts = screen.getAllByText(/Failed to sync/i);
       expect(errorTexts.length).toBeGreaterThan(0);
     });
@@ -182,11 +180,11 @@ describe('GoogleSheetsSync Component', () => {
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
       const createButton = screen.getByText('Create Sheet');
-      fireEvent.click(createButton);
-
-      await waitFor(() => {
-        expect(googleSheetsUtils.createSpreadsheet).toHaveBeenCalledWith('Job Application Tracker');
+      await act(async () => {
+        fireEvent.click(createButton);
       });
+
+      expect(googleSheetsUtils.createSpreadsheet).toHaveBeenCalledWith('Job Application Tracker');
     });
 
     test('should show error when createSpreadsheet fails', async () => {
@@ -195,11 +193,12 @@ describe('GoogleSheetsSync Component', () => {
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
       const createButton = screen.getByText('Create Sheet');
-      fireEvent.click(createButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/API Error/i)).toBeInTheDocument();
+      await act(async () => {
+        fireEvent.click(createButton);
       });
+
+      const alert = await screen.findByRole('alert');
+      expect(alert).toHaveTextContent(/API Error/i);
     });
 
     test('should open spreadsheet in new tab after creation', async () => {
@@ -215,7 +214,9 @@ describe('GoogleSheetsSync Component', () => {
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
       const createButton = screen.getByText('Create Sheet');
-      fireEvent.click(createButton);
+      await act(async () => {
+        fireEvent.click(createButton);
+      });
 
       await waitFor(() => {
         expect(mockWindowOpen).toHaveBeenCalledWith(
@@ -243,10 +244,17 @@ describe('GoogleSheetsSync Component', () => {
         expect(createButton).toHaveTextContent('Creating...');
       });
 
-      resolveCreate!({
-        spreadsheetId: 'new-id',
-        spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/new-id',
-        title: 'Test',
+      await act(async () => {
+        resolveCreate!({
+          spreadsheetId: 'new-id',
+          spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/new-id',
+          title: 'Test',
+        });
+        await createPromise;
+      });
+
+      await waitFor(() => {
+        expect(createButton).not.toBeDisabled();
       });
     });
   });
@@ -263,14 +271,14 @@ describe('GoogleSheetsSync Component', () => {
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
       const syncButton = screen.getByText('Sync Now');
-      fireEvent.click(syncButton);
-
-      await waitFor(() => {
-        expect(googleSheetsUtils.syncToGoogleSheets).toHaveBeenCalledWith(
-          mockApplications,
-          'test-id-123'
-        );
+      await act(async () => {
+        fireEvent.click(syncButton);
       });
+
+      expect(googleSheetsUtils.syncToGoogleSheets).toHaveBeenCalledWith(
+        mockApplications,
+        'test-id-123'
+      );
     });
 
     test('should show success message after successful sync', async () => {
@@ -279,11 +287,12 @@ describe('GoogleSheetsSync Component', () => {
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
       const syncButton = screen.getByText('Sync Now');
-      fireEvent.click(syncButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/Successfully synced 1 application/i)).toBeInTheDocument();
+      await act(async () => {
+        fireEvent.click(syncButton);
       });
+
+      const alert = await screen.findByRole('alert');
+      expect(alert).toHaveTextContent(/Successfully synced 1 application/i);
     });
 
     test('should show error message when sync fails', async () => {
@@ -292,11 +301,12 @@ describe('GoogleSheetsSync Component', () => {
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
       const syncButton = screen.getByText('Sync Now');
-      fireEvent.click(syncButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/Sync failed/i)).toBeInTheDocument();
+      await act(async () => {
+        fireEvent.click(syncButton);
       });
+
+      const alert = await screen.findByRole('alert');
+      expect(alert).toHaveTextContent(/Sync failed/i);
     });
 
     test('should call onSyncComplete callback after successful sync', async () => {
@@ -311,7 +321,9 @@ describe('GoogleSheetsSync Component', () => {
       );
       
       const syncButton = screen.getByText('Sync Now');
-      fireEvent.click(syncButton);
+      await act(async () => {
+        fireEvent.click(syncButton);
+      });
 
       await waitFor(() => {
         expect(onSyncComplete).toHaveBeenCalled();
@@ -336,7 +348,14 @@ describe('GoogleSheetsSync Component', () => {
         expect(syncButton).toHaveTextContent('Syncing...');
       });
 
-      resolveSync!({ rowsSynced: 1 });
+      await act(async () => {
+        resolveSync!({ rowsSynced: 1 });
+        await syncPromise;
+      });
+
+      await waitFor(() => {
+        expect(syncButton).not.toBeDisabled();
+      });
     });
 
     test('should show error when no spreadsheet ID exists', async () => {
@@ -345,7 +364,6 @@ describe('GoogleSheetsSync Component', () => {
 
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
-      // Should show create button instead
       expect(screen.getByText('Create Sheet')).toBeInTheDocument();
     });
   });
@@ -354,7 +372,6 @@ describe('GoogleSheetsSync Component', () => {
     beforeEach(() => {
       localStorageStore['isLoggedIn'] = 'true';
       localStorageStore['googleSheetsSpreadsheetId'] = 'test-id-123';
-      // Clear any error state and ensure URL is set
       vi.mocked(googleSheetsUtils.getSyncStatus).mockReturnValue({
         isSyncing: false,
         lastSyncTime: null,
@@ -367,7 +384,6 @@ describe('GoogleSheetsSync Component', () => {
     test('should open spreadsheet URL when link is clicked', async () => {
       renderWithProviders(<GoogleSheetsSync applications={mockApplications} />);
       
-      // Wait for component to render and set spreadsheet URL
       await waitFor(() => {
         expect(screen.getByText(/Open Spreadsheet/i)).toBeInTheDocument();
       });
@@ -382,4 +398,3 @@ describe('GoogleSheetsSync Component', () => {
     });
   });
 });
-
