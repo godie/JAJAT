@@ -33,5 +33,40 @@ export interface JobExtractor {
    * @returns JobData object with extracted information
    */
   extract(): JobData;
+  /**
+   * extract job title from the current page
+   * @returns job title
+   */
+  extractJobTitle(): string;
+
+  /**
+   * extract company name from the current page
+   * @returns company name
+   */
+  extractCompanyName(): string;
+
+  /**
+   * extract location from the current page
+   * @returns location
+   */
+  extractLocation(): string;
+
+  /**
+   * extract job type from the current page
+   * @returns job type
+   */
+  extractJobType(): string;
+
+  /**
+   * extract job description from the current page
+   * @returns job description
+   */
+  extractJobDescription(): string;
+
+  /** 
+   * extract salary from the current page
+   * @returns salary
+   */
+  extractSalary(): string;
 }
 

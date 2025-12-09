@@ -349,10 +349,11 @@ export const migrateApplicationData = (oldApp: any): JobApplication => {
 - [x] Document extension architecture and usage
 
 **Future Enhancements for Chrome Extension:**
-- [ ] Support for additional job boards:
+- [x] Support for additional job boards:
+  - [x] Greenhouse (greenhouse.io) ✅
+  - [x] AshbyHQ (ashbyhq.com) ✅
   - [ ] Lever (lever.co)
   - [ ] Workday (workday.com)
-  - [ ] Greenhouse (greenhouse.io)
   - [ ] Indeed
   - [ ] Glassdoor
   - [ ] Other ATS/HR systems
