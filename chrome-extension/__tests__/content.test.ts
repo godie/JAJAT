@@ -100,7 +100,7 @@ describe('Content Script - extractJobData', () => {
       textContent: 'San Francisco, CA · Remote · Posted 2 days ago',
     };
     
-    // Mock position (4), company (4), then location (found)
+    // Mock position (4), company (4), then location (4 for extractLocation) and jobType (4 for extractJobType)
     mockQuerySelector
       .mockReturnValueOnce(null) // position 1
       .mockReturnValueOnce(null) // position 2
@@ -110,7 +110,14 @@ describe('Content Script - extractJobData', () => {
       .mockReturnValueOnce(null) // company 2
       .mockReturnValueOnce(null) // company 3
       .mockReturnValueOnce(null) // company 4
-      .mockReturnValueOnce(mockLocationElement); // location (found!)
+      .mockReturnValueOnce(null) // location selector 1
+      .mockReturnValueOnce(null) // location selector 2
+      .mockReturnValueOnce(null) // location selector 3
+      .mockReturnValueOnce(mockLocationElement) // location selector 4 (found!)
+      .mockReturnValueOnce(null) // jobType selector 1
+      .mockReturnValueOnce(null) // jobType selector 2
+      .mockReturnValueOnce(null) // jobType selector 3
+      .mockReturnValueOnce(mockLocationElement); // jobType selector 4 (found!)
     
     const result = extractJobData('https://www.linkedin.com/jobs/view/123');
     expect(result.location).toBe('San Francisco, CA');
@@ -123,7 +130,7 @@ describe('Content Script - extractJobData', () => {
       textContent: longDescription,
     };
     
-    // Mock position (4), company (4), location (4), then description (found)
+    // Mock position (4), company (4), location (4), jobType (4), then description (4)
     mockQuerySelector
       .mockReturnValueOnce(null) // position 1
       .mockReturnValueOnce(null) // position 2
@@ -137,7 +144,14 @@ describe('Content Script - extractJobData', () => {
       .mockReturnValueOnce(null) // location 2
       .mockReturnValueOnce(null) // location 3
       .mockReturnValueOnce(null) // location 4
-      .mockReturnValueOnce(mockDescriptionElement); // description (found!)
+      .mockReturnValueOnce(null) // jobType 1
+      .mockReturnValueOnce(null) // jobType 2
+      .mockReturnValueOnce(null) // jobType 3
+      .mockReturnValueOnce(null) // jobType 4
+      .mockReturnValueOnce(null) // description 1
+      .mockReturnValueOnce(null) // description 2
+      .mockReturnValueOnce(null) // description 3
+      .mockReturnValueOnce(mockDescriptionElement); // description 4 (found!)
     
     const result = extractJobData('https://www.linkedin.com/jobs/view/123');
     expect(result.description?.length).toBeLessThanOrEqual(1003); // 1000 + '...'
@@ -147,11 +161,14 @@ describe('Content Script - extractJobData', () => {
   it('should extract posted date from "Posted X days ago" format', () => {
     // Mock multiple selectors - location selector returns element with date
     const mockLocationElement = {
-      textContent: 'San Francisco, CA · Remote · Posted 5 days ago',
+      textContent: 'San Francisco, CA · Remote',
+    };
+    const mockDateElement = {
+      textContent: 'Posted 5 days ago',
     };
     
-    // Mock all selectors: position (4), company (4), location (4), description (4), salary (3), date (3)
-    // Location and date use the same selectors, so we need to return the element for both
+    // Mock all selectors: position (4), company (4), location (4), jobType (4), description (4), date (3)
+    // Note: salary uses querySelectorAll, so it doesn't count for querySelector mocks
     mockQuerySelector
       .mockReturnValueOnce(null) // position selector 1
       .mockReturnValueOnce(null) // position selector 2
@@ -161,13 +178,21 @@ describe('Content Script - extractJobData', () => {
       .mockReturnValueOnce(null) // company selector 2
       .mockReturnValueOnce(null) // company selector 3
       .mockReturnValueOnce(null) // company selector 4
-      .mockReturnValueOnce(mockLocationElement) // location selector 1 (found!)
+      .mockReturnValueOnce(null) // location selector 1
+      .mockReturnValueOnce(null) // location selector 2
+      .mockReturnValueOnce(null) // location selector 3
+      .mockReturnValueOnce(mockLocationElement) // location selector 4 (found!)
+      .mockReturnValueOnce(null) // jobType selector 1
+      .mockReturnValueOnce(null) // jobType selector 2
+      .mockReturnValueOnce(null) // jobType selector 3
+      .mockReturnValueOnce(null) // jobType selector 4
       .mockReturnValueOnce(null) // description selector 1
       .mockReturnValueOnce(null) // description selector 2
       .mockReturnValueOnce(null) // description selector 3
       .mockReturnValueOnce(null) // description selector 4
-      .mockReturnValueOnce(null) // salary selector 1 (querySelectorAll returns empty)
-      .mockReturnValueOnce(mockLocationElement); // date selector 1 (found!)
+      .mockReturnValueOnce(null) // date selector 1
+      .mockReturnValueOnce(null) // date selector 2
+      .mockReturnValueOnce(mockDateElement); // date selector 3 (found!)
     
     const result = extractJobData('https://www.linkedin.com/jobs/view/123');
     expect(result.postedDate).toBeDefined();

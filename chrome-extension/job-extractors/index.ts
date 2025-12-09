@@ -3,14 +3,17 @@
 
 import { JobExtractor, JobData } from './JobExtractor';
 import { LinkedInJobExtractor } from './LinkedInJobExtractor';
+import { GreenhouseJobExtractor } from './GreenhouseJobExtractor';
+import { AshbyhqJobExtractor } from './AshbyhqJobExtractor';
 
 /**
  * Registry of all available job extractors
  */
 const extractors: JobExtractor[] = [
   new LinkedInJobExtractor(),
+  new GreenhouseJobExtractor(),
+  new AshbyhqJobExtractor(),
   // Add more extractors here as they are implemented:
-  // new GreenhouseJobExtractor(),
   // new LeverJobExtractor(),
   // new WorkableJobExtractor(),
 ];
@@ -59,4 +62,6 @@ export function registerExtractor(extractor: JobExtractor): void {
 // Export types and classes for external use
 export type { JobExtractor, JobData };
 export { LinkedInJobExtractor };
+export { GreenhouseJobExtractor };
+export { AshbyhqJobExtractor };
 

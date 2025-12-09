@@ -108,7 +108,7 @@ In the project directory, you can run:
   - **Timeline View**: Chronological visualization of interview process with status indicators
   - **Kanban View**: Board-style organization grouped by status with quick summaries
   - **Calendar View**: Monthly calendar highlighting upcoming interview events
-- **Smart Filters & Search**: Persisted search, status, platform, and date filters with real-time results
+- **Smart Filters & Search**: Persisted search, status (with advanced inclusion/exclusion), platform, and date filters with real-time results
 - **Custom Alert System**: Beautiful, accessible alerts with auto-dismiss (success, error, warning, info) replacing browser alerts
 - **Timeline Editor**: Full-featured editor for managing interview events with stages, statuses, and notes
 - **Soft Delete with Confirmation**: Applications are marked as "Deleted" instead of being removed, with a custom confirmation dialog to prevent accidental deletions
@@ -117,7 +117,7 @@ In the project directory, you can run:
 - Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience with improved spacing on small screens
 - Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage
 - **Google Sheets Integration**: One-way sync to Google Sheets with automatic spreadsheet creation, sync status tracking, and error handling
-- **Chrome Extension**: Capture job opportunities from LinkedIn with automatic data extraction and sync with the web app
+- **Chrome Extension**: Capture job opportunities from LinkedIn, Greenhouse, and AshbyHQ with automatic data extraction and sync with the web app
 - **Opportunities Page**: Separate view for managing captured job opportunities before converting them to applications
 - **Manual Opportunity Creation**: Add opportunities directly from the web app with a full-featured form
 - **Bidirectional Extension Sync**: Real-time synchronization between Chrome extension and web app
@@ -152,24 +152,36 @@ Supported interview stages include: Application Submitted, Screener Call, First 
 
 For more details on the security measures implemented in this project, please see the [SECURITY.md](./SECURITY.md) file.
 
-## Chrome Extension - LinkedIn Job Capture
+## Chrome Extension - Multi-Platform Job Capture
 
-The project includes a Chrome extension for capturing job opportunities directly from LinkedIn. This allows you to quickly save interesting job postings before applying.
+The project includes a Chrome extension for capturing job opportunities from multiple job boards. Currently supports LinkedIn, Greenhouse, and AshbyHQ, with more platforms coming soon.
+
+### Supported Job Boards
+- **LinkedIn**: Full support for LinkedIn job postings
+- **Greenhouse**: Complete extraction from Greenhouse job boards
+- **AshbyHQ**: Full support for AshbyHQ job postings
 
 ### Features
-- **One-click capture**: Automatically extracts job details from LinkedIn job postings
+- **One-click capture**: Automatically extracts job details from supported job boards
+- **Smart extraction**: Uses multiple data sources (embedded JSON, JSON-LD, HTML, meta tags) for reliable data extraction
 - **Editable form**: Review and edit captured data before saving
 - **Sync with web app**: Automatically syncs with the web application when open
 - **Offline storage**: Uses Chrome's storage API for reliable data persistence
 - **Manual creation**: Add opportunities directly from the web app without the extension
 - **Bidirectional sync**: Real-time synchronization between extension and web app
 - **Memory efficient**: Proper cleanup prevents memory leaks in single-page applications
+- **Advanced filtering**: Filter opportunities by status with inclusion/exclusion options
 
 ### Quick Start
 1. Build the extension: `npm run build:extension`
 2. Load it in Chrome: Go to `chrome://extensions/`, enable Developer mode, and load the `chrome-extension/dist` folder
-3. Visit a LinkedIn job posting and click the extension icon to capture it
+3. Visit a job posting on LinkedIn, Greenhouse, or AshbyHQ and click the extension icon to capture it
 4. Or add opportunities manually from the Opportunities page in the web app
+
+### Supported URLs
+- LinkedIn: `https://www.linkedin.com/jobs/view/*`
+- Greenhouse: `https://boards.greenhouse.io/*`, `https://job-boards.greenhouse.io/*`
+- AshbyHQ: `https://jobs.ashbyhq.com/*`, `https://*.ashbyhq.com/*`
 
 ### Manual Opportunity Creation
 You don't need the extension to add opportunities! Simply:
@@ -329,16 +341,18 @@ job-application-tracker/
 │   ├── get-auth-cookie.php      // Secure cookie retrieval for OAuth tokens
 │   ├── clear-auth-cookie.php    // Secure cookie deletion for logout
 │   └── google-sheets.php        // Google Sheets API proxy for secure operations
-├── chrome-extension/            // Chrome extension for LinkedIn job capture
+├── chrome-extension/            // Chrome extension for multi-platform job capture
 │   ├── manifest.json            // Extension manifest
 │   ├── popup.html               // Popup HTML container
 │   ├── popup.tsx                // React popup component
-│   ├── content.ts               // Content script for LinkedIn pages
+│   ├── content.ts               // Content script for job board pages
 │   ├── webapp-content.ts       // Content script for web app sync
 │   ├── background.ts            // Background service worker
 │   ├── job-extractors/          // Job extraction system
 │   │   ├── JobExtractor.ts      // Extractor interface
 │   │   ├── LinkedInJobExtractor.ts  // LinkedIn extractor
+│   │   ├── GreenhouseJobExtractor.ts // Greenhouse extractor
+│   │   ├── AshbyhqJobExtractor.ts   // AshbyHQ extractor
 │   │   └── index.ts             // Extractor registry
 │   └── dist/                    // Built extension files (generated)
 ├── .env.local                   // Stores VITE_GOOGLE_CLIENT_ID (Ignored by Git).
@@ -408,8 +422,8 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 17 passed (17)
-Tests: 190+ passed (190+)
+Test Files: 19 passed (19)
+Tests: 230 passed (230)
 ```
 
 ### Test Coverage Includes:
@@ -420,9 +434,10 @@ Tests: 190+ passed (190+)
 - Google Sheets integration (create, sync, error handling)
 - Timeline event management
 - View switching (Table, Timeline, Kanban, Calendar)
-- Filter and search functionality
+- Filter and search functionality (including advanced status filtering)
 - Alert system and notifications
 - Chrome Extension components (content script, background, popup, webapp-content)
+- Job extractors (LinkedIn, Greenhouse, AshbyHQ) with comprehensive unit tests
 - Opportunity management (creation, deletion, conversion)
 - Manual opportunity form validation and submission
 

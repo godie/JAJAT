@@ -186,10 +186,21 @@ describe('HomePage Core Functionality and Persistence', () => {
     });
     expect(screen.queryByText(/Backend Dev/i)).not.toBeInTheDocument();
 
-    // Clear search first, then filter by status
+    // Clear search first, then filter by status using the new advanced filtering
     fireEvent.change(searchInput, { target: { value: '' } });
-    const statusSelect = screen.getByLabelText(/^Status$/i);
-    fireEvent.change(statusSelect, { target: { value: 'Offer' } });
+    
+    // Open the Include dropdown and select "Offer"
+    const includeButton = screen.getByText(/Include/i);
+    fireEvent.click(includeButton);
+    
+    // Wait for the dropdown to open and click on "Offer" checkbox
+    // Use getAllByLabelText and select the first one (from Include dropdown)
+    await waitFor(() => {
+      const offerCheckboxes = screen.getAllByLabelText(/Offer/i);
+      expect(offerCheckboxes.length).toBeGreaterThan(0);
+    });
+    const offerCheckboxes = screen.getAllByLabelText(/Offer/i);
+    fireEvent.click(offerCheckboxes[0]); // Click the first one (from Include dropdown)
 
     // Wait for filter to apply
     await waitFor(() => {

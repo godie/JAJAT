@@ -60,7 +60,7 @@ describe('LinkedInJobExtractor', () => {
         textContent: 'San Francisco, CA · Remote · Posted 2 days ago',
       };
       
-      // Mock position (4), company (4), then location (found)
+      // Mock position (4), company (4), location (4), jobType (4)
       mockQuerySelector
         .mockReturnValueOnce(null) // position 1
         .mockReturnValueOnce(null) // position 2
@@ -70,7 +70,14 @@ describe('LinkedInJobExtractor', () => {
         .mockReturnValueOnce(null) // company 2
         .mockReturnValueOnce(null) // company 3
         .mockReturnValueOnce(null) // company 4
-        .mockReturnValueOnce(mockLocationElement); // location (found!)
+        .mockReturnValueOnce(null) // location 1
+        .mockReturnValueOnce(null) // location 2
+        .mockReturnValueOnce(null) // location 3
+        .mockReturnValueOnce(mockLocationElement) // location 4 (found!)
+        .mockReturnValueOnce(null) // jobType 1
+        .mockReturnValueOnce(null) // jobType 2
+        .mockReturnValueOnce(null) // jobType 3
+        .mockReturnValueOnce(mockLocationElement); // jobType 4 (found!)
       
       const result = extractor.extract();
       expect(result.location).toBe('San Francisco, CA');
@@ -81,7 +88,7 @@ describe('LinkedInJobExtractor', () => {
       const longDescription = 'A'.repeat(1500);
       const mockDescriptionElement = { textContent: longDescription };
       
-      // Mock all previous selectors, then description
+      // Mock all previous selectors: position (4), company (4), location (4), jobType (4), description (4)
       mockQuerySelector
         .mockReturnValueOnce(null) // position 1
         .mockReturnValueOnce(null) // position 2
@@ -95,7 +102,14 @@ describe('LinkedInJobExtractor', () => {
         .mockReturnValueOnce(null) // location 2
         .mockReturnValueOnce(null) // location 3
         .mockReturnValueOnce(null) // location 4
-        .mockReturnValueOnce(mockDescriptionElement); // description (found!)
+        .mockReturnValueOnce(null) // jobType 1
+        .mockReturnValueOnce(null) // jobType 2
+        .mockReturnValueOnce(null) // jobType 3
+        .mockReturnValueOnce(null) // jobType 4
+        .mockReturnValueOnce(null) // description 1
+        .mockReturnValueOnce(null) // description 2
+        .mockReturnValueOnce(null) // description 3
+        .mockReturnValueOnce(mockDescriptionElement); // description 4 (found!)
       
       const result = extractor.extract();
       expect(result.description?.length).toBeLessThanOrEqual(1003);
@@ -118,27 +132,23 @@ describe('LinkedInJobExtractor', () => {
     });
 
     it('should extract posted date from "Posted X days ago" format', () => {
-      const mockLocationElement = {
+      // The location/jobType/date selectors all use the same element
+      // This element contains: "Location · Job Type · Posted X days ago"
+      const mockPrimaryDescriptionElement = {
         textContent: 'San Francisco, CA · Remote · Posted 5 days ago',
       };
       
-      // Mock all selectors, location and date use same selectors
-      mockQuerySelector
-        .mockReturnValueOnce(null) // position 1
-        .mockReturnValueOnce(null) // position 2
-        .mockReturnValueOnce(null) // position 3
-        .mockReturnValueOnce(null) // position 4
-        .mockReturnValueOnce(null) // company 1
-        .mockReturnValueOnce(null) // company 2
-        .mockReturnValueOnce(null) // company 3
-        .mockReturnValueOnce(null) // company 4
-        .mockReturnValueOnce(mockLocationElement) // location (found!)
-        .mockReturnValueOnce(null) // description 1
-        .mockReturnValueOnce(null) // description 2
-        .mockReturnValueOnce(null) // description 3
-        .mockReturnValueOnce(null) // description 4
-        .mockReturnValueOnce(null) // salary (querySelectorAll returns empty)
-        .mockReturnValueOnce(mockLocationElement); // date (found!)
+      // Use mockImplementation to return elements based on selector
+      mockQuerySelector.mockImplementation((selector: string) => {
+        // Location, jobType, and date all use these same selectors
+        if (selector === '.job-details-jobs-unified-top-card__primary-description-without-tagline' ||
+            selector === '.jobs-details-top-card__primary-description' ||
+            selector === '.jobs-details-top-card__primary-description-without-tagline' ||
+            selector === '.job-details-jobs-unified-top-card__primary-description') {
+          return mockPrimaryDescriptionElement as unknown as HTMLElement;
+        }
+        return null;
+      });
       
       const result = extractor.extract();
       expect(result.postedDate).toBeDefined();
@@ -146,12 +156,15 @@ describe('LinkedInJobExtractor', () => {
     });
 
     it('should handle missing DOM elements gracefully', () => {
+      // Reset mock to ensure clean state
+      mockQuerySelector.mockReset();
       mockQuerySelector.mockReturnValue(null);
       
       const result = extractor.extract();
       expect(result).toBeDefined();
       expect(result.position).toBeUndefined();
       expect(result.company).toBeUndefined();
+      expect(result.postedDate).toBeUndefined();
     });
 
     it('should handle errors gracefully', () => {

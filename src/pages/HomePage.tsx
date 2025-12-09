@@ -28,6 +28,8 @@ const FILTERS_STORAGE_KEY = 'applicationFilters';
 const defaultFilters: Filters = {
   search: '',
   status: '',
+  statusInclude: [],
+  statusExclude: [],
   platform: '',
   dateFrom: '',
   dateTo: '',
@@ -239,7 +241,26 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
         ? [position, company, contact, notes, timelineNotes].some(value => value.includes(normalizedSearch))
         : true;
 
-      const matchesStatus = filters.status ? app.status === filters.status : true;
+      // Advanced status filtering with include/exclude
+      let matchesStatus = true;
+      const statusInclude = filters.statusInclude || [];
+      const statusExclude = filters.statusExclude || [];
+      
+      // If using legacy single status filter
+      if (filters.status && statusInclude.length === 0 && statusExclude.length === 0) {
+        matchesStatus = app.status === filters.status;
+      } else {
+        // New advanced filtering
+        // If there are included statuses, app must be in that list
+        if (statusInclude.length > 0) {
+          matchesStatus = statusInclude.includes(app.status);
+        }
+        // Excluded statuses always take precedence
+        if (statusExclude.length > 0 && statusExclude.includes(app.status)) {
+          matchesStatus = false;
+        }
+      }
+
       const matchesPlatform = filters.platform ? app.platform === filters.platform : true;
 
       let matchesDateFrom = true;
