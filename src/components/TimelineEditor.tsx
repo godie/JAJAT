@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import type { InterviewEvent, InterviewStageType, EventStatus } from '../utils/localStorage';
 import { generateId } from '../utils/localStorage';
+import { parseLocalDate } from '../utils/date';
 
 interface TimelineEditorProps {
   events: InterviewEvent[];
@@ -73,7 +74,7 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
     }
   };
 
-  const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedEvents = [...events].sort((a, b) => parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime());
 
   return (
     <div className="mt-6">

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import type { JobApplication, InterviewEvent } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
+import { parseLocalDate } from '../utils/date';
 
 interface TimelineViewProps {
   applications: JobApplication[];
@@ -57,13 +58,13 @@ const TimelineView: React.FC<TimelineViewProps> = ({ applications, onEdit, onDel
   };
 
   const sortEvents = (events: InterviewEvent[]): InterviewEvent[] => {
-    return [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return [...events].sort((a, b) => parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime());
   };
 
   const getNextEvent = (events: InterviewEvent[]): InterviewEvent | null => {
     const sorted = sortEvents(events);
     const now = new Date();
-    const upcoming = sorted.find((event) => new Date(event.date) >= now && event.status === 'scheduled');
+    const upcoming = sorted.find((event) => parseLocalDate(event.date) >= now && event.status === 'scheduled');
     return upcoming || null;
   };
 

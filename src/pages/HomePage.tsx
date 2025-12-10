@@ -21,6 +21,7 @@ import {
 import AddJobForm from '../components/AddJobComponent';
 import GoogleSheetsSync from '../components/GoogleSheetsSync';
 import packageJson from '../../package.json';
+import { parseLocalDate } from '../utils/date';
 
 const VIEW_STORAGE_KEY = 'preferredView';
 const FILTERS_STORAGE_KEY = 'applicationFilters';
@@ -222,8 +223,8 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
 
   const filteredApplications = useMemo(() => {
     const normalizedSearch = filters.search.trim().toLowerCase();
-    const fromDate = filters.dateFrom ? new Date(filters.dateFrom) : null;
-    const toDate = filters.dateTo ? new Date(filters.dateTo) : null;
+    const fromDate = filters.dateFrom ? parseLocalDate(filters.dateFrom) : null;
+    const toDate = filters.dateTo ? parseLocalDate(filters.dateTo) : null;
 
     return applications.filter(app => {
       // Exclude deleted applications by default
@@ -270,7 +271,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
         if (!app.applicationDate) {
           matchesDateFrom = false;
         } else {
-          matchesDateFrom = new Date(app.applicationDate) >= fromDate;
+          matchesDateFrom = parseLocalDate(app.applicationDate) >= fromDate;
         }
       }
 
@@ -278,7 +279,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
         if (!app.applicationDate) {
           matchesDateTo = false;
         } else {
-          const appDate = new Date(app.applicationDate);
+          const appDate = parseLocalDate(app.applicationDate);
           matchesDateTo = appDate <= toDate;
         }
       }
