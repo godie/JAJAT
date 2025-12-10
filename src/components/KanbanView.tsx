@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import type { JobApplication } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
+import { parseLocalDate } from '../utils/date';
 
 interface KanbanViewProps {
   applications: JobApplication[];
@@ -50,13 +51,13 @@ const getInterviewingSubStatus = (app: JobApplication): string | null => {
 
   // Sort timeline events by date (ascending - earliest first)
   const sortedEvents = [...app.timeline].sort((a, b) => 
-    new Date(a.date).getTime() - new Date(b.date).getTime()
+    parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime()
   );
 
   // First, look for the next active event (scheduled or pending) - the upcoming step
   const activeEvent = sortedEvents.find(
     (event) => (event.status === 'scheduled' || event.status === 'pending') && 
-               new Date(event.date) >= new Date()
+               parseLocalDate(event.date) >= new Date()
   );
 
   if (activeEvent) {
@@ -67,7 +68,7 @@ const getInterviewingSubStatus = (app: JobApplication): string | null => {
   // Sort by date descending to get the most recent
   const completedEvents = sortedEvents
     .filter((event) => event.status === 'completed')
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort((a, b) => parseLocalDate(b.date).getTime() - parseLocalDate(a.date).getTime());
   
   if (completedEvents.length > 0) {
     return getStageDisplayName(completedEvents[0].type, completedEvents[0].customTypeName);

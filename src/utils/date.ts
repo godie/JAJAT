@@ -2,6 +2,27 @@
 import type { DateFormat } from '../types/preferences';
 
 /**
+ * Parse a date string in YYYY-MM-DD format as a local date (not UTC)
+ * This prevents timezone issues where dates are shifted by one day
+ * @param dateString - ISO date string (YYYY-MM-DD)
+ * @returns Date object in local timezone
+ */
+export const parseLocalDate = (dateString: string): Date => {
+  if (!dateString) return new Date();
+  
+  // If the string is in YYYY-MM-DD format, parse it as local date
+  const dateMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (dateMatch) {
+    const [, year, month, day] = dateMatch;
+    // month is 0-indexed in Date constructor
+    return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+  }
+  
+  // Fallback to standard Date parsing for other formats
+  return new Date(dateString);
+};
+
+/**
  * Format a date string according to user's date format preference
  * @param dateString - ISO date string (YYYY-MM-DD) or any date string
  * @param format - Date format preference
@@ -11,7 +32,7 @@ export const formatDate = (dateString: string, format: DateFormat = 'YYYY-MM-DD'
   if (!dateString) return '';
   
   try {
-    const date = new Date(dateString);
+    const date = parseLocalDate(dateString);
     if (isNaN(date.getTime())) return dateString; // Return original if invalid
     
     const day = String(date.getDate()).padStart(2, '0');

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import type { JobApplication, InterviewEvent } from '../utils/localStorage';
+import { parseLocalDate } from '../utils/date';
 
 interface CalendarViewProps {
   applications: JobApplication[];
@@ -74,7 +75,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
       applications.forEach((application) => {
         application.timeline?.forEach((event) => {
           if (!event.date) return;
-          const eventDate = new Date(event.date);
+          const eventDate = parseLocalDate(event.date);
           if (isSameDay(eventDate, current)) {
             eventsForDay.push({ application, event });
           }
@@ -161,7 +162,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
               </div>
               <ul className="mt-1 space-y-1">
                 {day.events.slice(0, 3).map(({ application, event }) => {
-                  const eventDate = new Date(event.date);
+                  const eventDate = parseLocalDate(event.date);
                   const relativeTime = formatRelativeTime(eventDate);
                   const daysDiff = getDaysDifference(eventDate);
                   const isPast = daysDiff < 0;
