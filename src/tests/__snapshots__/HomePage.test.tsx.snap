@@ -510,7 +510,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
             godie
           </a>
            with cursor v
-          1.5.2
+          1.5.3
            (
           2025
           )
@@ -520,11 +520,20 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
         >
           <a
             class="text-gray-500 hover:text-gray-700"
+            href="/terms.html"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Terms of Service
+          </a>
+           | 
+          <a
+            class="text-gray-500 hover:text-gray-700"
             href="/privacy.html"
             rel="noopener noreferrer"
             target="_blank"
           >
-            Política de Privacidad
+            Privacy
           </a>
         </p>
       </div>

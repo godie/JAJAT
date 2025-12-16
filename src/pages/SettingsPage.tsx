@@ -11,6 +11,7 @@ import {
   type UserPreferences,
   type ViewType,
   type DateFormat,
+  type CustomInterviewEvent,
   generateId,
 } from '../utils/localStorage';
 import packageJson from '../../package.json';
@@ -23,13 +24,17 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
   const { showSuccess } = useAlert();
   const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
   const [hasChanges, setHasChanges] = useState(false);
-  const [activeSection, setActiveSection] = useState<'fields' | 'view' | 'date' | 'custom'>('fields');
+  const [activeSection, setActiveSection] = useState<'fields' | 'view' | 'date' | 'custom' | 'interviewing'>('fields');
   const [editingCustomField, setEditingCustomField] = useState<FieldDefinition | null>(null);
   const [customFieldForm, setCustomFieldForm] = useState<Partial<FieldDefinition>>({
     label: '',
     type: 'text',
     required: false,
     options: [],
+  });
+  const [editingInterviewEvent, setEditingInterviewEvent] = useState<CustomInterviewEvent | null>(null);
+  const [interviewEventForm, setInterviewEventForm] = useState<Partial<CustomInterviewEvent>>({
+    label: '',
   });
 
   useEffect(() => {
@@ -145,11 +150,66 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
     });
   };
 
+  const handleAddInterviewEvent = () => {
+    if (!interviewEventForm.label) return;
+    
+    const newEvent: CustomInterviewEvent = {
+      id: `interview-event-${generateId()}`,
+      label: interviewEventForm.label,
+    };
+
+    setPreferences((prev) => {
+      const customInterviewEvents = [...(prev.customInterviewEvents || []), newEvent];
+      setHasChanges(true);
+      return { ...prev, customInterviewEvents };
+    });
+
+    setInterviewEventForm({ label: '' });
+    setEditingInterviewEvent(null);
+  };
+
+  const handleEditInterviewEvent = (event: CustomInterviewEvent) => {
+    setEditingInterviewEvent(event);
+    setInterviewEventForm({
+      label: event.label,
+    });
+  };
+
+  const handleUpdateInterviewEvent = () => {
+    if (!editingInterviewEvent || !interviewEventForm.label) return;
+
+    setPreferences((prev) => {
+      const customInterviewEvents = (prev.customInterviewEvents || []).map((event) =>
+        event.id === editingInterviewEvent.id
+          ? {
+              ...event,
+              label: interviewEventForm.label!,
+            }
+          : event
+      );
+      setHasChanges(true);
+      return { ...prev, customInterviewEvents };
+    });
+
+    setInterviewEventForm({ label: '' });
+    setEditingInterviewEvent(null);
+  };
+
+  const handleDeleteInterviewEvent = (eventId: string) => {
+    setPreferences((prev) => {
+      const customInterviewEvents = (prev.customInterviewEvents || []).filter((e) => e.id !== eventId);
+      setHasChanges(true);
+      return { ...prev, customInterviewEvents };
+    });
+  };
+
   const handleReset = () => {
     setPreferences(DEFAULT_PREFERENCES);
     setHasChanges(true);
     setCustomFieldForm({ label: '', type: 'text', required: false, options: [] });
     setEditingCustomField(null);
+    setInterviewEventForm({ label: '' });
+    setEditingInterviewEvent(null);
   };
 
   const handleSave = () => {
@@ -168,6 +228,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
     { id: 'view' as const, label: 'Default View', icon: '👁️' },
     { id: 'date' as const, label: 'Date Format', icon: '📅' },
     { id: 'custom' as const, label: 'Custom Fields', icon: '➕' },
+    { id: 'interviewing' as const, label: 'Interview Events', icon: '🎯' },
   ];
 
   return (
@@ -576,6 +637,116 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <p className="text-sm">No custom fields yet. Create one above to get started!</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Interview Events Section */}
+          {activeSection === 'interviewing' && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Interview Events</h2>
+              <p className="text-sm text-gray-500 mb-6">
+                Manage custom interview event types that will be available when creating timeline events.
+              </p>
+
+              {/* Add/Edit Interview Event Form */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                  {editingInterviewEvent ? 'Edit Interview Event' : 'Add New Interview Event'}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Event Label *
+                    </label>
+                    <input
+                      type="text"
+                      value={interviewEventForm.label || ''}
+                      onChange={(e) => setInterviewEventForm({ ...interviewEventForm, label: e.target.value })}
+                      placeholder="e.g., Phone Screen, Panel Interview"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  {editingInterviewEvent ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handleUpdateInterviewEvent}
+                        disabled={!interviewEventForm.label}
+                        className={`px-4 py-2 rounded-md text-sm font-medium ${
+                          interviewEventForm.label
+                            ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        Update Event
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingInterviewEvent(null);
+                          setInterviewEventForm({ label: '' });
+                        }}
+                        className="px-4 py-2 rounded-md text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleAddInterviewEvent}
+                      disabled={!interviewEventForm.label}
+                      className={`px-4 py-2 rounded-md text-sm font-medium ${
+                        interviewEventForm.label
+                          ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      Add Event
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Interview Events List */}
+              {preferences.customInterviewEvents && preferences.customInterviewEvents.length > 0 ? (
+                <div className="border border-gray-100 rounded-lg divide-y divide-gray-100">
+                  {preferences.customInterviewEvents.map((event) => (
+                    <div
+                      key={event.id}
+                      className="flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50"
+                    >
+                      <div>
+                        <div className="font-medium text-gray-800">
+                          {event.label}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleEditInterviewEvent(event)}
+                          className="px-3 py-1 text-xs font-medium text-indigo-600 border border-indigo-300 rounded hover:bg-indigo-50"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteInterviewEvent(event.id)}
+                          className="px-3 py-1 text-xs font-medium text-red-600 border border-red-300 rounded hover:bg-red-50"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p className="text-sm">No custom interview events yet. Create one above to get started!</p>
                 </div>
               )}
             </div>

@@ -21,6 +21,14 @@ export interface FieldDefinition {
 export type DateFormat = 'DD/MM/YYYY' | 'MM/DD/YYYY' | 'YYYY-MM-DD';
 export type ViewType = 'table' | 'timeline' | 'kanban' | 'calendar';
 
+/**
+ * Custom interview event type definition
+ */
+export interface CustomInterviewEvent {
+  id: string;
+  label: string;
+}
+
 export interface UserPreferences {
   /** IDs of fields that should be visible/enabled in the table */
   enabledFields: string[];
@@ -32,5 +40,7 @@ export interface UserPreferences {
   defaultView: ViewType;
   /** Date format preference */
   dateFormat: DateFormat;
+  /** User defined custom interview event types */
+  customInterviewEvents: CustomInterviewEvent[];
 }
 

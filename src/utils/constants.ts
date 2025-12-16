@@ -25,5 +25,6 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   columnOrder: DEFAULT_FIELDS.map((field) => field.id),
   defaultView: 'table',
   dateFormat: 'YYYY-MM-DD',
+  customInterviewEvents: [],
 };
 

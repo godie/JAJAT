@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Job Application Tracker</title>
+    <meta name="description" content="Terms of Service for Job Application Tracker. Learn about the conditions and terms for using our service.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .language-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .language-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .language-tab:hover {
+            color: #3d74cc;
+        }
+
+        .language-tab.active {
+            color: #3d74cc;
+            border-bottom-color: #3d74cc;
+        }
+
+        header {
+            border-bottom: 2px solid #3d74cc;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: #3d74cc;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .last-updated {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        h2 {
+            color: #3d74cc;
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        h3 {
+            color: #555;
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .contact-info {
+            background-color: #e7f3ff;
+            border-left: 4px solid #3d74cc;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        a {
+            color: #3d74cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+
+            .language-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="language-tabs">
+            <button class="language-tab active" onclick="switchLanguage('en')">English</button>
+            <button class="language-tab" onclick="switchLanguage('es')">Español</button>
+        </div>
+
+        <!-- English Content -->
+        <div id="content-en" class="content active">
+            <header>
+                <h1>Terms of Service</h1>
+                <p class="last-updated">Last updated: <time datetime="2025-12-16">December 16, 2025</time></p>
+            </header>
+
+            <section>
+                <h2>1. Acceptance of Terms</h2>
+                <p>
+                    Welcome to Job Application Tracker ("we", "our", "the service", "the application"). 
+                    These Terms of Service ("Terms") govern your access and use of our web application and 
+                    Chrome extension for browsers (collectively, the "Service").
+                </p>
+                <p>
+                    By accessing or using our Service, you agree to be bound by these Terms. 
+                    If you disagree with any part of these terms, then you may not access the Service.
+                </p>
+                <div class="highlight">
+                    <p><strong>Important:</strong> By using our Service, you also agree to our 
+                    <a href="/privacy.html">Privacy Policy</a>, which describes how we collect, 
+                    use, and protect your information.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>2. Service Description</h2>
+                <p>
+                    Job Application Tracker is a web application and Chrome extension that allows you to:
+                </p>
+                <ul>
+                    <li>Manage and track your job applications</li>
+                    <li>Organize information about job opportunities</li>
+                    <li>Capture job information from websites such as LinkedIn, Greenhouse, and AshbyHQ</li>
+                    <li>Optionally sync your data with Google Sheets</li>
+                    <li>Visualize your applications in different formats (table, timeline, kanban, calendar)</li>
+                </ul>
+                <p>
+                    The Service is provided "as is" and may be modified, suspended, or discontinued 
+                    at any time without prior notice.
+                </p>
+            </section>
+
+            <section>
+                <h2>3. Eligibility and Accounts</h2>
+                
+                <h3>3.1. Age Requirements</h3>
+                <p>
+                    You must be at least 13 years old to use this Service. If you are under 18, 
+                    you must have permission from a parent or legal guardian to use the Service.
+                </p>
+
+                <h3>3.2. Google Account</h3>
+                <p>
+                    To use certain features of the Service, such as synchronization with Google Sheets, 
+                    you must authenticate using your Google account through Google OAuth. By doing so, you:
+                </p>
+                <ul>
+                    <li>Warrant that you have authority to link your Google account to the Service</li>
+                    <li>Are responsible for maintaining the confidentiality of your Google account</li>
+                    <li>Accept Google's policies and terms of service</li>
+                    <li>Acknowledge that we may access your Google account only for functions you explicitly authorize</li>
+                </ul>
+
+                <h3>3.3. Account Responsibility</h3>
+                <p>
+                    You are responsible for all activities that occur under your account. 
+                    You must notify us immediately of any unauthorized use of your account.
+                </p>
+            </section>
+
+            <section>
+                <h2>4. Acceptable Use</h2>
+                <p>You agree to use the Service only for lawful purposes and in accordance with these Terms. 
+                You are prohibited from:</p>
+                <ul>
+                    <li>Using the Service for any illegal or unauthorized purpose</li>
+                    <li>Violating any applicable law, regulation, or rule</li>
+                    <li>Infringing or violating the intellectual property rights of others</li>
+                    <li>Transmitting any virus, malware, or malicious code</li>
+                    <li>Attempting unauthorized access to any part of the Service or related systems</li>
+                    <li>Interfering with or disrupting the Service or servers connected to the Service</li>
+                    <li>Using the Service to send spam, unsolicited emails, or commercial communications</li>
+                    <li>Collecting or storing personal information of other users without their consent</li>
+                    <li>Using robots, scripts, or automated methods to access the Service without authorization</li>
+                    <li>Reverse engineering, decompiling, or disassembling any part of the Service</li>
+                </ul>
+                <div class="warning">
+                    <p><strong>Warning:</strong> Violation of these terms may result in immediate termination 
+                    of your access to the Service without prior notice.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>5. Integration with Google Services</h2>
+                
+                <h3>5.1. Google OAuth</h3>
+                <p>
+                    The Service uses Google OAuth for authentication. By using this feature, you:
+                </p>
+                <ul>
+                    <li>Accept Google's <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a></li>
+                    <li>Acknowledge that Google may receive information about your use of the Service</li>
+                    <li>Authorize the Service to access your basic Google profile information</li>
+                    <li>May revoke access at any time from your Google account settings</li>
+                </ul>
+
+                <h3>5.2. Google Sheets API</h3>
+                <p>
+                    If you choose to use the Google Sheets synchronization feature:
+                </p>
+                <ul>
+                    <li>You authorize the Service to create, read, and update spreadsheets in your Google Drive account</li>
+                    <li>You acknowledge that your data will be stored in your own Google Drive account</li>
+                    <li>You are responsible for managing access and permissions of created spreadsheets</li>
+                    <li>You may disable synchronization at any time</li>
+                    <li>You accept that use of Google Sheets is subject to Google's limits and policies</li>
+                </ul>
+                <p>
+                    <strong>Note:</strong> Synchronization with Google Sheets is completely optional. 
+                    You may use the Service without this feature.
+                </p>
+            </section>
+
+            <section>
+                <h2>6. User Data and Ownership</h2>
+                
+                <h3>6.1. Your Data</h3>
+                <p>
+                    You retain all ownership rights to the data you enter into the Service. 
+                    Your job application data, opportunities, and preferences are yours.
+                </p>
+
+                <h3>6.2. Data Storage</h3>
+                <p>
+                    Your data is stored primarily on your device using browser localStorage. 
+                    This means that:
+                </p>
+                <ul>
+                    <li>Your data remains under your control</li>
+                    <li>You can export or delete your data at any time</li>
+                    <li>If you clear your browser storage, your data may be lost</li>
+                    <li>We recommend making periodic backups of your data</li>
+                </ul>
+
+                <h3>6.3. License to Use Your Data</h3>
+                <p>
+                    By using the Service, you grant us a limited, non-exclusive, 
+                    revocable, and non-sublicensable license to:
+                </p>
+                <ul>
+                    <li>Process and store your data to provide the Service</li>
+                    <li>Improve and maintain the Service</li>
+                    <li>Perform aggregated and anonymous analysis (without personally identifying you)</li>
+                </ul>
+                <p>
+                    This license terminates when you delete your data or stop using the Service.
+                </p>
+            </section>
+
+            <section>
+                <h2>7. Intellectual Property</h2>
+                
+                <h3>7.1. Our Content</h3>
+                <p>
+                    The Service, including its design, source code, features, logos, trademarks, 
+                    and content, is the property of Job Application Tracker and is protected by intellectual property laws.
+                </p>
+
+                <h3>7.2. Third-Party Software</h3>
+                <p>
+                    The Service may use open-source software and third-party libraries. 
+                    These components are subject to their own licenses, which may be available 
+                    in the project repository.
+                </p>
+
+                <h3>7.3. Restrictions</h3>
+                <p>
+                    You may not copy, modify, distribute, sell, or rent any part of the Service 
+                    without our explicit written permission.
+                </p>
+            </section>
+
+            <section>
+                <h2>8. Service Availability</h2>
+                <p>
+                    We strive to keep the Service available and functioning properly, but:
+                </p>
+                <ul>
+                    <li>We do not guarantee that the Service will be available uninterrupted or error-free</li>
+                    <li>We may perform scheduled or emergency maintenance resulting in downtime</li>
+                    <li>We may modify, suspend, or discontinue any part of the Service at any time</li>
+                    <li>We are not responsible for any data loss due to technical issues</li>
+                </ul>
+                <div class="highlight">
+                    <p><strong>Recommendation:</strong> We recommend making periodic backups 
+                    of your data, especially if you use optional synchronization features.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>9. Limitation of Liability</h2>
+                <p>
+                    <strong>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW:</strong>
+                </p>
+                <ul>
+                    <li>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND</li>
+                    <li>WE DO NOT GUARANTEE THAT THE SERVICE WILL BE ACCURATE, COMPLETE, SECURE, ERROR-FREE, OR UNINTERRUPTED</li>
+                    <li>WE WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES 
+                        RESULTING FROM THE USE OR INABILITY TO USE THE SERVICE</li>
+                    <li>WE WILL NOT BE LIABLE FOR LOSS OF DATA, INFORMATION, OR BENEFITS</li>
+                    <li>OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT YOU HAVE PAID FOR THE SERVICE 
+                        (IF APPLICABLE) OR $0 IF THE SERVICE IS FREE</li>
+                </ul>
+                <p>
+                    Some jurisdictions do not allow the exclusion of implied warranties or the limitation 
+                    of liability for incidental damages, so some of the limitations above may not apply to you.
+                </p>
+            </section>
+
+            <section>
+                <h2>10. Indemnification</h2>
+                <p>
+                    You agree to indemnify, defend, and hold harmless Job Application Tracker, 
+                    its affiliates, directors, employees, and agents from any claim, liability, damage, 
+                    loss, or expense (including reasonable legal fees) arising from or related to:
+                </p>
+                <ul>
+                    <li>Your use of the Service</li>
+                    <li>Your violation of these Terms</li>
+                    <li>Your violation of any third-party rights</li>
+                    <li>Any content or data you provide to the Service</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>11. Modifications to Terms</h2>
+                <p>
+                    We reserve the right to modify these Terms at any time. 
+                    We will notify you of any material changes by posting the new Terms on this page 
+                    and updating the "Last updated" date.
+                </p>
+                <p>
+                    Your continued use of the Service after changes take effect constitutes 
+                    your acceptance of the modified Terms. If you do not agree with the changes, 
+                    you must stop using the Service.
+                </p>
+            </section>
+
+            <section>
+                <h2>12. Termination</h2>
+                
+                <h3>12.1. Termination by You</h3>
+                <p>
+                    You may stop using the Service at any time. You may delete your data 
+                    by clearing your browser's local storage or uninstalling the Chrome extension.
+                </p>
+
+                <h3>12.2. Termination by Us</h3>
+                <p>
+                    We reserve the right to suspend or terminate your access to the Service, 
+                    with or without cause or prior notice, for any reason, including but not limited to:
+                </p>
+                <ul>
+                    <li>Violation of these Terms</li>
+                    <li>Fraudulent or abusive use of the Service</li>
+                    <li>Illegal activity</li>
+                    <li>Prolonged inactivity</li>
+                </ul>
+
+                <h3>12.3. Effects of Termination</h3>
+                <p>
+                    Upon termination, your right to use the Service will cease immediately. 
+                    Your data may be deleted according to our data retention policies.
+                </p>
+            </section>
+
+            <section>
+                <h2>13. Third-Party Services</h2>
+                <p>
+                    The Service may contain links to third-party websites or services that are not owned 
+                    or controlled by us. We have no control over and assume no responsibility 
+                    for the content, privacy policies, or practices of third-party websites or services.
+                </p>
+                <p>
+                    You acknowledge and agree that we will not be responsible, directly or indirectly, 
+                    for any damage or loss caused or alleged to be caused by or in connection with 
+                    the use of any content, goods, or services available on or through such websites or services.
+                </p>
+            </section>
+
+            <section>
+                <h2>14. Applicable Law and Jurisdiction</h2>
+                <p>
+                    These Terms shall be governed and interpreted in accordance with the laws of the country 
+                    where the Service is operated, without regard to its conflict of law provisions.
+                </p>
+                <p>
+                    Any dispute arising from or related to these Terms or the Service 
+                    shall be resolved in the competent courts of the corresponding jurisdiction.
+                </p>
+            </section>
+
+            <section>
+                <h2>15. General Provisions</h2>
+                
+                <h3>15.1. Entire Agreement</h3>
+                <p>
+                    These Terms, together with our Privacy Policy, constitute the entire agreement 
+                    between you and Job Application Tracker regarding the use of the Service.
+                </p>
+
+                <h3>15.2. Severability</h3>
+                <p>
+                    If any provision of these Terms is found to be invalid or unenforceable, 
+                    the remaining provisions will remain in full force and effect.
+                </p>
+
+                <h3>15.3. Waiver</h3>
+                <p>
+                    Our failure to exercise or enforce any right or provision of these Terms 
+                    shall not constitute a waiver of such right or provision.
+                </p>
+
+                <h3>15.4. Assignment</h3>
+                <p>
+                    You may not assign or transfer these Terms or your rights under these Terms without our 
+                    prior written consent. We may assign these Terms without restriction.
+                </p>
+            </section>
+
+            <section>
+                <h2>16. Contact</h2>
+                <p>
+                    If you have questions about these Terms of Service, you can contact us:
+                </p>
+                <div class="contact-info">
+                    <p>
+                        <strong>Job Application Tracker</strong><br>
+                        Website: <a href="https://jajat.godieboy.com">https://jajat.godieboy.com</a><br>
+                        Terms of service page: <a href="https://jajat.godieboy.com/terms.html">https://jajat.godieboy.com/terms.html</a><br>
+                        Privacy policy page: <a href="https://jajat.godieboy.com/privacy.html">https://jajat.godieboy.com/privacy.html</a>
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>17. Acceptance</h2>
+                <p>
+                    By using Job Application Tracker, you acknowledge that you have read, understood, and agree 
+                    to be bound by these Terms of Service and our Privacy Policy. 
+                    If you do not agree with these terms, you must not use the Service.
+                </p>
+            </section>
+
+            <footer>
+                <p>&copy; 2025 Job Application Tracker. All rights reserved.</p>
+                <p>
+                    <a href="https://jajat.godieboy.com">Back to application</a> | 
+                    <a href="/privacy.html">Privacy Policy</a>
+                </p>
+            </footer>
+        </div>
+
+        <!-- Spanish Content -->
+        <div id="content-es" class="content">
+            <header>
+                <h1>Términos de Uso</h1>
+                <p class="last-updated">Última actualización: <time datetime="2025-12-16">16 de diciembre de 2025</time></p>
+            </header>
+
+            <section>
+                <h2>1. Aceptación de los Términos</h2>
+                <p>
+                    Bienvenido a Job Application Tracker ("nosotros", "nuestro", "el servicio", "la aplicación"). 
+                    Estos Términos de Uso ("Términos") rigen su acceso y uso de nuestra aplicación web y extensión 
+                    de Chrome para navegadores (colectivamente, el "Servicio").
+                </p>
+                <p>
+                    Al acceder o utilizar nuestro Servicio, usted acepta estar sujeto a estos Términos. 
+                    Si no está de acuerdo con alguna parte de estos términos, entonces no debe acceder al Servicio.
+                </p>
+                <div class="highlight">
+                    <p><strong>Importante:</strong> Al utilizar nuestro Servicio, usted también acepta nuestra 
+                    <a href="/privacy.html">Política de Privacidad</a>, que describe cómo recopilamos, 
+                    usamos y protegemos su información.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>2. Descripción del Servicio</h2>
+                <p>
+                    Job Application Tracker es una aplicación web y extensión de Chrome que le permite:
+                </p>
+                <ul>
+                    <li>Gestionar y rastrear sus solicitudes de empleo</li>
+                    <li>Organizar información sobre oportunidades de trabajo</li>
+                    <li>Capturar información de trabajos desde sitios web como LinkedIn, Greenhouse y AshbyHQ</li>
+                    <li>Sincronizar opcionalmente sus datos con Google Sheets</li>
+                    <li>Visualizar sus aplicaciones en diferentes formatos (tabla, línea de tiempo, kanban, calendario)</li>
+                </ul>
+                <p>
+                    El Servicio se proporciona "tal cual" y puede ser modificado, suspendido o discontinuado 
+                    en cualquier momento sin previo aviso.
+                </p>
+            </section>
+
+            <section>
+                <h2>3. Elegibilidad y Cuentas</h2>
+                
+                <h3>3.1. Requisitos de Edad</h3>
+                <p>
+                    Debe tener al menos 13 años de edad para utilizar este Servicio. Si tiene menos de 18 años, 
+                    debe tener el permiso de un padre o tutor legal para utilizar el Servicio.
+                </p>
+
+                <h3>3.2. Cuenta de Google</h3>
+                <p>
+                    Para utilizar ciertas funciones del Servicio, como la sincronización con Google Sheets, 
+                    debe autenticarse utilizando su cuenta de Google mediante Google OAuth. Al hacerlo, usted:
+                </p>
+                <ul>
+                    <li>Garantiza que tiene autoridad para vincular su cuenta de Google al Servicio</li>
+                    <li>Es responsable de mantener la confidencialidad de su cuenta de Google</li>
+                    <li>Acepta las políticas y términos de servicio de Google</li>
+                    <li>Reconoce que podemos acceder a su cuenta de Google solo para las funciones que autoriza explícitamente</li>
+                </ul>
+
+                <h3>3.3. Responsabilidad de la Cuenta</h3>
+                <p>
+                    Usted es responsable de todas las actividades que ocurran bajo su cuenta. 
+                    Debe notificarnos inmediatamente de cualquier uso no autorizado de su cuenta.
+                </p>
+            </section>
+
+            <section>
+                <h2>4. Uso Aceptable</h2>
+                <p>Usted se compromete a utilizar el Servicio solo para fines legales y de acuerdo con estos Términos. 
+                Está prohibido:</p>
+                <ul>
+                    <li>Utilizar el Servicio para cualquier propósito ilegal o no autorizado</li>
+                    <li>Violar cualquier ley, regulación o regla aplicable</li>
+                    <li>Infringir o violar los derechos de propiedad intelectual de otros</li>
+                    <li>Transmitir cualquier virus, malware o código malicioso</li>
+                    <li>Intentar acceder no autorizado a cualquier parte del Servicio o sistemas relacionados</li>
+                    <li>Interferir o interrumpir el Servicio o servidores conectados al Servicio</li>
+                    <li>Utilizar el Servicio para enviar spam, correos no solicitados o comunicaciones comerciales</li>
+                    <li>Recopilar o almacenar información personal de otros usuarios sin su consentimiento</li>
+                    <li>Utilizar robots, scripts o métodos automatizados para acceder al Servicio sin autorización</li>
+                    <li>Realizar ingeniería inversa, descompilar o desensamblar cualquier parte del Servicio</li>
+                </ul>
+                <div class="warning">
+                    <p><strong>Advertencia:</strong> La violación de estos términos puede resultar en la terminación 
+                    inmediata de su acceso al Servicio sin previo aviso.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>5. Integración con Google Services</h2>
+                
+                <h3>5.1. Google OAuth</h3>
+                <p>
+                    El Servicio utiliza Google OAuth para autenticación. Al utilizar esta función, usted:
+                </p>
+                <ul>
+                    <li>Acepta los <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Términos de Servicio de Google</a></li>
+                    <li>Reconoce que Google puede recibir información sobre su uso del Servicio</li>
+                    <li>Autoriza al Servicio a acceder a su información básica de perfil de Google</li>
+                    <li>Puede revocar el acceso en cualquier momento desde la configuración de su cuenta de Google</li>
+                </ul>
+
+                <h3>5.2. Google Sheets API</h3>
+                <p>
+                    Si elige utilizar la función de sincronización con Google Sheets:
+                </p>
+                <ul>
+                    <li>Autoriza al Servicio a crear, leer y actualizar hojas de cálculo en su cuenta de Google Drive</li>
+                    <li>Reconoce que sus datos se almacenarán en su propia cuenta de Google Drive</li>
+                    <li>Es responsable de gestionar el acceso y permisos de las hojas de cálculo creadas</li>
+                    <li>Puede desactivar la sincronización en cualquier momento</li>
+                    <li>Acepta que el uso de Google Sheets está sujeto a los límites y políticas de Google</li>
+                </ul>
+                <p>
+                    <strong>Nota:</strong> La sincronización con Google Sheets es completamente opcional. 
+                    Puede utilizar el Servicio sin esta función.
+                </p>
+            </section>
+
+            <section>
+                <h2>6. Datos del Usuario y Propiedad</h2>
+                
+                <h3>6.1. Sus Datos</h3>
+                <p>
+                    Usted conserva todos los derechos de propiedad sobre los datos que ingresa en el Servicio. 
+                    Sus datos de aplicaciones de trabajo, oportunidades y preferencias son suyos.
+                </p>
+
+                <h3>6.2. Almacenamiento de Datos</h3>
+                <p>
+                    Sus datos se almacenan principalmente en su dispositivo utilizando localStorage del navegador. 
+                    Esto significa que:
+                </p>
+                <ul>
+                    <li>Sus datos permanecen en su control</li>
+                    <li>Puede exportar o eliminar sus datos en cualquier momento</li>
+                    <li>Si limpia el almacenamiento de su navegador, sus datos pueden perderse</li>
+                    <li>Recomendamos hacer copias de seguridad periódicas de sus datos</li>
+                </ul>
+
+                <h3>6.3. Licencia para Utilizar sus Datos</h3>
+                <p>
+                    Al utilizar el Servicio, usted nos otorga una licencia limitada, no exclusiva, 
+                    revocable y sin derecho a sublicenciar para:
+                </p>
+                <ul>
+                    <li>Procesar y almacenar sus datos para proporcionar el Servicio</li>
+                    <li>Mejorar y mantener el Servicio</li>
+                    <li>Realizar análisis agregados y anónimos (sin identificarle personalmente)</li>
+                </ul>
+                <p>
+                    Esta licencia termina cuando elimina sus datos o deja de utilizar el Servicio.
+                </p>
+            </section>
+
+            <section>
+                <h2>7. Propiedad Intelectual</h2>
+                
+                <h3>7.1. Nuestro Contenido</h3>
+                <p>
+                    El Servicio, incluyendo su diseño, código fuente, funcionalidades, logotipos, marcas comerciales 
+                    y contenido, es propiedad de Job Application Tracker y está protegido por leyes de propiedad intelectual.
+                </p>
+
+                <h3>7.2. Software de Terceros</h3>
+                <p>
+                    El Servicio puede utilizar software de código abierto y bibliotecas de terceros. 
+                    Estos componentes están sujetos a sus propias licencias, que pueden estar disponibles 
+                    en el repositorio del proyecto.
+                </p>
+
+                <h3>7.3. Restricciones</h3>
+                <p>
+                    No puede copiar, modificar, distribuir, vender o alquilar ninguna parte del Servicio 
+                    sin nuestro permiso escrito explícito.
+                </p>
+            </section>
+
+            <section>
+                <h2>8. Disponibilidad del Servicio</h2>
+                <p>
+                    Nos esforzamos por mantener el Servicio disponible y funcionando correctamente, pero:
+                </p>
+                <ul>
+                    <li>No garantizamos que el Servicio esté disponible de forma ininterrumpida o libre de errores</li>
+                    <li>Podemos realizar mantenimiento programado o de emergencia que resulte en tiempo de inactividad</li>
+                    <li>Podemos modificar, suspender o discontinuar cualquier parte del Servicio en cualquier momento</li>
+                    <li>No somos responsables de cualquier pérdida de datos debido a problemas técnicos</li>
+                </ul>
+                <div class="highlight">
+                    <p><strong>Recomendación:</strong> Le recomendamos hacer copias de seguridad periódicas 
+                    de sus datos, especialmente si utiliza funciones de sincronización opcionales.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>9. Limitación de Responsabilidad</h2>
+                <p>
+                    <strong>EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY APLICABLE:</strong>
+                </p>
+                <ul>
+                    <li>EL SERVICIO SE PROPORCIONA "TAL CUAL" Y "SEGÚN DISPONIBILIDAD" SIN GARANTÍAS DE NINGÚN TIPO</li>
+                    <li>NO GARANTIZAMOS QUE EL SERVICIO SEA EXACTO, COMPLETO, SEGURO, LIBRE DE ERRORES O ININTERRUMPIDO</li>
+                    <li>NO SEREMOS RESPONSABLES DE CUALQUIER DAÑO DIRECTO, INDIRECTO, INCIDENTAL, ESPECIAL O CONSECUENTE 
+                        RESULTANTE DEL USO O IMPOSIBILIDAD DE USAR EL SERVICIO</li>
+                    <li>NO SEREMOS RESPONSABLES DE LA PÉRDIDA DE DATOS, INFORMACIÓN O BENEFICIOS</li>
+                    <li>NUESTRA RESPONSABILIDAD TOTAL NO EXCEDERÁ EL MONTO QUE USTED HA PAGADO POR EL SERVICIO 
+                        (SI APLICA) O $0 SI EL SERVICIO ES GRATUITO</li>
+                </ul>
+                <p>
+                    Algunas jurisdicciones no permiten la exclusión de garantías implícitas o la limitación 
+                    de responsabilidad por daños incidentales, por lo que algunas de las limitaciones anteriores 
+                    pueden no aplicarse a usted.
+                </p>
+            </section>
+
+            <section>
+                <h2>10. Indemnización</h2>
+                <p>
+                    Usted acepta indemnizar, defender y eximir de responsabilidad a Job Application Tracker, 
+                    sus afiliados, directores, empleados y agentes de cualquier reclamo, responsabilidad, daño, 
+                    pérdida o gasto (incluyendo honorarios legales razonables) que surja de o esté relacionado con:
+                </p>
+                <ul>
+                    <li>Su uso del Servicio</li>
+                    <li>Su violación de estos Términos</li>
+                    <li>Su violación de cualquier derecho de terceros</li>
+                    <li>Cualquier contenido o datos que proporcione al Servicio</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>11. Modificaciones de los Términos</h2>
+                <p>
+                    Nos reservamos el derecho de modificar estos Términos en cualquier momento. 
+                    Le notificaremos de cualquier cambio material publicando los nuevos Términos en esta página 
+                    y actualizando la fecha de "Última actualización".
+                </p>
+                <p>
+                    Su uso continuado del Servicio después de que los cambios entren en vigor constituye 
+                    su aceptación de los Términos modificados. Si no está de acuerdo con los cambios, 
+                    debe dejar de utilizar el Servicio.
+                </p>
+            </section>
+
+            <section>
+                <h2>12. Terminación</h2>
+                
+                <h3>12.1. Terminación por Usted</h3>
+                <p>
+                    Puede dejar de utilizar el Servicio en cualquier momento. Puede eliminar sus datos 
+                    limpiando el almacenamiento local de su navegador o desinstalando la extensión de Chrome.
+                </p>
+
+                <h3>12.2. Terminación por Nosotros</h3>
+                <p>
+                    Nos reservamos el derecho de suspender o terminar su acceso al Servicio, 
+                    con o sin causa o aviso previo, por cualquier motivo, incluyendo pero no limitado a:
+                </p>
+                <ul>
+                    <li>Violación de estos Términos</li>
+                    <li>Uso fraudulento o abusivo del Servicio</li>
+                    <li>Actividad ilegal</li>
+                    <li>Inactividad prolongada</li>
+                </ul>
+
+                <h3>12.3. Efectos de la Terminación</h3>
+                <p>
+                    Al terminar, su derecho a utilizar el Servicio cesará inmediatamente. 
+                    Sus datos pueden ser eliminados según nuestras políticas de retención de datos.
+                </p>
+            </section>
+
+            <section>
+                <h2>13. Servicios de Terceros</h2>
+                <p>
+                    El Servicio puede contener enlaces a sitios web o servicios de terceros que no son propiedad 
+                    ni están controlados por nosotros. No tenemos control sobre y no asumimos responsabilidad 
+                    por el contenido, políticas de privacidad o prácticas de sitios web o servicios de terceros.
+                </p>
+                <p>
+                    Usted reconoce y acepta que no seremos responsables, directa o indirectamente, 
+                    de cualquier daño o pérdida causada o presuntamente causada por o en conexión con 
+                    el uso de cualquier contenido, bienes o servicios disponibles en o a través de dichos sitios web o servicios.
+                </p>
+            </section>
+
+            <section>
+                <h2>14. Ley Aplicable y Jurisdicción</h2>
+                <p>
+                    Estos Términos se regirán e interpretarán de acuerdo con las leyes del país donde 
+                    se opera el Servicio, sin tener en cuenta sus disposiciones sobre conflictos de leyes.
+                </p>
+                <p>
+                    Cualquier disputa que surja de o esté relacionada con estos Términos o el Servicio 
+                    se resolverá en los tribunales competentes de la jurisdicción correspondiente.
+                </p>
+            </section>
+
+            <section>
+                <h2>15. Disposiciones Generales</h2>
+                
+                <h3>15.1. Acuerdo Completo</h3>
+                <p>
+                    Estos Términos, junto con nuestra Política de Privacidad, constituyen el acuerdo completo 
+                    entre usted y Job Application Tracker con respecto al uso del Servicio.
+                </p>
+
+                <h3>15.2. Divisibilidad</h3>
+                <p>
+                    Si alguna disposición de estos Términos se considera inválida o inaplicable, 
+                    las disposiciones restantes permanecerán en pleno vigor y efecto.
+                </p>
+
+                <h3>15.3. Renuncia</h3>
+                <p>
+                    Nuestra falta de ejercer o hacer valer cualquier derecho o disposición de estos Términos 
+                    no constituirá una renuncia a tal derecho o disposición.
+                </p>
+
+                <h3>15.4. Cesión</h3>
+                <p>
+                    No puede ceder o transferir estos Términos o sus derechos bajo estos Términos sin nuestro 
+                    consentimiento previo por escrito. Podemos ceder estos Términos sin restricciones.
+                </p>
+            </section>
+
+            <section>
+                <h2>16. Contacto</h2>
+                <p>
+                    Si tiene preguntas sobre estos Términos de Uso, puede contactarnos:
+                </p>
+                <div class="contact-info">
+                    <p>
+                        <strong>Job Application Tracker</strong><br>
+                        Sitio web: <a href="https://jajat.godieboy.com">https://jajat.godieboy.com</a><br>
+                        Página de términos de uso: <a href="https://jajat.godieboy.com/terms.html">https://jajat.godieboy.com/terms.html</a><br>
+                        Página de política de privacidad: <a href="https://jajat.godieboy.com/privacy.html">https://jajat.godieboy.com/privacy.html</a>
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>17. Aceptación</h2>
+                <p>
+                    Al utilizar Job Application Tracker, usted reconoce que ha leído, entendido y acepta 
+                    estar sujeto a estos Términos de Uso y a nuestra Política de Privacidad. 
+                    Si no está de acuerdo con estos términos, no debe utilizar el Servicio.
+                </p>
+            </section>
+
+            <footer>
+                <p>&copy; 2025 Job Application Tracker. Todos los derechos reservados.</p>
+                <p>
+                    <a href="https://jajat.godieboy.com">Volver a la aplicación</a> | 
+                    <a href="/privacy.html">Política de Privacidad</a>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        function switchLanguage(lang) {
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected language content
+            document.getElementById('content-' + lang).classList.add('active');
+            
+            // Update tabs
+            document.querySelectorAll('.language-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang === 'en' ? 'en' : 'es';
+            
+            // Save preference
+            localStorage.setItem('preferredLanguage', lang);
+        }
+        
+        // Load saved language preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+            const tabs = document.querySelectorAll('.language-tab');
+            const contents = document.querySelectorAll('.content');
+            
+            // Remove active from all
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Activate saved language
+            if (savedLang === 'es') {
+                document.getElementById('content-es').classList.add('active');
+                tabs[1].classList.add('active');
+                document.documentElement.lang = 'es';
+            } else {
+                document.getElementById('content-en').classList.add('active');
+                tabs[0].classList.add('active');
+                document.documentElement.lang = 'en';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 // src/components/TimelineEditor.tsx
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { InterviewEvent, InterviewStageType, EventStatus } from '../utils/localStorage';
-import { generateId } from '../utils/localStorage';
+import { generateId, getPreferences } from '../utils/localStorage';
 import { parseLocalDate } from '../utils/date';
 
 interface TimelineEditorProps {
@@ -13,22 +13,35 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const stageOptions: { value: InterviewStageType; label: string }[] = [
-    { value: 'application_submitted', label: 'Application Submitted' },
-    { value: 'screener_call', label: 'Screener Call' },
-    { value: 'first_contact', label: 'First Contact' },
-    { value: 'technical_interview', label: 'Technical Interview' },
-    { value: 'code_challenge', label: 'Code Challenge' },
-    { value: 'live_coding', label: 'Live Coding' },
-    { value: 'hiring_manager', label: 'Hiring Manager' },
-    { value: 'system_design', label: 'System Design' },
-    { value: 'cultural_fit', label: 'Cultural Fit' },
-    { value: 'final_round', label: 'Final Round' },
-    { value: 'offer', label: 'Offer' },
-    { value: 'rejected', label: 'Rejected' },
-    { value: 'withdrawn', label: 'Withdrawn' },
-    { value: 'custom', label: 'Custom' },
-  ];
+  const preferences = getPreferences();
+
+  const stageOptions: { value: InterviewStageType | string; label: string; isCustom?: boolean }[] = useMemo(() => {
+    const baseOptions: { value: InterviewStageType; label: string }[] = [
+      { value: 'application_submitted', label: 'Application Submitted' },
+      { value: 'screener_call', label: 'Screener Call' },
+      { value: 'first_contact', label: 'First Contact' },
+      { value: 'technical_interview', label: 'Technical Interview' },
+      { value: 'code_challenge', label: 'Code Challenge' },
+      { value: 'live_coding', label: 'Live Coding' },
+      { value: 'hiring_manager', label: 'Hiring Manager' },
+      { value: 'system_design', label: 'System Design' },
+      { value: 'cultural_fit', label: 'Cultural Fit' },
+      { value: 'final_round', label: 'Final Round' },
+      { value: 'offer', label: 'Offer' },
+      { value: 'rejected', label: 'Rejected' },
+      { value: 'withdrawn', label: 'Withdrawn' },
+      { value: 'custom', label: 'Custom' },
+    ];
+
+    // Add custom interview events from user preferences
+    const customEvents = (preferences.customInterviewEvents || []).map(event => ({
+      value: `custom:${event.id}`,
+      label: event.label,
+      isCustom: true,
+    }));
+
+    return [...baseOptions, ...customEvents];
+  }, [preferences.customInterviewEvents]);
 
   const statusOptions: { value: EventStatus; label: string }[] = [
     { value: 'pending', label: 'Pending' },
@@ -110,7 +123,7 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
                     <span className="font-medium text-gray-900">
                       {event.type === 'custom' && event.customTypeName 
                         ? event.customTypeName 
-                        : stageOptions.find(opt => opt.value === event.type)?.label || event.type}
+                        : stageOptions.find(opt => opt.value === event.type || (opt.isCustom && event.customTypeName === opt.label))?.label || event.type}
                     </span>
                     <span className="text-sm text-gray-600">{event.date}</span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
@@ -174,30 +187,55 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
 
 interface EventFormProps {
   event?: InterviewEvent;
-  stageOptions: { value: InterviewStageType; label: string }[];
+  stageOptions: { value: InterviewStageType | string; label: string; isCustom?: boolean }[];
   statusOptions: { value: EventStatus; label: string }[];
   onSave: (type: InterviewStageType, date: string, status: EventStatus, notes: string, interviewerName: string, customTypeName?: string) => void;
   onCancel: () => void;
 }
 
 const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOptions, onSave, onCancel }) => {
-  const [type, setType] = useState<InterviewStageType>(event?.type || 'application_submitted');
+  // Initialize state: if event has customTypeName, find matching custom event option
+  const getInitialType = (): InterviewStageType | string => {
+    if (event?.customTypeName) {
+      const customOption = stageOptions.find(opt => opt.isCustom && opt.label === event.customTypeName);
+      if (customOption) {
+        return customOption.value;
+      }
+    }
+    return event?.type || 'application_submitted';
+  };
+
+  const [type, setType] = useState<InterviewStageType | string>(getInitialType());
   const [date, setDate] = useState(event?.date || '');
   const [status, setStatus] = useState<EventStatus>(event?.status || 'scheduled');
   const [notes, setNotes] = useState(event?.notes || '');
   const [customType, setCustomType] = useState(event?.customTypeName || '');
   const [interviewerName, setInterviewerName] = useState(event?.interviewerName || '');
 
-  // Reset customType when type changes away from 'custom'
-  const handleTypeChange = (newType: InterviewStageType) => {
-    setType(newType);
-    if (newType !== 'custom') {
+  // Handle type change: if it's a custom event (custom:${id}), extract the label
+  const handleTypeChange = (newTypeValue: string) => {
+    setType(newTypeValue);
+    
+    if (newTypeValue.startsWith('custom:')) {
+      // It's a custom event from user preferences
+      const customOption = stageOptions.find(opt => opt.value === newTypeValue);
+      if (customOption) {
+        setCustomType(customOption.label);
+      }
+    } else if (newTypeValue === 'custom') {
+      // It's the generic 'custom' option, keep customType as is (or empty)
+      // Don't clear it in case user wants to edit an existing custom event
+    } else {
+      // It's a standard event type, clear customType
       setCustomType('');
     }
   };
 
   const handleSave = () => {
-    onSave(type, date, status, notes, interviewerName, customType);
+    // If type is a custom event (custom:${id}), use 'custom' as the type and the label as customTypeName
+    const finalType: InterviewStageType = type.startsWith('custom:') ? 'custom' : (type as InterviewStageType);
+    const finalCustomType = type.startsWith('custom:') || type === 'custom' ? customType : undefined;
+    onSave(finalType, date, status, notes, interviewerName, finalCustomType);
   };
 
   return (
@@ -208,11 +246,13 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
           <select
             id="stage-type"
             value={type}
-            onChange={(e) => handleTypeChange(e.target.value as InterviewStageType)}
+            onChange={(e) => handleTypeChange(e.target.value)}
             className="w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
           >
             {stageOptions.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+              <option key={opt.value} value={opt.value}>
+                {opt.isCustom ? `⭐ ${opt.label}` : opt.label}
+              </option>
             ))}
           </select>
         </div>
@@ -244,17 +284,27 @@ const EventForm: React.FC<EventFormProps> = ({ event, stageOptions, statusOption
         </div>
       </div>
 
-      {type === 'custom' && (
+      {(type === 'custom' || type.startsWith('custom:')) && (
         <div>
-          <label htmlFor="custom-type-name" className="block text-xs font-medium text-gray-700 mb-1">Custom Type Name</label>
+          <label htmlFor="custom-type-name" className="block text-xs font-medium text-gray-700 mb-1">
+            {type.startsWith('custom:') ? 'Event Name (from your custom events)' : 'Custom Type Name'}
+          </label>
           <input
             id="custom-type-name"
             type="text"
             value={customType}
             onChange={(e) => setCustomType(e.target.value)}
             placeholder="Enter custom event name"
-            className="w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+            disabled={type.startsWith('custom:')}
+            className={`w-full text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border ${
+              type.startsWith('custom:') ? 'bg-gray-100' : ''
+            }`}
           />
+          {type.startsWith('custom:') && (
+            <p className="text-xs text-gray-500 mt-1">
+              This event name is managed in Settings. To change it, go to Settings → Interview Events.
+            </p>
+          )}
         </div>
       )}
 

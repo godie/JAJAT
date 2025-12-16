@@ -6,6 +6,14 @@ import type { InterviewEvent } from '../utils/localStorage';
 // Mock localStorage utilities
 vi.mock('../utils/localStorage', () => ({
   generateId: vi.fn(() => `test-id-${Math.random().toString(36).substr(2, 9)}`),
+  getPreferences: vi.fn(() => ({
+    enabledFields: ['position', 'company', 'salary', 'status', 'applicationdate', 'interviewdate', 'platform', 'contactname', 'followupdate', 'notes', 'link'],
+    customFields: [],
+    columnOrder: ['position', 'company', 'salary', 'status', 'applicationdate', 'interviewdate', 'platform', 'contactname', 'followupdate', 'notes', 'link'],
+    defaultView: 'table',
+    dateFormat: 'YYYY-MM-DD',
+    customInterviewEvents: [],
+  })),
 }));
 
 // Mock window.confirm

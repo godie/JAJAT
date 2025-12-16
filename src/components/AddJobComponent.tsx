@@ -71,8 +71,20 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }
   const isCreationMode = initialData && !initialData.id;
   const isEditing = !!initialData && !!initialData.id;
   
+  // When creating a new entry, merge initialData with initialFormData to ensure defaults
+  const getInitialFormData = () => {
+    if (isEditing && initialData) {
+      return initialData;
+    }
+    if (isCreationMode && initialData) {
+      // Merge initialData with initialFormData to ensure all defaults are set
+      return { ...initialFormData, ...initialData };
+    }
+    return initialFormData;
+  };
+  
   const [formData, setFormData] = useState<Omit<JobApplication, 'id'> | JobApplication>(
-    isCreationMode ? initialData : initialData || initialFormData
+    getInitialFormData()
   );
   
   useKeyboardEscape(onCancel, true);
@@ -85,13 +97,19 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Ensure status has a default value
+    const dataWithStatus = {
+      ...formData,
+      status: formData.status || 'Applied',
+    };
+    
     // Use manual timeline if exists, otherwise build from form data
-    let timeline = formData.timeline || [];
+    let timeline = dataWithStatus.timeline || [];
     if (timeline.length === 0) {
-      timeline = buildTimeline(formData);
+      timeline = buildTimeline(dataWithStatus);
     }
     
-    const finalData = { ...formData, timeline };
+    const finalData = { ...dataWithStatus, timeline };
     onSave(finalData);
   };
 
@@ -157,7 +175,7 @@ const AddJobForm: React.FC<AddJobFormProps> = ({ onSave, onCancel, initialData }
               <span className="text-gray-700 font-medium">Status *</span>
               <select
                 name="status"
-                value={formData.status}
+                value={formData.status || 'Applied'}
                 data-testid="form-status"
                 onChange={handleChange}
                 required
