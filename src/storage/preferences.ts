@@ -32,12 +32,15 @@ export const getPreferences = (): UserPreferences => {
       ? parsed.dateFormat
       : DEFAULT_PREFERENCES.dateFormat;
 
+    const customInterviewEvents = parsed.customInterviewEvents ?? DEFAULT_PREFERENCES.customInterviewEvents;
+
     return {
       enabledFields,
       columnOrder,
       customFields,
       defaultView,
       dateFormat,
+      customInterviewEvents,
     };
   } catch (error) {
     console.error('Error loading preferences from localStorage:', error);

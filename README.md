@@ -127,7 +127,8 @@ In the project directory, you can run:
   - **Date Format Preferences**: Select date format (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD) for consistent display
   - **Custom Fields Management**: Create, edit, and delete custom fields with support for multiple field types (text, date, number, select, checkbox, URL)
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
-- Footer: Displays version information and attribution
+- Footer: Displays version information, attribution, and links to Terms of Service and Privacy Policy
+- **Legal Pages**: Bilingual Terms of Service and Privacy Policy pages with language switcher (English/Spanish, default: English)
 
 ## Interview Timeline System
 
@@ -149,8 +150,22 @@ Supported interview stages include: Application Submitted, Screener Call, First 
 - OAuth 2.0 Flow: Full OAuth 2.0 implementation with access token management.
 - Backend Integration: PHP endpoints for secure cookie handling (set and read).
 - Google Sheets API Scope: OAuth includes Google Sheets API scope for spreadsheet synchronization.
+- **Legal Compliance**: Complete Terms of Service and Privacy Policy pages required for Google OAuth verification and production deployment.
 
 For more details on the security measures implemented in this project, please see the [SECURITY.md](./SECURITY.md) file.
+
+## Legal & Compliance
+
+The application includes comprehensive legal documentation required for Google OAuth verification and production deployment:
+
+- **Terms of Service** (`/terms.html`): Complete terms of service in English and Spanish with interactive language switcher
+- **Privacy Policy** (`/privacy.html`): Detailed privacy policy in English and Spanish with interactive language switcher
+- **Bilingual Support**: Both legal pages support English (default) and Spanish with persistent language preference stored in localStorage
+- **Language Switcher**: Tab-based interface to switch between languages seamlessly
+- **Google OAuth Compliance**: Required for Google OAuth verification and moving out of testing mode
+- **Footer Integration**: Links to both legal pages accessible from the application footer
+
+These pages are accessible from the footer and are required for Google Cloud Console OAuth consent screen verification. The bilingual support ensures compliance with international users and Google's requirements.
 
 ## Chrome Extension - Multi-Platform Job Capture
 

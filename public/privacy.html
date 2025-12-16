@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidad - Job Application Tracker</title>
-    <meta name="description" content="Política de Privacidad de Job Application Tracker. Conoce cómo recopilamos, usamos y protegemos tu información.">
+    <title>Privacy Policy - Job Application Tracker</title>
+    <meta name="description" content="Privacy Policy for Job Application Tracker. Learn how we collect, use, and protect your information.">
     <style>
         * {
             margin: 0;
@@ -25,6 +25,34 @@
             padding: 2rem;
             background-color: #ffffff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .language-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .language-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .language-tab:hover {
+            color: #3d74cc;
+        }
+
+        .language-tab.active {
+            color: #3d74cc;
+            border-bottom-color: #3d74cc;
         }
 
         header {
@@ -107,6 +135,14 @@
             font-size: 0.9rem;
         }
 
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -119,270 +155,632 @@
             h2 {
                 font-size: 1.25rem;
             }
+
+            .language-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Política de Privacidad</h1>
-            <p class="last-updated">Última actualización: <time datetime="2025-01-16">16 de enero de 2025</time></p>
-        </header>
+        <div class="language-tabs">
+            <button class="language-tab active" onclick="switchLanguage('en')">English</button>
+            <button class="language-tab" onclick="switchLanguage('es')">Español</button>
+        </div>
 
-        <section>
-            <h2>1. Introducción</h2>
-            <p>
-                Job Application Tracker ("nosotros", "nuestra aplicación", "el servicio") se compromete a proteger su privacidad. 
-                Esta Política de Privacidad explica cómo recopilamos, usamos, almacenamos y protegemos su información personal 
-                cuando utiliza nuestra aplicación web y extensión de Chrome.
-            </p>
-            <p>
-                Al utilizar Job Application Tracker, usted acepta las prácticas descritas en esta política. 
-                Si no está de acuerdo con esta política, por favor no utilice nuestros servicios.
-            </p>
-        </section>
+        <!-- English Content -->
+        <div id="content-en" class="content active">
+            <header>
+                <h1>Privacy Policy</h1>
+                <p class="last-updated">Last updated: <time datetime="2025-12-16">December 16, 2025</time></p>
+            </header>
 
-        <section>
-            <h2>2. Información que Recopilamos</h2>
-            
-            <h3>2.1. Información de Autenticación</h3>
-            <p>Cuando se autentica con Google OAuth, recopilamos:</p>
-            <ul>
-                <li><strong>Token de acceso de Google:</strong> Almacenado de forma segura en una cookie HTTP-only para autenticación.</li>
-                <li><strong>Información básica de perfil:</strong> Incluyendo nombre, dirección de correo electrónico y foto de perfil de su cuenta de Google.</li>
-            </ul>
-
-            <h3>2.2. Datos de Aplicaciones de Trabajo</h3>
-            <p>Los datos que usted ingresa sobre sus solicitudes de empleo incluyen:</p>
-            <ul>
-                <li>Información de posición (título del trabajo, compañía, salario)</li>
-                <li>Fechas (fecha de solicitud, fechas de entrevistas, fechas de seguimiento)</li>
-                <li>Estado de la aplicación y eventos de la línea de tiempo de entrevistas</li>
-                <li>Información de contacto (nombres de contactos, enlaces, notas)</li>
-                <li>Plataforma o sitio donde encontró la oportunidad</li>
-                <li>Campos personalizados definidos por usted</li>
-            </ul>
-
-            <h3>2.3. Oportunidades de Trabajo</h3>
-            <p>Si utiliza nuestra extensión de Chrome para capturar oportunidades de trabajo:</p>
-            <ul>
-                <li>Datos extraídos de páginas de trabajo (LinkedIn, Greenhouse, etc.)</li>
-                <li>Información que usted edita o agrega antes de guardar</li>
-                <li>Enlaces a publicaciones de trabajo</li>
-            </ul>
-
-            <h3>2.4. Preferencias de Usuario</h3>
-            <p>Almacenamos sus preferencias de configuración:</p>
-            <ul>
-                <li>Configuración de campos visibles y orden de columnas</li>
-                <li>Vista predeterminada (Tabla, Línea de tiempo, Kanban, Calendario)</li>
-                <li>Formato de fecha preferido</li>
-                <li>Campos personalizados definidos</li>
-            </ul>
-
-            <h3>2.5. Cookies y Almacenamiento Local</h3>
-            <p>Utilizamos:</p>
-            <ul>
-                <li><strong>Cookie HTTP-only segura:</strong> Para almacenar el token de autenticación de Google de forma segura</li>
-                <li><strong>localStorage del navegador:</strong> Para almacenar sus datos de aplicaciones y preferencias localmente en su dispositivo</li>
-                <li><strong>Chrome Storage (extensión):</strong> Para almacenar oportunidades capturadas en la extensión</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>3. Cómo Utilizamos su Información</h2>
-            <p>Utilizamos la información recopilada para:</p>
-            <ul>
-                <li><strong>Proporcionar el servicio:</strong> Permitirle gestionar y rastrear sus solicitudes de empleo</li>
-                <li><strong>Autenticación:</strong> Verificar su identidad y mantener su sesión activa</li>
-                <li><strong>Mejora del servicio:</strong> Entender cómo utiliza la aplicación para mejorar la experiencia</li>
-                <li><strong>Sincronización:</strong> Sincronizar datos entre la aplicación web y la extensión de Chrome</li>
-                <li><strong>Integración con Google Sheets:</strong> Si elige sincronizar, crear y actualizar hojas de cálculo en su cuenta de Google</li>
-            </ul>
-            <p>
-                <strong>No vendemos, alquilamos ni compartimos su información personal con terceros</strong> 
-                para fines de marketing o comerciales sin su consentimiento explícito.
-            </p>
-        </section>
-
-        <section>
-            <h2>4. Almacenamiento de Datos</h2>
-            
-            <h3>4.1. Almacenamiento Local</h3>
-            <p>
-                La mayor parte de sus datos se almacena <strong>localmente en su navegador</strong> utilizando localStorage. 
-                Esto significa que sus datos permanecen en su dispositivo y no se transmiten a nuestros servidores 
-                (excepto cuando utiliza funciones opcionales como la sincronización con Google Sheets).
-            </p>
-
-            <h3>4.2. Servidor PHP</h3>
-            <p>
-                Utilizamos un servidor PHP para:
-            </p>
-            <ul>
-                <li>Gestionar cookies de autenticación seguras (HTTP-only, Secure, SameSite=Strict)</li>
-                <li>Actuar como proxy seguro para la API de Google Sheets</li>
-                <li>No almacenamos sus datos de aplicaciones en nuestros servidores</li>
-            </ul>
-
-            <h3>4.3. Integración con Google Sheets</h3>
-            <p>
-                Si elige sincronizar con Google Sheets, sus datos se almacenarán en hojas de cálculo de Google 
-                en su propia cuenta de Google Drive. Esta sincronización es completamente opcional.
-            </p>
-            <p>
-                Cuando utiliza esta función, sus datos se transmiten a través de nuestros servidores PHP 
-                como proxy seguro para la API de Google Sheets, pero no se almacenan permanentemente en nuestros servidores.
-            </p>
-        </section>
-
-        <section>
-            <h2>5. Compartir Información con Terceros</h2>
-            
-            <h3>5.1. Google Services</h3>
-            <p>
-                Utilizamos los siguientes servicios de Google:
-            </p>
-            <ul>
-                <li><strong>Google OAuth:</strong> Para autenticación. Google puede recibir información sobre su uso del servicio. 
-                    Para más información, consulte la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidad de Google</a>.</li>
-                <li><strong>Google Sheets API:</strong> Para sincronización opcional. Sus datos se almacenan en su propia cuenta de Google Drive.</li>
-            </ul>
-
-            <h3>5.2. Proveedores de Servicios</h3>
-            <p>
-                Podemos utilizar servicios de terceros para:
-            </p>
-            <ul>
-                <li>Hospedaje de la aplicación web</li>
-                <li>Análisis de uso (si aplica)</li>
-            </ul>
-            <p>
-                Estos proveedores tienen acceso solo a la información necesaria para realizar sus funciones 
-                y están obligados a no usar o divulgar la información para ningún otro propósito.
-            </p>
-
-            <h3>5.3. Requisitos Legales</h3>
-            <p>
-                Podemos divulgar su información si la ley lo requiere o en respuesta a solicitudes válidas 
-                de autoridades públicas.
-            </p>
-        </section>
-
-        <section>
-            <h2>6. Seguridad de Datos</h2>
-            <p>
-                Implementamos medidas de seguridad técnicas y organizativas para proteger su información:
-            </p>
-            <ul>
-                <li><strong>Cookies seguras:</strong> Utilizamos cookies HTTP-only que no pueden ser leídas por JavaScript, 
-                    protegiéndolo contra ataques XSS</li>
-                <li><strong>HTTPS:</strong> Toda la comunicación se realiza a través de conexiones HTTPS encriptadas</li>
-                <li><strong>Sanitización de entrada:</strong> Todos los datos del usuario se sanitizan antes de almacenarse 
-                    para prevenir ataques XSS e inyección</li>
-                <li><strong>Políticas CORS:</strong> Restringimos el acceso a nuestros endpoints API a orígenes conocidos</li>
-                <li><strong>Almacenamiento local:</strong> Sus datos se almacenan en su dispositivo, reduciendo el riesgo de brechas de datos</li>
-            </ul>
-            <div class="highlight">
-                <p><strong>Importante:</strong> Aunque implementamos medidas de seguridad sólidas, ningún método de transmisión 
-                o almacenamiento es 100% seguro. Usted es responsable de mantener la seguridad de su cuenta y dispositivo.</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>7. Sus Derechos</h2>
-            <p>Usted tiene los siguientes derechos respecto a su información personal:</p>
-            <ul>
-                <li><strong>Acceso:</strong> Puede acceder a todos sus datos en cualquier momento a través de la aplicación</li>
-                <li><strong>Eliminación:</strong> Puede eliminar sus datos en cualquier momento eliminando las entradas individuales 
-                    o limpiando el almacenamiento local de su navegador</li>
-                <li><strong>Exportación:</strong> Sus datos se almacenan en formato JSON en localStorage y pueden ser exportados 
-                    manualmente desde las herramientas de desarrollador de su navegador</li>
-                <li><strong>Retiro del consentimiento:</strong> Puede dejar de usar el servicio en cualquier momento</li>
-                <li><strong>Desconexión de Google:</strong> Puede cerrar sesión y eliminar la cookie de autenticación en cualquier momento</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>8. Retención de Datos</h2>
-            <p>
-                Sus datos se almacenan <strong>indefinidamente en su dispositivo</strong> hasta que:
-            </p>
-            <ul>
-                <li>Usted los elimine manualmente</li>
-                <li>Limpie el almacenamiento local de su navegador</li>
-                <li>Desinstale la extensión de Chrome (para datos de la extensión)</li>
-            </ul>
-            <p>
-                Cuando cierra sesión, el token de autenticación se elimina del servidor. 
-                Si no utiliza el servicio durante un período prolongado, sus datos permanecen en su dispositivo.
-            </p>
-        </section>
-
-        <section>
-            <h2>9. Privacidad de Menores</h2>
-            <p>
-                Job Application Tracker no está dirigido a menores de 13 años. No recopilamos intencionalmente 
-                información personal de menores de 13 años. Si descubrimos que hemos recopilado información 
-                de un menor de 13 años, tomaremos medidas para eliminar esa información de nuestros sistemas.
-            </p>
-        </section>
-
-        <section>
-            <h2>10. Cambios a esta Política de Privacidad</h2>
-            <p>
-                Podemos actualizar esta Política de Privacidad de vez en cuando. Le notificaremos de cualquier cambio 
-                publicando la nueva política en esta página y actualizando la fecha de "Última actualización".
-            </p>
-            <p>
-                Le recomendamos que revise esta política periódicamente para estar informado sobre cómo protegemos su información.
-            </p>
-        </section>
-
-        <section>
-            <h2>11. Cookies y Tecnologías de Rastreo</h2>
-            <p>
-                Utilizamos las siguientes tecnologías:
-            </p>
-            <ul>
-                <li><strong>Cookie HTTP-only:</strong> Almacena el token de autenticación de Google de forma segura</li>
-                <li><strong>localStorage:</strong> Almacena sus datos de aplicaciones y preferencias en su navegador</li>
-                <li><strong>Chrome Storage API:</strong> Utilizada por la extensión de Chrome para almacenar oportunidades</li>
-            </ul>
-            <p>
-                Puede controlar las cookies a través de la configuración de su navegador. 
-                Tenga en cuenta que deshabilitar ciertas cookies puede afectar la funcionalidad del servicio.
-            </p>
-        </section>
-
-        <section>
-            <h2>12. Contacto</h2>
-            <p>Si tiene preguntas o inquietudes sobre esta Política de Privacidad, puede contactarnos:</p>
-            <div class="contact-info">
+            <section>
+                <h2>1. Introduction</h2>
                 <p>
-                    <strong>Job Application Tracker</strong><br>
-                    Sitio web: <a href="https://jajat.godieboy.com">https://jajat.godieboy.com</a><br>
-                    Página de política de privacidad: <a href="https://jajat.godieboy.com/privacy.html">https://jajat.godieboy.com/privacy.html</a>
+                    Job Application Tracker ("we", "our application", "the service") is committed to protecting your privacy. 
+                    This Privacy Policy explains how we collect, use, store, and protect your personal information 
+                    when you use our web application and Chrome extension.
                 </p>
-            </div>
-        </section>
+                <p>
+                    By using Job Application Tracker, you agree to the practices described in this policy. 
+                    If you do not agree with this policy, please do not use our services.
+                </p>
+            </section>
 
-        <section>
-            <h2>13. Aceptación de Términos</h2>
-            <p>
-                Al utilizar Job Application Tracker, usted reconoce que ha leído y entendido esta Política de Privacidad 
-                y acepta todas las prácticas descritas en ella. Si no está de acuerdo con esta política, 
-                por favor no utilice nuestros servicios.
-            </p>
-        </section>
+            <section>
+                <h2>2. Information We Collect</h2>
+                
+                <h3>2.1. Authentication Information</h3>
+                <p>When you authenticate with Google OAuth, we collect:</p>
+                <ul>
+                    <li><strong>Google Access Token:</strong> Stored securely in an HTTP-only cookie for authentication.</li>
+                    <li><strong>Basic Profile Information:</strong> Including name, email address, and profile picture from your Google account.</li>
+                </ul>
 
-        <footer>
-            <p>&copy; 2025 Job Application Tracker. Todos los derechos reservados.</p>
-            <p>
-                <a href="https://jajat.godieboy.com">Volver a la aplicación</a>
-            </p>
-        </footer>
+                <h3>2.2. Job Application Data</h3>
+                <p>The data you enter about your job applications includes:</p>
+                <ul>
+                    <li>Position information (job title, company, salary)</li>
+                    <li>Dates (application date, interview dates, follow-up dates)</li>
+                    <li>Application status and interview timeline events</li>
+                    <li>Contact information (contact names, links, notes)</li>
+                    <li>Platform or site where you found the opportunity</li>
+                    <li>Custom fields defined by you</li>
+                </ul>
+
+                <h3>2.3. Job Opportunities</h3>
+                <p>If you use our Chrome extension to capture job opportunities:</p>
+                <ul>
+                    <li>Data extracted from job pages (LinkedIn, Greenhouse, etc.)</li>
+                    <li>Information you edit or add before saving</li>
+                    <li>Links to job postings</li>
+                </ul>
+
+                <h3>2.4. User Preferences</h3>
+                <p>We store your configuration preferences:</p>
+                <ul>
+                    <li>Visible fields configuration and column order</li>
+                    <li>Default view (Table, Timeline, Kanban, Calendar)</li>
+                    <li>Preferred date format</li>
+                    <li>Defined custom fields</li>
+                </ul>
+
+                <h3>2.5. Cookies and Local Storage</h3>
+                <p>We use:</p>
+                <ul>
+                    <li><strong>Secure HTTP-only Cookie:</strong> To securely store Google authentication token</li>
+                    <li><strong>Browser localStorage:</strong> To store your application data and preferences locally on your device</li>
+                    <li><strong>Chrome Storage (extension):</strong> To store captured opportunities in the extension</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>3. How We Use Your Information</h2>
+                <p>We use the collected information to:</p>
+                <ul>
+                    <li><strong>Provide the service:</strong> Allow you to manage and track your job applications</li>
+                    <li><strong>Authentication:</strong> Verify your identity and maintain your active session</li>
+                    <li><strong>Service improvement:</strong> Understand how you use the application to improve the experience</li>
+                    <li><strong>Synchronization:</strong> Sync data between the web application and Chrome extension</li>
+                    <li><strong>Google Sheets Integration:</strong> If you choose to sync, create and update spreadsheets in your Google account</li>
+                </ul>
+                <p>
+                    <strong>We do not sell, rent, or share your personal information with third parties</strong> 
+                    for marketing or commercial purposes without your explicit consent.
+                </p>
+            </section>
+
+            <section>
+                <h2>4. Data Storage</h2>
+                
+                <h3>4.1. Local Storage</h3>
+                <p>
+                    Most of your data is stored <strong>locally in your browser</strong> using localStorage. 
+                    This means your data remains on your device and is not transmitted to our servers 
+                    (except when using optional features like Google Sheets synchronization).
+                </p>
+
+                <h3>4.2. PHP Server</h3>
+                <p>
+                    We use a PHP server to:
+                </p>
+                <ul>
+                    <li>Manage secure authentication cookies (HTTP-only, Secure, SameSite=Strict)</li>
+                    <li>Act as a secure proxy for the Google Sheets API</li>
+                    <li>We do not store your application data on our servers</li>
+                </ul>
+
+                <h3>4.3. Google Sheets Integration</h3>
+                <p>
+                    If you choose to sync with Google Sheets, your data will be stored in Google spreadsheets 
+                    in your own Google Drive account. This synchronization is completely optional.
+                </p>
+                <p>
+                    When you use this feature, your data is transmitted through our PHP servers 
+                    as a secure proxy for the Google Sheets API, but is not permanently stored on our servers.
+                </p>
+            </section>
+
+            <section>
+                <h2>5. Sharing Information with Third Parties</h2>
+                
+                <h3>5.1. Google Services</h3>
+                <p>
+                    We use the following Google services:
+                </p>
+                <ul>
+                    <li><strong>Google OAuth:</strong> For authentication. Google may receive information about your use of the service. 
+                        For more information, see Google's <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+                    <li><strong>Google Sheets API:</strong> For optional synchronization. Your data is stored in your own Google Drive account.</li>
+                </ul>
+
+                <h3>5.2. Service Providers</h3>
+                <p>
+                    We may use third-party services for:
+                </p>
+                <ul>
+                    <li>Web application hosting</li>
+                    <li>Usage analytics (if applicable)</li>
+                </ul>
+                <p>
+                    These providers have access only to the information necessary to perform their functions 
+                    and are obligated not to use or disclose the information for any other purpose.
+                </p>
+
+                <h3>5.3. Legal Requirements</h3>
+                <p>
+                    We may disclose your information if required by law or in response to valid requests 
+                    from public authorities.
+                </p>
+            </section>
+
+            <section>
+                <h2>6. Data Security</h2>
+                <p>
+                    We implement technical and organizational security measures to protect your information:
+                </p>
+                <ul>
+                    <li><strong>Secure cookies:</strong> We use HTTP-only cookies that cannot be read by JavaScript, 
+                        protecting you against XSS attacks</li>
+                    <li><strong>HTTPS:</strong> All communication is conducted through encrypted HTTPS connections</li>
+                    <li><strong>Input sanitization:</strong> All user data is sanitized before storage 
+                        to prevent XSS and injection attacks</li>
+                    <li><strong>CORS policies:</strong> We restrict access to our API endpoints to known origins</li>
+                    <li><strong>Local storage:</strong> Your data is stored on your device, reducing the risk of data breaches</li>
+                </ul>
+                <div class="highlight">
+                    <p><strong>Important:</strong> Although we implement strong security measures, no method of transmission 
+                    or storage is 100% secure. You are responsible for maintaining the security of your account and device.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>7. Your Rights</h2>
+                <p>You have the following rights regarding your personal information:</p>
+                <ul>
+                    <li><strong>Access:</strong> You can access all your data at any time through the application</li>
+                    <li><strong>Deletion:</strong> You can delete your data at any time by deleting individual entries 
+                        or clearing your browser's local storage</li>
+                    <li><strong>Export:</strong> Your data is stored in JSON format in localStorage and can be exported 
+                        manually from your browser's developer tools</li>
+                    <li><strong>Withdrawal of consent:</strong> You can stop using the service at any time</li>
+                    <li><strong>Google disconnection:</strong> You can log out and delete the authentication cookie at any time</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>8. Data Retention</h2>
+                <p>
+                    Your data is stored <strong>indefinitely on your device</strong> until:
+                </p>
+                <ul>
+                    <li>You delete it manually</li>
+                    <li>You clear your browser's local storage</li>
+                    <li>You uninstall the Chrome extension (for extension data)</li>
+                </ul>
+                <p>
+                    When you log out, the authentication token is deleted from the server. 
+                    If you do not use the service for an extended period, your data remains on your device.
+                </p>
+            </section>
+
+            <section>
+                <h2>9. Children's Privacy</h2>
+                <p>
+                    Job Application Tracker is not directed at children under 13 years of age. We do not knowingly collect 
+                    personal information from children under 13. If we discover that we have collected information 
+                    from a child under 13, we will take steps to remove that information from our systems.
+                </p>
+            </section>
+
+            <section>
+                <h2>10. Changes to this Privacy Policy</h2>
+                <p>
+                    We may update this Privacy Policy from time to time. We will notify you of any changes 
+                    by posting the new policy on this page and updating the "Last updated" date.
+                </p>
+                <p>
+                    We recommend that you review this policy periodically to stay informed about how we protect your information.
+                </p>
+            </section>
+
+            <section>
+                <h2>11. Cookies and Tracking Technologies</h2>
+                <p>
+                    We use the following technologies:
+                </p>
+                <ul>
+                    <li><strong>HTTP-only Cookie:</strong> Stores Google authentication token securely</li>
+                    <li><strong>localStorage:</strong> Stores your application data and preferences in your browser</li>
+                    <li><strong>Chrome Storage API:</strong> Used by the Chrome extension to store opportunities</li>
+                </ul>
+                <p>
+                    You can control cookies through your browser settings. 
+                    Note that disabling certain cookies may affect the functionality of the service.
+                </p>
+            </section>
+
+            <section>
+                <h2>12. Contact</h2>
+                <p>If you have questions or concerns about this Privacy Policy, you can contact us:</p>
+                <div class="contact-info">
+                    <p>
+                        <strong>Job Application Tracker</strong><br>
+                        Website: <a href="https://jajat.godieboy.com">https://jajat.godieboy.com</a><br>
+                        Privacy policy page: <a href="https://jajat.godieboy.com/privacy.html">https://jajat.godieboy.com/privacy.html</a>
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>13. Acceptance of Terms</h2>
+                <p>
+                    By using Job Application Tracker, you acknowledge that you have read and understood this Privacy Policy 
+                    and agree to all the practices described in it. If you do not agree with this policy, 
+                    please do not use our services.
+                </p>
+            </section>
+
+            <footer>
+                <p>&copy; 2025 Job Application Tracker. All rights reserved.</p>
+                <p>
+                    <a href="https://jajat.godieboy.com">Back to application</a>
+                </p>
+            </footer>
+        </div>
+
+        <!-- Spanish Content -->
+        <div id="content-es" class="content">
+            <header>
+                <h1>Política de Privacidad</h1>
+                <p class="last-updated">Última actualización: <time datetime="2025-12-16">16 de diciembre de 2025</time></p>
+            </header>
+
+            <section>
+                <h2>1. Introducción</h2>
+                <p>
+                    Job Application Tracker ("nosotros", "nuestra aplicación", "el servicio") se compromete a proteger su privacidad. 
+                    Esta Política de Privacidad explica cómo recopilamos, usamos, almacenamos y protegemos su información personal 
+                    cuando utiliza nuestra aplicación web y extensión de Chrome.
+                </p>
+                <p>
+                    Al utilizar Job Application Tracker, usted acepta las prácticas descritas en esta política. 
+                    Si no está de acuerdo con esta política, por favor no utilice nuestros servicios.
+                </p>
+            </section>
+
+            <section>
+                <h2>2. Información que Recopilamos</h2>
+                
+                <h3>2.1. Información de Autenticación</h3>
+                <p>Cuando se autentica con Google OAuth, recopilamos:</p>
+                <ul>
+                    <li><strong>Token de acceso de Google:</strong> Almacenado de forma segura en una cookie HTTP-only para autenticación.</li>
+                    <li><strong>Información básica de perfil:</strong> Incluyendo nombre, dirección de correo electrónico y foto de perfil de su cuenta de Google.</li>
+                </ul>
+
+                <h3>2.2. Datos de Aplicaciones de Trabajo</h3>
+                <p>Los datos que usted ingresa sobre sus solicitudes de empleo incluyen:</p>
+                <ul>
+                    <li>Información de posición (título del trabajo, compañía, salario)</li>
+                    <li>Fechas (fecha de solicitud, fechas de entrevistas, fechas de seguimiento)</li>
+                    <li>Estado de la aplicación y eventos de la línea de tiempo de entrevistas</li>
+                    <li>Información de contacto (nombres de contactos, enlaces, notas)</li>
+                    <li>Plataforma o sitio donde encontró la oportunidad</li>
+                    <li>Campos personalizados definidos por usted</li>
+                </ul>
+
+                <h3>2.3. Oportunidades de Trabajo</h3>
+                <p>Si utiliza nuestra extensión de Chrome para capturar oportunidades de trabajo:</p>
+                <ul>
+                    <li>Datos extraídos de páginas de trabajo (LinkedIn, Greenhouse, etc.)</li>
+                    <li>Información que usted edita o agrega antes de guardar</li>
+                    <li>Enlaces a publicaciones de trabajo</li>
+                </ul>
+
+                <h3>2.4. Preferencias de Usuario</h3>
+                <p>Almacenamos sus preferencias de configuración:</p>
+                <ul>
+                    <li>Configuración de campos visibles y orden de columnas</li>
+                    <li>Vista predeterminada (Tabla, Línea de tiempo, Kanban, Calendario)</li>
+                    <li>Formato de fecha preferido</li>
+                    <li>Campos personalizados definidos</li>
+                </ul>
+
+                <h3>2.5. Cookies y Almacenamiento Local</h3>
+                <p>Utilizamos:</p>
+                <ul>
+                    <li><strong>Cookie HTTP-only segura:</strong> Para almacenar el token de autenticación de Google de forma segura</li>
+                    <li><strong>localStorage del navegador:</strong> Para almacenar sus datos de aplicaciones y preferencias localmente en su dispositivo</li>
+                    <li><strong>Chrome Storage (extensión):</strong> Para almacenar oportunidades capturadas en la extensión</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>3. Cómo Utilizamos su Información</h2>
+                <p>Utilizamos la información recopilada para:</p>
+                <ul>
+                    <li><strong>Proporcionar el servicio:</strong> Permitirle gestionar y rastrear sus solicitudes de empleo</li>
+                    <li><strong>Autenticación:</strong> Verificar su identidad y mantener su sesión activa</li>
+                    <li><strong>Mejora del servicio:</strong> Entender cómo utiliza la aplicación para mejorar la experiencia</li>
+                    <li><strong>Sincronización:</strong> Sincronizar datos entre la aplicación web y la extensión de Chrome</li>
+                    <li><strong>Integración con Google Sheets:</strong> Si elige sincronizar, crear y actualizar hojas de cálculo en su cuenta de Google</li>
+                </ul>
+                <p>
+                    <strong>No vendemos, alquilamos ni compartimos su información personal con terceros</strong> 
+                    para fines de marketing o comerciales sin su consentimiento explícito.
+                </p>
+            </section>
+
+            <section>
+                <h2>4. Almacenamiento de Datos</h2>
+                
+                <h3>4.1. Almacenamiento Local</h3>
+                <p>
+                    La mayor parte de sus datos se almacena <strong>localmente en su navegador</strong> utilizando localStorage. 
+                    Esto significa que sus datos permanecen en su dispositivo y no se transmiten a nuestros servidores 
+                    (excepto cuando utiliza funciones opcionales como la sincronización con Google Sheets).
+                </p>
+
+                <h3>4.2. Servidor PHP</h3>
+                <p>
+                    Utilizamos un servidor PHP para:
+                </p>
+                <ul>
+                    <li>Gestionar cookies de autenticación seguras (HTTP-only, Secure, SameSite=Strict)</li>
+                    <li>Actuar como proxy seguro para la API de Google Sheets</li>
+                    <li>No almacenamos sus datos de aplicaciones en nuestros servidores</li>
+                </ul>
+
+                <h3>4.3. Integración con Google Sheets</h3>
+                <p>
+                    Si elige sincronizar con Google Sheets, sus datos se almacenarán en hojas de cálculo de Google 
+                    en su propia cuenta de Google Drive. Esta sincronización es completamente opcional.
+                </p>
+                <p>
+                    Cuando utiliza esta función, sus datos se transmiten a través de nuestros servidores PHP 
+                    como proxy seguro para la API de Google Sheets, pero no se almacenan permanentemente en nuestros servidores.
+                </p>
+            </section>
+
+            <section>
+                <h2>5. Compartir Información con Terceros</h2>
+                
+                <h3>5.1. Google Services</h3>
+                <p>
+                    Utilizamos los siguientes servicios de Google:
+                </p>
+                <ul>
+                    <li><strong>Google OAuth:</strong> Para autenticación. Google puede recibir información sobre su uso del servicio. 
+                        Para más información, consulte la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de Privacidad de Google</a>.</li>
+                    <li><strong>Google Sheets API:</strong> Para sincronización opcional. Sus datos se almacenan en su propia cuenta de Google Drive.</li>
+                </ul>
+
+                <h3>5.2. Proveedores de Servicios</h3>
+                <p>
+                    Podemos utilizar servicios de terceros para:
+                </p>
+                <ul>
+                    <li>Hospedaje de la aplicación web</li>
+                    <li>Análisis de uso (si aplica)</li>
+                </ul>
+                <p>
+                    Estos proveedores tienen acceso solo a la información necesaria para realizar sus funciones 
+                    y están obligados a no usar o divulgar la información para ningún otro propósito.
+                </p>
+
+                <h3>5.3. Requisitos Legales</h3>
+                <p>
+                    Podemos divulgar su información si la ley lo requiere o en respuesta a solicitudes válidas 
+                    de autoridades públicas.
+                </p>
+            </section>
+
+            <section>
+                <h2>6. Seguridad de Datos</h2>
+                <p>
+                    Implementamos medidas de seguridad técnicas y organizativas para proteger su información:
+                </p>
+                <ul>
+                    <li><strong>Cookies seguras:</strong> Utilizamos cookies HTTP-only que no pueden ser leídas por JavaScript, 
+                        protegiéndolo contra ataques XSS</li>
+                    <li><strong>HTTPS:</strong> Toda la comunicación se realiza a través de conexiones HTTPS encriptadas</li>
+                    <li><strong>Sanitización de entrada:</strong> Todos los datos del usuario se sanitizan antes de almacenarse 
+                        para prevenir ataques XSS e inyección</li>
+                    <li><strong>Políticas CORS:</strong> Restringimos el acceso a nuestros endpoints API a orígenes conocidos</li>
+                    <li><strong>Almacenamiento local:</strong> Sus datos se almacenan en su dispositivo, reduciendo el riesgo de brechas de datos</li>
+                </ul>
+                <div class="highlight">
+                    <p><strong>Importante:</strong> Aunque implementamos medidas de seguridad sólidas, ningún método de transmisión 
+                    o almacenamiento es 100% seguro. Usted es responsable de mantener la seguridad de su cuenta y dispositivo.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>7. Sus Derechos</h2>
+                <p>Usted tiene los siguientes derechos respecto a su información personal:</p>
+                <ul>
+                    <li><strong>Acceso:</strong> Puede acceder a todos sus datos en cualquier momento a través de la aplicación</li>
+                    <li><strong>Eliminación:</strong> Puede eliminar sus datos en cualquier momento eliminando las entradas individuales 
+                        o limpiando el almacenamiento local de su navegador</li>
+                    <li><strong>Exportación:</strong> Sus datos se almacenan en formato JSON en localStorage y pueden ser exportados 
+                        manualmente desde las herramientas de desarrollador de su navegador</li>
+                    <li><strong>Retiro del consentimiento:</strong> Puede dejar de usar el servicio en cualquier momento</li>
+                    <li><strong>Desconexión de Google:</strong> Puede cerrar sesión y eliminar la cookie de autenticación en cualquier momento</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>8. Retención de Datos</h2>
+                <p>
+                    Sus datos se almacenan <strong>indefinidamente en su dispositivo</strong> hasta que:
+                </p>
+                <ul>
+                    <li>Usted los elimine manualmente</li>
+                    <li>Limpie el almacenamiento local de su navegador</li>
+                    <li>Desinstale la extensión de Chrome (para datos de la extensión)</li>
+                </ul>
+                <p>
+                    Cuando cierra sesión, el token de autenticación se elimina del servidor. 
+                    Si no utiliza el servicio durante un período prolongado, sus datos permanecen en su dispositivo.
+                </p>
+            </section>
+
+            <section>
+                <h2>9. Privacidad de Menores</h2>
+                <p>
+                    Job Application Tracker no está dirigido a menores de 13 años. No recopilamos intencionalmente 
+                    información personal de menores de 13 años. Si descubrimos que hemos recopilado información 
+                    de un menor de 13 años, tomaremos medidas para eliminar esa información de nuestros sistemas.
+                </p>
+            </section>
+
+            <section>
+                <h2>10. Cambios a esta Política de Privacidad</h2>
+                <p>
+                    Podemos actualizar esta Política de Privacidad de vez en cuando. Le notificaremos de cualquier cambio 
+                    publicando la nueva política en esta página y actualizando la fecha de "Última actualización".
+                </p>
+                <p>
+                    Le recomendamos que revise esta política periódicamente para estar informado sobre cómo protegemos su información.
+                </p>
+            </section>
+
+            <section>
+                <h2>11. Cookies y Tecnologías de Rastreo</h2>
+                <p>
+                    Utilizamos las siguientes tecnologías:
+                </p>
+                <ul>
+                    <li><strong>Cookie HTTP-only:</strong> Almacena el token de autenticación de Google de forma segura</li>
+                    <li><strong>localStorage:</strong> Almacena sus datos de aplicaciones y preferencias en su navegador</li>
+                    <li><strong>Chrome Storage API:</strong> Utilizada por la extensión de Chrome para almacenar oportunidades</li>
+                </ul>
+                <p>
+                    Puede controlar las cookies a través de la configuración de su navegador. 
+                    Tenga en cuenta que deshabilitar ciertas cookies puede afectar la funcionalidad del servicio.
+                </p>
+            </section>
+
+            <section>
+                <h2>12. Contacto</h2>
+                <p>Si tiene preguntas o inquietudes sobre esta Política de Privacidad, puede contactarnos:</p>
+                <div class="contact-info">
+                    <p>
+                        <strong>Job Application Tracker</strong><br>
+                        Sitio web: <a href="https://jajat.godieboy.com">https://jajat.godieboy.com</a><br>
+                        Página de política de privacidad: <a href="https://jajat.godieboy.com/privacy.html">https://jajat.godieboy.com/privacy.html</a>
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>13. Aceptación de Términos</h2>
+                <p>
+                    Al utilizar Job Application Tracker, usted reconoce que ha leído y entendido esta Política de Privacidad 
+                    y acepta todas las prácticas descritas en ella. Si no está de acuerdo con esta política, 
+                    por favor no utilice nuestros servicios.
+                </p>
+            </section>
+
+            <footer>
+                <p>&copy; 2025 Job Application Tracker. Todos los derechos reservados.</p>
+                <p>
+                    <a href="https://jajat.godieboy.com">Volver a la aplicación</a>
+                </p>
+            </footer>
+        </div>
     </div>
+
+    <script>
+        function switchLanguage(lang) {
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected language content
+            document.getElementById('content-' + lang).classList.add('active');
+            
+            // Update tabs
+            document.querySelectorAll('.language-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang === 'en' ? 'en' : 'es';
+            
+            // Save preference
+            localStorage.setItem('preferredLanguage', lang);
+        }
+        
+        // Format date function
+        function formatDate(date, lang) {
+            const monthsEn = ['January', 'February', 'March', 'April', 'May', 'June', 
+                             'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthsEs = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                             'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            
+            const year = date.getFullYear();
+            const month = lang === 'es' ? monthsEs[date.getMonth()] : monthsEn[date.getMonth()];
+            const day = date.getDate();
+            
+            if (lang === 'es') {
+                return `${day} de ${month} de ${year}`;
+            } else {
+                return `${month} ${day}, ${year}`;
+            }
+        }
+        
+        // Update dates on page load
+        function updateDates() {
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+            
+            // English date
+            const enDateEl = document.getElementById('last-updated-en');
+            if (enDateEl) {
+                enDateEl.setAttribute('datetime', dateStr);
+                enDateEl.textContent = formatDate(today, 'en');
+            }
+            
+            // Spanish date
+            const esDateEl = document.getElementById('last-updated-es');
+            if (esDateEl) {
+                esDateEl.setAttribute('datetime', dateStr);
+                esDateEl.textContent = formatDate(today, 'es');
+            }
+        }
+        
+        // Load saved language preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Update dates first
+            updateDates();
+            
+            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+            const tabs = document.querySelectorAll('.language-tab');
+            const contents = document.querySelectorAll('.content');
+            
+            // Remove active from all
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Activate saved language
+            if (savedLang === 'es') {
+                document.getElementById('content-es').classList.add('active');
+                tabs[1].classList.add('active');
+                document.documentElement.lang = 'es';
+            } else {
+                document.getElementById('content-en').classList.add('active');
+                tabs[0].classList.add('active');
+                document.documentElement.lang = 'en';
+            }
+        });
+    </script>
 </body>
 </html>
-

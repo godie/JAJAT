@@ -348,6 +348,18 @@ export const migrateApplicationData = (oldApp: any): JobApplication => {
 - [x] Create comprehensive unit tests for extension components
 - [x] Document extension architecture and usage
 
+### Phase 9 (Completed): Legal Compliance & Bug Fixes ✅
+- [x] Create Terms of Service page (`/terms.html`) with bilingual support (English/Spanish)
+- [x] Update Privacy Policy page (`/privacy.html`) with bilingual support (English/Spanish)
+- [x] Implement interactive language switcher with tab-based UI
+- [x] Add persistent language preference storage (localStorage)
+- [x] Set English as default language for legal pages
+- [x] Add legal page links to footer (Terms of Service and Privacy Policy)
+- [x] Fix default status issue in AddJobComponent (now defaults to "Applied" instead of "unknown")
+- [x] Fix TimelineEditor test mocks to include getPreferences function
+- [x] Ensure all legal pages are ready for Google OAuth verification
+- [x] Update footer text to English for consistency
+
 **Future Enhancements for Chrome Extension:**
 - [x] Support for additional job boards:
   - [x] Greenhouse (greenhouse.io) ✅
@@ -438,6 +450,12 @@ export const PreferencesContext = createContext<{
 20. ✅ Date format preferences
 21. ✅ Custom fields management (create, edit, delete)
 22. ✅ Comprehensive unit tests for Settings page
+23. ✅ Terms of Service page (bilingual: English/Spanish with interactive switcher)
+24. ✅ Privacy Policy page (bilingual: English/Spanish with interactive switcher)
+25. ✅ Language switcher with persistent preference (localStorage)
+26. ✅ Legal compliance for Google OAuth verification
+27. ✅ Bug fix: Default status now correctly set to "Applied" in new entries
+28. ✅ Test fix: TimelineEditor tests now properly mock getPreferences function
 
 **Immediate Next Steps:**
 1. Chrome Extension enhancements:
