@@ -63,8 +63,10 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
   );
 };
 
+import { type PageType } from '../App';
+
 interface HomePageContentProps {
-  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
+  onNavigate?: (page: PageType) => void;
 }
 
 const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
@@ -411,7 +413,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
 };
 
 interface HomePageProps {
-  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
+  onNavigate?: (page: PageType) => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {

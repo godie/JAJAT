@@ -465,6 +465,7 @@ export const PreferencesContext = createContext<{
 3. Export/import functionality
 
 **Future Enhancements:**
+- Insights Page
 - Advanced analytics and insights
 - Mobile app version
 - Real-time collaboration
