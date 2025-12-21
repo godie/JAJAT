@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor, within } from '@testing-library/rea
 import SettingsPage from '../pages/SettingsPage';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AlertProvider } from '../components/AlertProvider';
 import {
   DEFAULT_PREFERENCES,
   DEFAULT_FIELDS,
@@ -22,11 +23,13 @@ const localStorageMock = (() => {
 })();
 Object.defineProperty(global, 'localStorage', { value: localStorageMock });
 
-// Helper function to render with GoogleOAuthProvider
+// Helper function to render with GoogleOAuthProvider and AlertProvider
 const renderWithGoogleProvider = (ui: React.ReactElement) => {
   return render(
     <GoogleOAuthProvider clientId="test-client-id">
-      {ui}
+      <AlertProvider>
+        {ui}
+      </AlertProvider>
     </GoogleOAuthProvider>
   );
 };

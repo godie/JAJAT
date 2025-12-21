@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import HomePage from '../pages/HomePage';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AlertProvider } from '../components/AlertProvider';
 
 // =========================================================================
 // 1. MOCK: Configuración del Mock para localStorage
@@ -18,11 +19,13 @@ const localStorageMock = (() => {
 })();
 Object.defineProperty(global, 'localStorage', { value: localStorageMock });
 
-// Helper function to render with GoogleOAuthProvider
+// Helper function to render with GoogleOAuthProvider and AlertProvider
 const renderWithGoogleProvider = (ui: React.ReactElement) => {
   return render(
     <GoogleOAuthProvider clientId="test-client-id">
-      {ui}
+      <AlertProvider>
+        {ui}
+      </AlertProvider>
     </GoogleOAuthProvider>
   );
 };
@@ -95,13 +98,9 @@ describe('HomePage Core Requirements (Static Content)', () => {
     renderWithGoogleProvider(<HomePage />);
   });
 
-  test('renders the application title, login button, and add entry button', () => {
-    // Título
-    expect(screen.getByText(/Just Another Job Application Tracker/i)).toBeInTheDocument();
-    
-    // Botones
-    expect(screen.queryByRole('button', { name: /Failed to login with Google. Please try again./i })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Login with Google/i })).toBeInTheDocument();
+  test('renders the add entry button', () => {
+    // El título y login button ahora están en el Header que está en MainLayout
+    // Solo verificamos que el botón de agregar entrada esté presente
     expect(screen.getByRole('button', { name: "Add new application entry" })).toBeInTheDocument();
   });
 
