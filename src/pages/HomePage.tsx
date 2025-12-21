@@ -1,6 +1,5 @@
 // src/pages/HomePage.tsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ApplicationTable from '../components/ApplicationTable';
 import TimelineView from '../components/TimelineView';
@@ -8,7 +7,7 @@ import KanbanView from '../components/KanbanView';
 import CalendarView from '../components/CalendarView';
 import ViewSwitcher, { type ViewType } from '../components/ViewSwitcher';
 import FiltersBar, { type Filters } from '../components/FiltersBar';
-import { AlertProvider, useAlert } from '../components/AlertProvider';
+import { useAlert } from '../components/AlertProvider';
 import {
   getApplications,
   saveApplications,
@@ -53,10 +52,10 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
       {metrics.map((metric) => (
         <div 
           key={metric.label} 
-          className={`bg-white p-6 rounded-xl shadow-lg border-l-4 ${metric.color} transition duration-300 hover:shadow-xl`}
+          className={`bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 ${metric.color} transition duration-300 hover:shadow-xl`}
         >
-          <p className="text-sm font-medium text-gray-500">{metric.label}</p>
-          <p className="mt-1 text-4xl font-extrabold text-gray-900">{metric.value}</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{metric.label}</p>
+          <p className="mt-1 text-4xl font-extrabold text-gray-900 dark:text-white">{metric.value}</p>
         </div>
       ))}
     </section>
@@ -69,7 +68,7 @@ interface HomePageContentProps {
   onNavigate?: (page: PageType) => void;
 }
 
-const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
+const HomePageContent: React.FC<HomePageContentProps> = () => {
   const { showSuccess } = useAlert();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
@@ -350,9 +349,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-        <Header onNavigate={onNavigate} currentPage="applications" />
-        <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto">
           
           {/* Summary Section */}
           <MetricsSummary applications={filteredApplications} />
@@ -375,8 +372,8 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
               onClear={handleClearFilters}
             />
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs sm:text-sm text-gray-500">
-                Showing <span className="font-semibold text-gray-700">{filteredApplications.length}</span> of {applications.length} applications
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                Showing <span className="font-semibold text-gray-700 dark:text-gray-300">{filteredApplications.length}</span> of {applications.length} applications
               </p>
             </div>
           </div>
@@ -384,7 +381,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
           {/* View Switcher, Header and Add Button */}
           <div className="flex flex-col gap-4 mb-6 mt-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:flex-1">
-              <h2 className="text-2xl font-bold text-gray-800">Application Pipeline</h2>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Application Pipeline</h2>
               <ViewSwitcher currentView={currentView} onViewChange={handleViewChange} />
             </div>
             <button 
@@ -399,7 +396,6 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ onNavigate }) => {
           
           {/* Current View */}
           {renderCurrentView()}
-        </main>
         <Footer version={packageJson.version} />
         {isFormOpen && (
           <AddJobForm 
@@ -417,11 +413,7 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
-  return (
-    <AlertProvider>
-      <HomePageContent onNavigate={onNavigate} />
-    </AlertProvider>
-  );
+  return <HomePageContent onNavigate={onNavigate} />;
 };
 
 export default HomePage;

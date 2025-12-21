@@ -5,6 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="https://godieboy.com/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JAJAT</title>
+    <script>
+      // Apply theme before React mounts to prevent flash
+      (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

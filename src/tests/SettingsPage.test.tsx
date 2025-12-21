@@ -28,7 +28,7 @@ const renderWithGoogleProvider = (ui: React.ReactElement) => {
   return render(
     <GoogleOAuthProvider clientId="test-client-id">
       <AlertProvider>
-        {ui}
+      {ui}
       </AlertProvider>
     </GoogleOAuthProvider>
   );

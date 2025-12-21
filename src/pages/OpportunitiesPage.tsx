@@ -1,8 +1,7 @@
 // src/pages/OpportunitiesPage.tsx
 import React, { useState, useEffect, useMemo } from 'react';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { AlertProvider, useAlert } from '../components/AlertProvider';
+import { useAlert } from '../components/AlertProvider';
 import { 
   getOpportunities, 
   addOpportunity,
@@ -23,7 +22,7 @@ interface OpportunitiesPageContentProps {
   onNavigate?: (page: PageType) => void;
 }
 
-const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onNavigate }) => {
+const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = () => {
   const { showSuccess, showError } = useAlert();
   const [opportunities, setOpportunities] = useState<JobOpportunity[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -165,13 +164,11 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header onNavigate={onNavigate} currentPage="opportunities" />
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex justify-between items-start">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Interesting Opportunities</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Interesting Opportunities</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Job opportunities captured from LinkedIn or added manually. Click "Apply" to convert them into applications.
             </p>
           </div>
@@ -184,9 +181,9 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
         </div>
 
         {opportunities.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <p className="text-gray-500 text-lg mb-2">No opportunities yet</p>
-            <p className="text-gray-400 text-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
+            <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">No opportunities yet</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">
               Install the Chrome extension to capture job opportunities from LinkedIn.
             </p>
           </div>
@@ -198,34 +195,34 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
                 placeholder="Search opportunities..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full sm:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                 Showing {filteredOpportunities.length} of {opportunities.length} opportunities
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-900">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Position
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Company
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Location
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Job Type
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Posted
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Captured
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -233,30 +230,30 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {filteredOpportunities.map((opp) => (
-                      <tr key={opp.id} className="hover:bg-gray-50">
+                      <tr key={opp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{opp.position}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{opp.position}</div>
                           {opp.salary && (
-                            <div className="text-xs text-gray-500">{opp.salary}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{opp.salary}</div>
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{opp.company}</div>
+                          <div className="text-sm text-gray-900 dark:text-white">{opp.company}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{opp.location || 'N/A'}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{opp.location || 'N/A'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                             {opp.jobType || 'N/A'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {formatDate(opp.postedDate)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {formatDate(opp.capturedDate)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -265,20 +262,20 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
                               href={sanitizeUrl(opp.link)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-indigo-600 hover:text-indigo-900"
+                              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
                               title="View on LinkedIn"
                             >
                               View
                             </a>
                             <button
                               onClick={() => handleApply(opp)}
-                              className="text-green-600 hover:text-green-900 font-semibold"
+                              className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 font-semibold"
                             >
                               Apply
                             </button>
                             <button
                               onClick={() => handleDelete(opp)}
-                              className="text-red-600 hover:text-red-900"
+                              className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
                             >
                               Delete
                             </button>
@@ -292,7 +289,6 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
             </div>
           </>
         )}
-      </main>
       <Footer version={packageJson.version} />
       <OpportunityForm
         isOpen={isFormOpen}
@@ -318,11 +314,7 @@ interface OpportunitiesPageProps {
 }
 
 const OpportunitiesPage: React.FC<OpportunitiesPageProps> = ({ onNavigate }) => {
-  return (
-    <AlertProvider>
-      <OpportunitiesPageContent onNavigate={onNavigate} />
-    </AlertProvider>
-  );
+  return <OpportunitiesPageContent onNavigate={onNavigate} />;
 };
 
 export default OpportunitiesPage;

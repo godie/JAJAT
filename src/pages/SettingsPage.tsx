@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { AlertProvider, useAlert } from '../components/AlertProvider';
+import { useAlert } from '../components/AlertProvider';
 import {
   DEFAULT_FIELDS,
   DEFAULT_PREFERENCES,
@@ -22,7 +21,7 @@ interface SettingsPageProps {
   onNavigate?: (page: PageType) => void;
 }
 
-const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
+const SettingsPageContent: React.FC<SettingsPageProps> = () => {
   const { showSuccess } = useAlert();
   const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
   const [hasChanges, setHasChanges] = useState(false);
@@ -234,18 +233,16 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header onNavigate={onNavigate} currentPage="settings" />
-      <main className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-5xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Settings</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white dark:text-white mb-2">Settings</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400">
             Customize your application tracking experience. All changes are saved locally in your browser.
           </p>
         </div>
 
         {/* Section Navigation */}
-        <div className="mb-6 flex flex-wrap gap-2 bg-white rounded-lg shadow-sm border border-gray-200 p-2">
+        <div className="mb-6 flex flex-wrap gap-2 bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 dark:border-gray-700 p-2">
           {sections.map((section) => (
             <button
               key={section.id}
@@ -253,8 +250,8 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
               onClick={() => setActiveSection(section.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeSection === section.id
-                  ? 'bg-indigo-100 text-indigo-700'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300'
+                  : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:bg-gray-700'
               }`}
             >
               <span>{section.icon}</span>
@@ -264,7 +261,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
         </div>
 
         {/* Save/Reset Controls */}
-        <div className="mb-6 flex justify-between items-center bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="mb-6 flex justify-between items-center bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 dark:border-gray-700 p-4">
           <div className="flex gap-2">
             <button
               type="button"
@@ -273,7 +270,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
               className={`px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition ${
                 hasChanges
                   ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-200 text-gray-500 dark:text-gray-400 cursor-not-allowed'
               }`}
             >
               Save Changes
@@ -281,7 +278,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={handleReset}
-              className="px-4 py-2 rounded-full text-sm font-semibold border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+              className="px-4 py-2 rounded-full text-sm font-semibold border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700 transition"
             >
               Reset to Default
             </button>
@@ -294,12 +291,12 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
         </div>
 
         {/* Section Content */}
-        <div className="bg-white shadow-lg rounded-xl p-6 sm:p-8">
+        <div className="bg-white dark:bg-gray-800 dark:bg-gray-800 shadow-lg rounded-xl p-6 sm:p-8">
           {/* Table Fields Section */}
           {activeSection === 'fields' && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Fields Configuration</h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white dark:text-white mb-2">Application Fields Configuration</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400 mb-6">
                 Choose which columns you want to see in your Applications table and adjust their order.
               </p>
 
@@ -310,20 +307,21 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                   return (
                     <div
                       key={field.id}
-                      className="flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50"
+                      className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700"
                     >
                       <div className="flex items-center gap-3">
                         <input
                           id={`field-${field.id}`}
+                          name={`field-${field.id}`}
                           type="checkbox"
                           checked={isEnabled}
                           onChange={() => handleToggleField(field.id)}
-                          className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                          className="h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded"
                         />
                         <div>
                           <label
                             htmlFor={`field-${field.id}`}
-                            className="text-sm font-medium text-gray-800"
+                            className="text-sm font-medium text-gray-800 dark:text-white"
                           >
                             {field.label}
                             {isCustom && (
@@ -332,7 +330,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                               </span>
                             )}
                           </label>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {field.required ? 'Required core field' : 'Optional field'}
                           </p>
                         </div>
@@ -344,8 +342,8 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                           disabled={index === 0}
                           className={`px-2 py-1 rounded-md text-xs font-medium border ${
                             index === 0
-                              ? 'text-gray-300 border-gray-200 cursor-not-allowed'
-                              : 'text-gray-600 border-gray-300 hover:bg-gray-100'
+                              ? 'text-gray-300 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                              : 'text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                           }`}
                         >
                           ↑
@@ -356,8 +354,8 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                           disabled={index === orderedFields.length - 1}
                           className={`px-2 py-1 rounded-md text-xs font-medium border ${
                             index === orderedFields.length - 1
-                              ? 'text-gray-300 border-gray-200 cursor-not-allowed'
-                              : 'text-gray-600 border-gray-300 hover:bg-gray-100'
+                              ? 'text-gray-300 border-gray-200 dark:border-gray-700 cursor-not-allowed'
+                              : 'text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                           }`}
                         >
                           ↓
@@ -373,8 +371,8 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
           {/* Default View Section */}
           {activeSection === 'view' && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Default View</h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white dark:text-white mb-2">Default View</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400 mb-6">
                 Choose which view should be displayed when you open the Applications page.
               </p>
 
@@ -387,12 +385,12 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                     className={`p-4 rounded-lg border-2 transition ${
                       preferences.defaultView === view
                         ? 'border-indigo-500 bg-indigo-50'
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
                     }`}
                   >
                     <div className="text-left">
-                      <div className="font-semibold text-gray-800 capitalize mb-1">{view}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="font-semibold text-gray-800 dark:text-white capitalize mb-1">{view}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
                         {view === 'table' && 'Enhanced table with filters'}
                         {view === 'timeline' && 'Chronological interview flow'}
                         {view === 'kanban' && 'Board view grouped by status'}
@@ -408,8 +406,8 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
           {/* Date Format Section */}
           {activeSection === 'date' && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Date Format</h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white dark:text-white mb-2">Date Format</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400 mb-6">
                 Choose how dates should be displayed throughout the application.
               </p>
 
@@ -440,7 +438,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                       className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${
                         preferences.dateFormat === format
                           ? 'border-indigo-500 bg-indigo-50'
-                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
                       }`}
                     >
                       <input
@@ -452,8 +450,8 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                         className="h-4 w-4 text-indigo-600"
                       />
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-800">{format}</div>
-                        <div className="text-xs text-gray-500">Example: {example}</div>
+                        <div className="font-semibold text-gray-800 dark:text-white">{format}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Example: {example}</div>
                       </div>
                     </label>
                   );
@@ -465,19 +463,19 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
           {/* Custom Fields Section */}
           {activeSection === 'custom' && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Custom Fields</h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white dark:text-white mb-2">Custom Fields</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400 mb-6">
                 Create your own fields to track additional information about your applications.
               </p>
 
               {/* Add/Edit Custom Field Form */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">
+              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
                   {editingCustomField ? 'Edit Custom Field' : 'Add New Custom Field'}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Field Label *
                     </label>
                     <input
@@ -485,11 +483,11 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                       value={customFieldForm.label || ''}
                       onChange={(e) => setCustomFieldForm({ ...customFieldForm, label: e.target.value })}
                       placeholder="e.g., Recruiter Phone"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Field Type *
                     </label>
                     <select
@@ -501,7 +499,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                           options: e.target.value === 'select' ? [] : undefined,
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                     >
                       <option value="text">Text</option>
                       <option value="date">Date</option>
@@ -513,7 +511,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                   </div>
                   {customFieldForm.type === 'select' && (
                     <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Options (one per line) *
                       </label>
                       <textarea
@@ -526,9 +524,9 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                         }
                         placeholder="Remote&#10;Hybrid&#10;On-site"
                         rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                       />
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Enter one option per line. These will appear as dropdown options.
                       </p>
                     </div>
@@ -537,13 +535,14 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                     <input
                       type="checkbox"
                       id="required-field"
+                      name="required-field"
                       checked={customFieldForm.required || false}
                       onChange={(e) =>
                         setCustomFieldForm({ ...customFieldForm, required: e.target.checked })
                       }
-                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                      className="h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded"
                     />
-                    <label htmlFor="required-field" className="text-sm text-gray-700">
+                    <label htmlFor="required-field" className="text-sm text-gray-700 dark:text-gray-300">
                       Required field
                     </label>
                   </div>
@@ -558,7 +557,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                         className={`px-4 py-2 rounded-md text-sm font-medium ${
                           customFieldForm.label
                             ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                            : 'bg-gray-200 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                         }`}
                       >
                         Update Field
@@ -569,7 +568,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                           setEditingCustomField(null);
                           setCustomFieldForm({ label: '', type: 'text', required: false, options: [] });
                         }}
-                        className="px-4 py-2 rounded-md text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        className="px-4 py-2 rounded-md text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700"
                       >
                         Cancel
                       </button>
@@ -582,7 +581,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                       className={`px-4 py-2 rounded-md text-sm font-medium ${
                         customFieldForm.label && (customFieldForm.type !== 'select' || (customFieldForm.options && customFieldForm.options.length > 0))
                           ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                          : 'bg-gray-200 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                       }`}
                     >
                       Add Field
@@ -597,10 +596,10 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                   {preferences.customFields.map((field) => (
                     <div
                       key={field.id}
-                      className="flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50"
+                      className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700"
                     >
                       <div>
-                        <div className="font-medium text-gray-800">
+                        <div className="font-medium text-gray-800 dark:text-white">
                           {field.label}
                           <span className="ml-2 text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
                             {field.type}
@@ -612,7 +611,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                           )}
                         </div>
                         {field.options && field.options.length > 0 && (
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Options: {field.options.join(', ')}
                           </div>
                         )}
@@ -637,7 +636,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   <p className="text-sm">No custom fields yet. Create one above to get started!</p>
                 </div>
               )}
@@ -647,19 +646,19 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
           {/* Interview Events Section */}
           {activeSection === 'interviewing' && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Interview Events</h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white dark:text-white mb-2">Interview Events</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400 mb-6">
                 Manage custom interview event types that will be available when creating timeline events.
               </p>
 
               {/* Add/Edit Interview Event Form */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">
+              <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
                   {editingInterviewEvent ? 'Edit Interview Event' : 'Add New Interview Event'}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Event Label *
                     </label>
                     <input
@@ -667,7 +666,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                       value={interviewEventForm.label || ''}
                       onChange={(e) => setInterviewEventForm({ ...interviewEventForm, label: e.target.value })}
                       placeholder="e.g., Phone Screen, Panel Interview"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
                 </div>
@@ -681,7 +680,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                         className={`px-4 py-2 rounded-md text-sm font-medium ${
                           interviewEventForm.label
                             ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                            : 'bg-gray-200 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                         }`}
                       >
                         Update Event
@@ -692,7 +691,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                           setEditingInterviewEvent(null);
                           setInterviewEventForm({ label: '' });
                         }}
-                        className="px-4 py-2 rounded-md text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        className="px-4 py-2 rounded-md text-sm font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700"
                       >
                         Cancel
                       </button>
@@ -705,7 +704,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                       className={`px-4 py-2 rounded-md text-sm font-medium ${
                         interviewEventForm.label
                           ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                          : 'bg-gray-200 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                       }`}
                     >
                       Add Event
@@ -720,10 +719,10 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                   {preferences.customInterviewEvents.map((event) => (
                     <div
                       key={event.id}
-                      className="flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50"
+                      className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-700"
                     >
                       <div>
-                        <div className="font-medium text-gray-800">
+                        <div className="font-medium text-gray-800 dark:text-white">
                           {event.label}
                         </div>
                       </div>
@@ -747,25 +746,20 @@ const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   <p className="text-sm">No custom interview events yet. Create one above to get started!</p>
                 </div>
               )}
             </div>
           )}
         </div>
-      </main>
       <Footer version={packageJson.version} />
     </div>
   );
 };
 
 const SettingsPage: React.FC<SettingsPageProps> = ({ onNavigate }) => {
-  return (
-    <AlertProvider>
-      <SettingsPageContent onNavigate={onNavigate} />
-    </AlertProvider>
-  );
+  return <SettingsPageContent onNavigate={onNavigate} />;
 };
 
 export default SettingsPage;

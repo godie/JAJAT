@@ -1,55 +1,84 @@
 // src/components/Sidebar.tsx
 import React, { useState, useEffect } from 'react';
+import { type PageType } from '../App';
+import { getOpportunities } from '../utils/localStorage';
 
-const Sidebar: React.FC = () => {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+interface SidebarProps {
+  currentPage?: PageType;
+  onNavigate?: (page: PageType) => void;
+  isOpen?: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ currentPage = 'applications', onNavigate, isOpen = true }) => {
+  const [opportunitiesCount, setOpportunitiesCount] = useState(0);
 
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    updateOpportunitiesCount();
+    
+    // Listen for storage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'jobOpportunities' || e.key === null) {
+        updateOpportunitiesCount();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Poll for changes (in case extension uses chrome.storage.local)
+    const interval = setInterval(updateOpportunitiesCount, 2000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+  const updateOpportunitiesCount = () => {
+    setOpportunitiesCount(getOpportunities().length);
   };
 
+  const handleNavigation = (page: PageType) => {
+    if (onNavigate) {
+      onNavigate(page);
+    }
+  };
+
+  const navItems: { page: PageType; label: string; showBadge?: boolean }[] = [
+    { page: 'applications', label: 'Applications' },
+    { page: 'opportunities', label: 'Opportunities', showBadge: true },
+    { page: 'settings', label: 'Settings' },
+    { page: 'insights', label: 'Insights' },
+  ];
+
   return (
-    <div className="w-64 h-full bg-secondary-light dark:bg-secondary-dark p-4">
-      <nav>
+    <div
+      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col transition-transform duration-300 ease-in-out z-40 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      } w-64`}
+    >
+      <nav className="flex-1">
         <ul>
-          <li className="mb-4">
-            <a href="#" className="text-lg font-semibold text-text-light dark:text-text-dark hover:text-gray-900 dark:hover:text-gray-100">
-              Applications
-            </a>
-          </li>
-          <li className="mb-4">
-            <a href="#" className="text-lg font-semibold text-text-light dark:text-text-dark hover:text-gray-900 dark:hover:text-gray-100">
-              Opportunities
-            </a>
-          </li>
-          <li className="mb-4">
-            <a href="#" className="text-lg font-semibold text-text-light dark:text-text-dark hover:text-gray-900 dark:hover:text-gray-100">
-              Settings
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-lg font-semibold text-text-light dark:text-text-dark hover:text-gray-900 dark:hover:text-gray-100">
-              Insights
-            </a>
-          </li>
+          {navItems.map((item) => (
+            <li key={item.page} className="mb-4">
+              <button
+                onClick={() => handleNavigation(item.page)}
+                className={`w-full text-left text-lg font-semibold text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white py-2 px-3 rounded-lg transition-colors relative ${
+                  currentPage === item.page
+                    ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                {item.label}
+                {item.showBadge && opportunitiesCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {opportunitiesCount > 9 ? '9+' : opportunitiesCount}
+                  </span>
+                )}
+              </button>
+            </li>
+          ))}
         </ul>
       </nav>
-      <button
-        onClick={toggleTheme}
-        className="mt-8 bg-primary-light dark:bg-primary-dark text-text-light dark:text-text-dark py-2 px-4 rounded"
-        aria-label="toggle theme"
-      >
-        Toggle Theme
-      </button>
     </div>
   );
 };
