@@ -17,8 +17,10 @@ import OpportunityForm from '../components/OpportunityForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 import packageJson from '../../package.json';
 
+import { type PageType } from '../App';
+
 interface OpportunitiesPageContentProps {
-  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
+  onNavigate?: (page: PageType) => void;
 }
 
 const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onNavigate }) => {
@@ -312,7 +314,7 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = ({ onN
 };
 
 interface OpportunitiesPageProps {
-  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
+  onNavigate?: (page: PageType) => void;
 }
 
 const OpportunitiesPage: React.FC<OpportunitiesPageProps> = ({ onNavigate }) => {

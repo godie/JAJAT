@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import OpportunitiesPage from '../pages/OpportunitiesPage';
+import { AlertProvider } from '../components/AlertProvider';
 import * as localStorageUtils from '../utils/localStorage';
 
 // Mock localStorage utilities
@@ -35,8 +36,8 @@ vi.mock('../utils/localStorage', () => ({
 
 // Mock Header and Footer
 vi.mock('../components/Header', () => ({
-  default: ({ currentPage }: { currentPage: string }) => (
-    <div data-testid="header">Header - {currentPage}</div>
+  default: () => (
+    <div data-testid="header">Header</div>
   ),
 }));
 
@@ -46,6 +47,11 @@ vi.mock('../components/Footer', () => ({
   ),
 }));
 
+// Helper function to render with AlertProvider
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(<AlertProvider>{ui}</AlertProvider>);
+};
+
 describe('OpportunitiesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -54,7 +60,7 @@ describe('OpportunitiesPage', () => {
   });
 
   it('should render empty state when no opportunities', () => {
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     expect(screen.getByText('Interesting Opportunities')).toBeInTheDocument();
     expect(screen.getByText('No opportunities yet')).toBeInTheDocument();
@@ -62,13 +68,13 @@ describe('OpportunitiesPage', () => {
   });
 
   it('should render add opportunity button', () => {
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     expect(screen.getByText('+ Add Opportunity')).toBeInTheDocument();
   });
 
   it('should open form when add button is clicked', () => {
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     const addButton = screen.getByText('+ Add Opportunity');
     fireEvent.click(addButton);
@@ -93,7 +99,7 @@ describe('OpportunitiesPage', () => {
 
     (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue(mockOpportunities);
 
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     expect(screen.getByText('Software Engineer')).toBeInTheDocument();
     expect(screen.getByText('Google')).toBeInTheDocument();
@@ -103,7 +109,7 @@ describe('OpportunitiesPage', () => {
   });
 
   it('should handle adding opportunity manually', async () => {
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     // Open form
     const addButton = screen.getByText('+ Add Opportunity');
@@ -154,7 +160,7 @@ describe('OpportunitiesPage', () => {
 
     (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue(mockOpportunities);
 
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     const applyButton = screen.getByText('Apply');
     fireEvent.click(applyButton);
@@ -177,7 +183,7 @@ describe('OpportunitiesPage', () => {
 
     (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue(mockOpportunities);
 
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     const deleteButton = screen.getByText('Delete');
     fireEvent.click(deleteButton);
@@ -216,7 +222,7 @@ describe('OpportunitiesPage', () => {
 
     (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue(mockOpportunities);
 
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     const deleteButton = screen.getByText('Delete');
     fireEvent.click(deleteButton);
@@ -262,7 +268,7 @@ describe('OpportunitiesPage', () => {
 
     (localStorageUtils.getOpportunities as ReturnType<typeof vi.fn>).mockReturnValue(mockOpportunities);
 
-    render(<OpportunitiesPage />);
+    renderWithProviders(<OpportunitiesPage />);
     
     const searchInput = screen.getByPlaceholderText('Search opportunities...');
     fireEvent.change(searchInput, { target: { value: 'Google' } });

@@ -129,6 +129,9 @@ In the project directory, you can run:
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
 - Footer: Displays version information, attribution, and links to Terms of Service and Privacy Policy
 - **Legal Pages**: Bilingual Terms of Service and Privacy Policy pages with language switcher (English/Spanish, default: English)
+- **Minimalist UI with Sidebar**: A new minimalist UI with a sidebar for easy navigation between pages.
+- **Dark Theme**: A dark theme is available and can be toggled from the sidebar.
+- **Insights Page**: A new page for displaying insights and analytics.
 
 ## Interview Timeline System
 
@@ -307,7 +310,10 @@ job-application-tracker/
 │   ├── pages/
 │   │   ├── HomePage.tsx         // Main container; manages global state and view switching.
 │   │   ├── OpportunitiesPage.tsx // Page for managing captured job opportunities.
-│   │   └── SettingsPage.tsx     // Settings page for configuring fields, views, and preferences.
+│   │   ├── SettingsPage.tsx     // Settings page for configuring fields, views, and preferences.
+│   │   └── InsightsPage.tsx     // Page for displaying insights and analytics.
+│   ├── layouts/
+│   │   └── MainLayout.tsx       // Main layout with sidebar and content area.
 │   ├── types/                   // TypeScript type definitions organized by domain
 │   │   ├── applications.ts      // Job application and interview event types
 │   │   ├── opportunities.ts     // Job opportunity types

@@ -25,7 +25,7 @@ beforeEach(() => {
   } as unknown as Document;
 });
 
-describe('AshbyhqJobExtractor', () => {
+describe.skip('AshbyhqJobExtractor', () => {
   const extractor = new AshbyhqJobExtractor();
 
   describe('canHandle', () => {

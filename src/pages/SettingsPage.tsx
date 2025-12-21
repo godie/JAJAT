@@ -16,8 +16,10 @@ import {
 } from '../utils/localStorage';
 import packageJson from '../../package.json';
 
+import { type PageType } from '../App';
+
 interface SettingsPageProps {
-  onNavigate?: (page: 'applications' | 'opportunities' | 'settings') => void;
+  onNavigate?: (page: PageType) => void;
 }
 
 const SettingsPageContent: React.FC<SettingsPageProps> = ({ onNavigate }) => {
