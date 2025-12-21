@@ -53,7 +53,7 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange }
   ];
 
   return (
-    <div className="flex items-center flex-wrap gap-2 bg-white rounded-lg shadow-sm border border-gray-200 p-2">
+    <div className="flex items-center flex-wrap gap-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-2">
       {views.map((view) => {
         const isActive = currentView === view.id;
 
@@ -65,8 +65,8 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange }
             className={`
               flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-150 text-sm
               ${isActive
-                ? 'bg-indigo-100 text-indigo-700 font-semibold shadow'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
+                ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-semibold shadow'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'}
             `}
             aria-pressed={isActive}
             aria-label={view.description}

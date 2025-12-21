@@ -57,12 +57,31 @@ export default defineConfig({
         entryFileNames: '[name].js',
         chunkFileNames: '[name].js',
         assetFileNames: '[name].[ext]',
+        // Avoid using eval in output to prevent CSP issues
+        format: 'es',
+        generatedCode: {
+          constBindings: true,
+        },
       },
-    } : undefined,
+    } : {
+      output: {
+        // Avoid using eval in output to prevent CSP issues
+        format: 'es',
+        generatedCode: {
+          constBindings: true,
+        },
+      },
+    },
+    // Use modern target to avoid eval in production
+    target: 'es2015',
+    // Source maps can cause CSP issues with eval, disable for production
+    sourcemap: false,
+    // Use esbuild (default) which doesn't use eval
+    minify: 'esbuild',
   },
   test: {
     globals: true, // Allows using functions like 'describe', 'it', 'expect' globally
-    environment: 'jsdom', // Simulates a browser environment for React components
+    environment: 'happy-dom', // Using happy-dom instead of jsdom to avoid DONT_CONTEXTIFY error
     setupFiles: './src/setupTests.ts', // File to set up testing library extensions
     // Specify where tests are located
     include: ['**/*.test.{ts,tsx}'],

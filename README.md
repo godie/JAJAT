@@ -3,12 +3,18 @@
 This is a modern Job Application Tracker built using React, TypeScript, and Tailwind CSS. The project follows Test-Driven Development (TDD) principles, utilizing Vitest and React Testing Library for comprehensive unit and component testing.The application manages job applications locally, with an architecture designed for seamless integration with external services like Google Sheets.
 
 # Project Status
-**Completion: 85%**
+**Completion: 90%**
 
-This project is feature-complete for its core functionality. Based on the project [recommendations](./RECOMMENDATIONS.md), 19 out of 21 planned features have been implemented and are fully tested.
+This project is feature-complete for its core functionality. Based on the project [recommendations](./RECOMMENDATIONS.md), 36 out of 38 planned features have been implemented and are fully tested. Recent additions include full dark mode support, improved UI with sidebar navigation, and comprehensive test coverage improvements.
+
+## Recent Updates
+- **Dark Mode**: Full dark mode implementation with persistent theme preference
+- **Sidebar Navigation**: Clean sidebar navigation with theme toggle and opportunities badge
+- **Test Infrastructure**: Migrated from jsdom to happy-dom, achieving 100% test pass rate (251 tests passing)
+- **UI Improvements**: All components now support dark mode with consistent styling
 
 ## Next Steps
-- Analytics dashboard
+- Analytics dashboard / Insights page enhancements
 - Export/import functionality
 
 For a detailed feature breakdown, please see the [recommendations document](./RECOMMENDATIONS.md).
@@ -129,9 +135,9 @@ In the project directory, you can run:
 - Keyboard Accessibility: Implements a custom hook (useKeyboardEscape) to allow users to close the modal form by pressing the Escape key
 - Footer: Displays version information, attribution, and links to Terms of Service and Privacy Policy
 - **Legal Pages**: Bilingual Terms of Service and Privacy Policy pages with language switcher (English/Spanish, default: English)
-- **Minimalist UI with Sidebar**: A new minimalist UI with a sidebar for easy navigation between pages.
-- **Dark Theme**: A dark theme is available and can be toggled from the sidebar.
-- **Insights Page**: A new page for displaying insights and analytics.
+- **Minimalist UI with Sidebar**: A clean, minimalist UI with a sidebar for easy navigation between pages (Applications, Opportunities, Settings, Insights)
+- **Dark Theme Support**: Full dark mode implementation with persistent theme preference stored in localStorage. Theme toggle switch with sun/moon icons available in the sidebar. All components support dark mode styling.
+- **Insights Page**: A new page for displaying insights and analytics (coming soon)
 
 ## Interview Timeline System
 
@@ -294,6 +300,7 @@ job-application-tracker/
 ├── src/
 │   ├── components/
 │   │   ├── Header.tsx           // Application header, login button, and OAuth logic.
+│   │   ├── Sidebar.tsx          // Sidebar navigation with theme toggle and opportunities badge.
 │   │   ├── ApplicationTable.tsx // Table displaying job entries and handling edit/delete UI.
 │   │   ├── AddJobComponent.tsx  // Modal form for creating and editing job entries.
 │   │   ├── TimelineView.tsx     // Timeline visualization of interview process.
@@ -313,7 +320,7 @@ job-application-tracker/
 │   │   ├── SettingsPage.tsx     // Settings page for configuring fields, views, and preferences.
 │   │   └── InsightsPage.tsx     // Page for displaying insights and analytics.
 │   ├── layouts/
-│   │   └── MainLayout.tsx       // Main layout with sidebar and content area.
+│   │   └── MainLayout.tsx       // Main layout with sidebar navigation and header, supports dark mode.
 │   ├── types/                   // TypeScript type definitions organized by domain
 │   │   ├── applications.ts      // Job application and interview event types
 │   │   ├── opportunities.ts     // Job opportunity types
@@ -354,7 +361,9 @@ job-application-tracker/
 │   │   ├── ConfirmDialog.test.tsx   // Tests for confirmation dialog component.
 │   │   ├── ApplicationTable.test.tsx // Tests for application table rendering.
 │   │   ├── localStorage.test.ts     // Tests for localStorage utilities.
-│   │   └── googleSheets.test.ts     // Tests for Google Sheets utility functions.
+│   │   ├── googleSheets.test.ts     // Tests for Google Sheets utility functions.
+│   │   ├── Theme.test.tsx           // Tests for theme persistence and localStorage functionality.
+│   │   └── DarkModeIntegration.test.tsx // Integration tests for dark mode functionality.
 │   ├── App.tsx                  // Main app component with GoogleOAuthProvider wrapper.
 │   └── main.tsx
 ├── api/                         // PHP backend endpoints
@@ -443,8 +452,8 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 19 passed (19)
-Tests: 230 passed (230)
+Test Files: 25 passed | 1 skipped (26)
+Tests: 251 passed | 34 skipped (285)
 ```
 
 ### Test Coverage Includes:
@@ -461,8 +470,15 @@ Tests: 230 passed (230)
 - Job extractors (LinkedIn, Greenhouse, AshbyHQ) with comprehensive unit tests
 - Opportunity management (creation, deletion, conversion)
 - Manual opportunity form validation and submission
+- **Dark mode functionality** (theme toggle, persistence, class application)
+- **Sidebar navigation** and theme switching
+- **Theme integration tests** for localStorage and document class management
 
-All tests can be run with `npm test` or `npm run test:watch` for TDD workflow.
+### Testing Infrastructure:
+- **Test Runner**: Vitest with happy-dom environment (optimized for React component testing)
+- **Component Testing**: React Testing Library for user-centric tests
+- **Mocking**: Comprehensive mocks for localStorage, Google OAuth, and API endpoints
+- All tests can be run with `npm test` or `npm run test:watch` for TDD workflow
 
 ## Git Pre-Commit Hook
 

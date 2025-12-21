@@ -360,6 +360,19 @@ export const migrateApplicationData = (oldApp: any): JobApplication => {
 - [x] Ensure all legal pages are ready for Google OAuth verification
 - [x] Update footer text to English for consistency
 
+### Phase 10 (Completed): Dark Mode & UI Improvements ✅
+- [x] Implement full dark mode support with theme toggle in sidebar
+- [x] Add theme persistence in localStorage with automatic initialization
+- [x] Apply dark mode styles to all components (Header, Sidebar, Tables, Forms, Modals, etc.)
+- [x] Configure Tailwind CSS v4 dark mode with `@custom-variant dark`
+- [x] Add inline script in index.html to prevent flash of unstyled content (FOUC)
+- [x] Implement theme toggle switch with sun/moon icons
+- [x] Update all page components with dark mode styling
+- [x] Add comprehensive tests for dark mode functionality (Theme.test.tsx, DarkModeIntegration.test.tsx)
+- [x] Fix all broken tests (47 failed → 0 failed) by switching from jsdom to happy-dom
+- [x] Add AlertProvider wrappers to all test files that need it
+- [x] Update test suite coverage (251 tests passing, 34 skipped)
+
 **Future Enhancements for Chrome Extension:**
 - [x] Support for additional job boards:
   - [x] Greenhouse (greenhouse.io) ✅
@@ -412,10 +425,14 @@ export const PreferencesContext = createContext<{
 - IndexedDB for large datasets
 
 ### Testing
-- Add tests for migration utilities
-- Test with various interview stage combinations
-- Test custom field rendering
-- Integration tests for Google Sheets sync
+- ✅ Add tests for migration utilities
+- ✅ Test with various interview stage combinations
+- ✅ Test custom field rendering
+- ✅ Integration tests for Google Sheets sync
+- ✅ Dark mode functionality tests (Theme.test.tsx, DarkModeIntegration.test.tsx)
+- ✅ Sidebar navigation and theme toggle tests
+- ✅ Test infrastructure improvements (jsdom → happy-dom for better compatibility)
+- ✅ All tests passing (251 tests, 34 skipped)
 
 ### Security
 - Never store OAuth tokens in localStorage (use secure storage)
@@ -456,6 +473,14 @@ export const PreferencesContext = createContext<{
 26. ✅ Legal compliance for Google OAuth verification
 27. ✅ Bug fix: Default status now correctly set to "Applied" in new entries
 28. ✅ Test fix: TimelineEditor tests now properly mock getPreferences function
+29. ✅ **Dark mode implementation** with theme toggle in sidebar
+30. ✅ **Theme persistence** in localStorage with automatic initialization
+31. ✅ **Full dark mode styling** across all components and pages
+32. ✅ **Tailwind CSS v4 dark mode** configuration with custom variant
+33. ✅ **Comprehensive dark mode tests** (Theme.test.tsx, DarkModeIntegration.test.tsx)
+34. ✅ **Test infrastructure improvements** (jsdom → happy-dom, all tests passing)
+35. ✅ **Sidebar navigation** with theme toggle and opportunities badge
+36. ✅ **MainLayout restructure** with sidebar and header separation
 
 **Immediate Next Steps:**
 1. Chrome Extension enhancements:

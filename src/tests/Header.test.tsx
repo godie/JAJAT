@@ -23,6 +23,9 @@ const renderWithProviders = (ui: React.ReactElement) => {
   return render(<AlertProvider>{ui}</AlertProvider>);
 };
 
+// Mock function for sidebar toggle
+const mockToggleSidebar = vi.fn();
+
 // Mock the module that provides the utility functions
 vi.mock('../utils/localStorage', () => {
   const checkLoginStatus = vi.fn(() => {
@@ -65,18 +68,56 @@ describe('Header Component', () => {
     Object.keys(localStorageStore).forEach(key => delete localStorageStore[key]);
     localStorageStore['isLoggedIn'] = 'false'; // Default to logged out
     mockGoogleLogin.mockClear();
+    mockToggleSidebar.mockClear();
+    // Reset theme in localStorage
+    localStorage.setItem('theme', 'light');
+    document.documentElement.classList.remove('dark');
   });
 
   test('should render the application title', () => {
-    renderWithProviders(<Header />);
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
     expect(screen.getByText(/Just Another Job Application Tracker/i)).toBeInTheDocument();
+  });
+
+  test('should render sidebar toggle button', () => {
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    const sidebarToggle = screen.getByTestId('sidebar-toggle');
+    expect(sidebarToggle).toBeInTheDocument();
+    expect(sidebarToggle).toHaveAttribute('aria-label', 'Toggle sidebar');
+  });
+
+  test('sidebar toggle button should call onToggleSidebar when clicked', () => {
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    const sidebarToggle = screen.getByTestId('sidebar-toggle');
+    fireEvent.click(sidebarToggle);
+    expect(mockToggleSidebar).toHaveBeenCalledTimes(1);
+  });
+
+  test('should render theme toggle button', () => {
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    const themeToggle = screen.getByTestId('theme-toggle');
+    expect(themeToggle).toBeInTheDocument();
+    expect(themeToggle).toHaveAttribute('aria-label', 'Toggle theme');
+  });
+
+  test('theme toggle should change theme when clicked', async () => {
+    localStorage.setItem('theme', 'light');
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    const themeToggle = screen.getByTestId('theme-toggle');
+    
+    fireEvent.click(themeToggle);
+    
+    await waitFor(() => {
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+      expect(localStorage.getItem('theme')).toBe('dark');
+    });
   });
 
   // --- Initial State Tests ---
 
   test('should render Login button when initially logged out', () => {
     localStorageStore['isLoggedIn'] = 'false';
-    renderWithProviders(<Header />);
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
     const loginButton = screen.getByTestId('login-button');
     expect(loginButton).toHaveTextContent('Login with Google');
     expect(loginButton).toHaveAttribute('aria-label', 'Login with Google');
@@ -84,7 +125,7 @@ describe('Header Component', () => {
 
   test('should render Logout button when initially logged in', () => {
     localStorageStore['isLoggedIn'] = 'true';
-    renderWithProviders(<Header />);
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
     const logoutButton = screen.getByTestId('login-button');
     expect(logoutButton).toHaveTextContent('Logout');
     expect(logoutButton).toHaveAttribute('aria-label', 'Logout');
@@ -94,7 +135,7 @@ describe('Header Component', () => {
 
   test('Logout action should call setLoginStatus(false)', async () => {
     localStorageStore['isLoggedIn'] = 'true';
-    renderWithProviders(<Header />);
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
     
     const logoutButton = screen.getByTestId('login-button');
     fireEvent.click(logoutButton);
@@ -107,7 +148,7 @@ describe('Header Component', () => {
 
   test('Login action should call googleLogin function', () => {
     localStorageStore['isLoggedIn'] = 'false';
-    renderWithProviders(<Header />);
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
     
     const loginButton = screen.getByTestId('login-button');
     fireEvent.click(loginButton);

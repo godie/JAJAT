@@ -41,15 +41,15 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
   };
 
   return (
-    <div className="overflow-x-auto shadow-xl rounded-lg border border-gray-100 bg-white">
-      <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm" data-testid="application-table">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto shadow-xl rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm" data-testid="application-table">
+        <thead className="bg-gray-50 dark:bg-gray-900">
           <tr>
             {columns.map((column) => (
               <th
                 key={column}
                 scope="col"
-                className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 uppercase tracking-wider bg-indigo-50 whitespace-nowrap"
+                className="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
               >
                 {column}
               </th>
@@ -59,10 +59,10 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-100">
+        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
           {data.length === 0 ? (
             <tr>
-              <td colSpan={columns.length + 1} className="px-4 sm:px-6 py-10 text-center text-gray-400 italic text-sm">
+              <td colSpan={columns.length + 1} className="px-4 sm:px-6 py-10 text-center text-gray-400 dark:text-gray-500 italic text-sm">
                 Use the "+ Add Entry" button to start tracking your applications!
               </td>
             </tr>
@@ -70,7 +70,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
             data.map((item) => (
               <tr
                 key={item.id}
-                className="hover:bg-gray-50 transition duration-100 cursor-pointer group"
+                className="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-100 cursor-pointer group"
                 onMouseEnter={() => setHoveredRowId(item.id)}
                 onMouseLeave={() => setHoveredRowId(null)}
                 data-testid={`row-${item.id}`}
@@ -84,14 +84,14 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
                     <td
                       key={index}
                       onClick={() => onEdit(item)}
-                      className="px-4 sm:px-6 py-3 whitespace-nowrap text-gray-900 border-r border-gray-100 group-hover:bg-indigo-50"
+                      className="px-4 sm:px-6 py-3 whitespace-nowrap text-gray-900 dark:text-gray-100 border-r border-gray-100 dark:border-gray-700 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900"
                     >
                       {key === 'link' ? (
                         <a
                           href={sanitizeUrl(cellContent)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-indigo-600 hover:underline"
+                          className="text-indigo-600 dark:text-indigo-400 hover:underline"
                           dangerouslySetInnerHTML={createMarkup(cellContent)}
                           onClick={(e) => e.stopPropagation()}
                         />
@@ -112,7 +112,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
                         e.stopPropagation();
                         setDeleteConfirm({ isOpen: true, application: item });
                       }}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-800 bg-red-50 px-3 py-1 rounded-full transition"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 bg-red-50 dark:bg-red-900 px-3 py-1 rounded-full transition"
                       aria-label={`Delete application for ${item.position}`}
                       data-testid={`delete-btn-${item.id}`}
                     >

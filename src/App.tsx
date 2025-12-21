@@ -1,12 +1,12 @@
 // src/App.tsx
 import { useState, useEffect } from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AlertProvider } from './components/AlertProvider';
 import HomePage from './pages/HomePage';
 import OpportunitiesPage from './pages/OpportunitiesPage';
 import SettingsPage from './pages/SettingsPage';
 import InsightsPage from './pages/InsightsPage';
 import MainLayout from './layouts/MainLayout';
-import Sidebar from './components/Sidebar';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
@@ -45,12 +45,11 @@ function App() {
 
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <MainLayout>
-        <Sidebar />
-        <div className="flex-1 p-8">
+      <AlertProvider>
+        <MainLayout currentPage={currentPage} onNavigate={setCurrentPage}>
           {renderPage()}
-        </div>
       </MainLayout>
+      </AlertProvider>
     </GoogleOAuthProvider>
   );
 }

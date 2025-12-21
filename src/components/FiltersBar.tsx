@@ -52,39 +52,41 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
   const statusExclude = filters.statusExclude || [];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 space-y-3">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-4 space-y-3">
       <div className="md:flex md:flex-wrap md:items-end md:gap-4">
         <div className="flex-1 min-w-[180px]">
-          <label htmlFor="search" className="block text-xs font-semibold text-gray-600 mb-1">Search</label>
+          <label htmlFor="search" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Search</label>
           <input
             id="search"
             type="text"
             value={filters.search}
             onChange={handleChange('search')}
             placeholder="Search by position, company, notes..."
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
           />
         </div>
 
         {/* Status filters - Advanced mode */}
         <div className="min-w-[200px] relative">
-          <label htmlFor="status-filters" className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
-          <div id="status-filters" className="flex gap-2">
+          <div className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Status</div>
+          <div className="flex gap-2">
             <div className="flex-1 relative">
               <details className="group">
-                <summary className="cursor-pointer text-xs px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-700 hover:text-indigo-600">
+                <summary className="cursor-pointer text-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
                   {statusInclude.length > 0 ? `✓ Include (${statusInclude.length})` : 'Include'}
                 </summary>
-                <div className="absolute mt-1 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-white shadow-lg z-20 w-48">
+                <div className="absolute mt-1 max-h-48 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-800 shadow-lg z-20 w-48">
                   {availableStatuses.map((status) => (
-                    <label key={status} className="flex items-center gap-2 py-1.5 px-2 cursor-pointer hover:bg-indigo-50 rounded">
+                    <label key={status} className="flex items-center gap-2 py-1.5 px-2 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-900 rounded">
                       <input
+                        id={`status-include-${status}`}
+                        name={`status-include-${status}`}
                         type="checkbox"
                         checked={statusInclude.includes(status)}
                         onChange={() => handleStatusIncludeToggle(status)}
-                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        className="rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-gray-700"
                       />
-                      <span className="text-xs text-gray-700">{status}</span>
+                      <span className="text-xs text-gray-700 dark:text-gray-300">{status}</span>
                     </label>
                   ))}
                 </div>
@@ -92,19 +94,21 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
             </div>
             <div className="flex-1 relative">
               <details className="group">
-                <summary className="cursor-pointer text-xs px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-700 hover:text-red-600">
+                <summary className="cursor-pointer text-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
                   {statusExclude.length > 0 ? `✗ Exclude (${statusExclude.length})` : 'Exclude'}
                 </summary>
-                <div className="absolute mt-1 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-white shadow-lg z-20 w-48">
+                <div className="absolute mt-1 max-h-48 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-800 shadow-lg z-20 w-48">
                   {availableStatuses.map((status) => (
-                    <label key={status} className="flex items-center gap-2 py-1.5 px-2 cursor-pointer hover:bg-red-50 rounded">
+                    <label key={status} className="flex items-center gap-2 py-1.5 px-2 cursor-pointer hover:bg-red-50 dark:hover:bg-red-900 rounded">
                       <input
+                        id={`status-exclude-${status}`}
+                        name={`status-exclude-${status}`}
                         type="checkbox"
                         checked={statusExclude.includes(status)}
                         onChange={() => handleStatusExcludeToggle(status)}
-                        className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                        className="rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500 bg-white dark:bg-gray-700"
                       />
-                      <span className="text-xs text-gray-700">{status}</span>
+                      <span className="text-xs text-gray-700 dark:text-gray-300">{status}</span>
                     </label>
                   ))}
                 </div>
@@ -115,7 +119,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
             <button
               type="button"
               onClick={() => onFiltersChange({ ...filters, statusInclude: [], statusExclude: [] })}
-              className="mt-1 text-xs text-gray-500 hover:text-gray-700 underline"
+              className="mt-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 underline"
             >
               Clear status filters
             </button>
@@ -123,12 +127,12 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
         </div>
 
       <div className="min-w-[160px]">
-        <label htmlFor="platform-filter" className="block text-xs font-semibold text-gray-600 mb-1">Platform</label>
+        <label htmlFor="platform-filter" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Platform</label>
         <select
           id="platform-filter"
           value={filters.platform}
           onChange={handleChange('platform')}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white"
+          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         >
           <option value="">All</option>
           {availablePlatforms.map((platform) => (
@@ -139,23 +143,23 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
 
       <div className="flex flex-col sm:flex-row sm:items-end gap-2">
         <div className="min-w-[140px]">
-          <label htmlFor="date-from" className="block text-xs font-semibold text-gray-600 mb-1">From</label>
+          <label htmlFor="date-from" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">From</label>
           <input
             id="date-from"
             type="date"
             value={filters.dateFrom}
             onChange={handleChange('dateFrom')}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-indigo-500"
           />
         </div>
         <div className="min-w-[140px]">
-          <label htmlFor="date-to" className="block text-xs font-semibold text-gray-600 mb-1">To</label>
+          <label htmlFor="date-to" className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">To</label>
           <input
             id="date-to"
             type="date"
             value={filters.dateTo}
             onChange={handleChange('dateTo')}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-indigo-500"
           />
         </div>
       </div>
@@ -164,7 +168,7 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
           <button
             type="button"
             onClick={onClear}
-            className="px-3 py-2 text-xs font-semibold text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+            className="px-3 py-2 text-xs font-semibold text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
           >
             Clear
           </button>
