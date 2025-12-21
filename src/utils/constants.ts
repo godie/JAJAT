@@ -1,30 +1,38 @@
 // src/utils/constants.ts
-import type { FieldDefinition, UserPreferences } from '../types/preferences';
+import { UserPreferences } from "../types/preferences";
+import { FieldDefinition } from "../types/fields";
 
-export const STORAGE_KEY = 'jobTrackerData';
-export const PREFERENCES_STORAGE_KEY = 'jobTrackerPreferences';
+export const STORAGE_KEY = 'jobApplications';
 export const OPPORTUNITIES_STORAGE_KEY = 'jobOpportunities';
+export const PREFERENCES_STORAGE_KEY = 'userPreferences';
+
+export const VALUE_BY_STATUS: Record<string, string> = {
+  'applied': 'Applied',
+  'interviewing': 'Interviewing',
+  'offer': 'Offer',
+  'rejected': 'Rejected',
+  'withdrawn': 'Withdrawn',
+};
 
 export const DEFAULT_FIELDS: FieldDefinition[] = [
-  { id: 'position', label: 'Position', type: 'text', required: true },
-  { id: 'company', label: 'Company', type: 'text', required: true },
-  { id: 'salary', label: 'Salary', type: 'text', required: false },
-  { id: 'status', label: 'Status', type: 'text', required: false },
-  { id: 'applicationdate', label: 'Application Date', type: 'date', required: false },
-  { id: 'interviewdate', label: 'Interview Date', type: 'date', required: false },
-  { id: 'platform', label: 'Platform', type: 'text', required: false },
-  { id: 'contactname', label: 'Contact Name', type: 'text', required: false },
-  { id: 'followupdate', label: 'Follow-up Date', type: 'date', required: false },
-  { id: 'notes', label: 'Notes', type: 'text', required: false },
-  { id: 'link', label: 'Link', type: 'url', required: false },
+  { id: 'position', label: 'Position', type: 'text', enabled: true },
+  { id: 'company', label: 'Company', type: 'text', enabled: true },
+  { id: 'status', label: 'Status', type: 'text', enabled: true },
+  { id: 'applicationDate', label: 'Application Date', type: 'date', enabled: true },
+  { id: 'timeline', label: 'Timeline', type: 'timeline', enabled: true },
+  { id: 'notes', label: 'Notes', type: 'textarea', enabled: true },
+  { id: 'link', label: 'Link', type: 'url', enabled: true },
+  { id: 'platform', label: 'Platform', type: 'text', enabled: false },
+  { id: 'salary', label: 'Salary', type: 'text', enabled: false },
+  { id: 'contactName', label: 'Contact', type: 'text', enabled: false },
+  { id: 'followUpDate', label: 'Follow Up', type: 'date', enabled: false },
 ];
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
-  enabledFields: DEFAULT_FIELDS.map((field) => field.id),
+  enabledFields: ['position', 'company', 'status', 'applicationDate'],
+  columnOrder: ['position', 'company', 'status', 'applicationDate'],
   customFields: [],
-  columnOrder: DEFAULT_FIELDS.map((field) => field.id),
   defaultView: 'table',
   dateFormat: 'YYYY-MM-DD',
   customInterviewEvents: [],
 };
-
