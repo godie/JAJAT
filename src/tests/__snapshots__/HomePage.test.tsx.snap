@@ -388,12 +388,6 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
               class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
               scope="col"
             >
-              Salary
-            </th>
-            <th
-              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
-              scope="col"
-            >
               Status
             </th>
             <th
@@ -406,25 +400,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
               class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
               scope="col"
             >
-              Interview Date
-            </th>
-            <th
-              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
-              scope="col"
-            >
-              Platform
-            </th>
-            <th
-              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
-              scope="col"
-            >
-              Contact Name
-            </th>
-            <th
-              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
-              scope="col"
-            >
-              Follow-up Date
+              Timeline
             </th>
             <th
               class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
@@ -437,6 +413,30 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
               scope="col"
             >
               Link
+            </th>
+            <th
+              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
+              scope="col"
+            >
+              Platform
+            </th>
+            <th
+              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
+              scope="col"
+            >
+              Salary
+            </th>
+            <th
+              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
+              scope="col"
+            >
+              Contact
+            </th>
+            <th
+              class="px-4 sm:px-6 py-3 text-left text-[11px] sm:text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-900 whitespace-nowrap"
+              scope="col"
+            >
+              Follow Up
             </th>
             <th
               class="relative px-4 sm:px-6 py-3 w-1"

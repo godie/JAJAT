@@ -3,6 +3,7 @@ import HomePage from '../pages/HomePage';
 import { expect, test, describe, beforeEach, vi } from 'vitest';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AlertProvider } from '../components/AlertProvider';
+import { STORAGE_KEY } from '../utils/constants';
 
 // =========================================================================
 // 1. MOCK: Configuración del Mock para localStorage
@@ -80,10 +81,10 @@ const createAndSaveApplication = async (
 // 3. ESTRUCTURA DE TESTS
 // =========================================================================
 
-// Configuración de columnas para evitar repetición
+// Configuración de columnas para evitar repetición - basado en DEFAULT_FIELDS
 const requiredColumns = [
-    'Position', 'Company', 'Salary', 'Status', 'Application Date', 
-    'Interview Date', 'Platform', 'Contact Name', 'Follow-up Date', 'Notes', 'Link'
+    'Position', 'Company', 'Status', 'Application Date', 'Timeline',
+    'Notes', 'Link', 'Platform', 'Salary', 'Contact', 'Follow Up'
 ];
 
 test('HomePage renders correctly and matches snapshot', () => {
@@ -104,7 +105,7 @@ describe('HomePage Core Requirements (Static Content)', () => {
     expect(screen.getByRole('button', { name: "Add new application entry" })).toBeInTheDocument();
   });
 
-  test('renders the table with all required 11 columns', () => {
+  test('renders the table with all required columns', () => {
     requiredColumns.forEach(column => {
       expect(screen.getByRole('columnheader', { name: column })).toBeInTheDocument();
     });
@@ -137,7 +138,7 @@ describe('HomePage Core Functionality and Persistence', () => {
 
     // 1. Verificación de Persistencia
     expect(localStorageMock.setItem).toHaveBeenCalledTimes(1); 
-    const savedData = JSON.parse(localStorageMock.getItem('jobTrackerData')!);
+    const savedData = JSON.parse(localStorageMock.getItem(STORAGE_KEY)!);
     
     expect(savedData).toHaveLength(1);
     expect(savedData[0].position).toBe('QA Tester');
@@ -168,7 +169,7 @@ describe('HomePage Core Functionality and Persistence', () => {
     }
     
     // Verificación final: el array de localStorage debe tener 3 elementos
-    const finalSavedData = JSON.parse(localStorageMock.getItem('jobTrackerData')!);
+    const finalSavedData = JSON.parse(localStorageMock.getItem(STORAGE_KEY)!);
     expect(finalSavedData).toHaveLength(testApplications.length);
   });
 

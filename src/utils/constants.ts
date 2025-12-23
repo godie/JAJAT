@@ -1,10 +1,9 @@
 // src/utils/constants.ts
-import { UserPreferences } from "../types/preferences";
-import { FieldDefinition } from "../types/fields";
+import type { UserPreferences, FieldDefinition } from "../types/preferences";
 
-export const STORAGE_KEY = 'jobApplications';
+export const STORAGE_KEY = 'jobTrackerData';
 export const OPPORTUNITIES_STORAGE_KEY = 'jobOpportunities';
-export const PREFERENCES_STORAGE_KEY = 'userPreferences';
+export const PREFERENCES_STORAGE_KEY = 'jobTrackerPreferences';
 
 export const VALUE_BY_STATUS: Record<string, string> = {
   'applied': 'Applied',
@@ -15,22 +14,22 @@ export const VALUE_BY_STATUS: Record<string, string> = {
 };
 
 export const DEFAULT_FIELDS: FieldDefinition[] = [
-  { id: 'position', label: 'Position', type: 'text', enabled: true },
-  { id: 'company', label: 'Company', type: 'text', enabled: true },
-  { id: 'status', label: 'Status', type: 'text', enabled: true },
-  { id: 'applicationDate', label: 'Application Date', type: 'date', enabled: true },
-  { id: 'timeline', label: 'Timeline', type: 'timeline', enabled: true },
-  { id: 'notes', label: 'Notes', type: 'textarea', enabled: true },
-  { id: 'link', label: 'Link', type: 'url', enabled: true },
-  { id: 'platform', label: 'Platform', type: 'text', enabled: false },
-  { id: 'salary', label: 'Salary', type: 'text', enabled: false },
-  { id: 'contactName', label: 'Contact', type: 'text', enabled: false },
-  { id: 'followUpDate', label: 'Follow Up', type: 'date', enabled: false },
+  { id: 'position', label: 'Position', type: 'text', required: true },
+  { id: 'company', label: 'Company', type: 'text', required: true },
+  { id: 'status', label: 'Status', type: 'text', required: false },
+  { id: 'applicationDate', label: 'Application Date', type: 'date', required: false },
+  { id: 'timeline', label: 'Timeline', type: 'text', required: false },
+  { id: 'notes', label: 'Notes', type: 'text', required: false },
+  { id: 'link', label: 'Link', type: 'url', required: false },
+  { id: 'platform', label: 'Platform', type: 'text', required: false },
+  { id: 'salary', label: 'Salary', type: 'text', required: false },
+  { id: 'contactName', label: 'Contact', type: 'text', required: false },
+  { id: 'followUpDate', label: 'Follow Up', type: 'date', required: false },
 ];
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
-  enabledFields: ['position', 'company', 'status', 'applicationDate'],
-  columnOrder: ['position', 'company', 'status', 'applicationDate'],
+  enabledFields: DEFAULT_FIELDS.map(field => field.id),
+  columnOrder: DEFAULT_FIELDS.map(field => field.id),
   customFields: [],
   defaultView: 'table',
   dateFormat: 'YYYY-MM-DD',
