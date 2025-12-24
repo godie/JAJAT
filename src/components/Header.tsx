@@ -9,7 +9,7 @@ interface HeaderProps {
   onToggleSidebar: () => void;
 }
 
-const Header = React.forwardRef<HTMLHeadElement, HeaderProps>(({ onToggleSidebar }, ref) => {
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -115,12 +115,12 @@ const Header = React.forwardRef<HTMLHeadElement, HeaderProps>(({ onToggleSidebar
   };
 
   return (
-    <header ref={ref} className="flex flex-col sm:flex-row items-center justify-between p-4 border-b border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700 fixed top-0 left-0 right-0 z-50 h-auto sm:h-16">
-      <div className="flex items-center gap-4 w-full sm:w-auto">
+    <header className="flex items-center justify-between p-4 border-b border-gray-200 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700 fixed top-0 left-0 right-0 z-50 h-16">
+      <div className="flex items-center gap-4">
         {/* Hamburger menu button */}
         <button
           onClick={onToggleSidebar}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors md:hidden"
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors hidden md:block"
           aria-label="Toggle sidebar"
           data-testid="sidebar-toggle"
         >
@@ -139,11 +139,11 @@ const Header = React.forwardRef<HTMLHeadElement, HeaderProps>(({ onToggleSidebar
             />
           </svg>
         </button>
-        <h1 className="text-lg sm:text-2xl font-extrabold text-indigo-700 dark:text-indigo-400" data-testid="app-title">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-indigo-700 dark:text-indigo-400" data-testid="app-title">
           Just Another Job Application Tracker
         </h1>
       </div>
-      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mt-4 sm:mt-0">
+      <div className="flex items-center gap-4">
         {/* Theme Toggle */}
         <div className="flex items-center gap-3">
           {/* Sun Icon (Light Mode) */}
@@ -210,6 +210,6 @@ const Header = React.forwardRef<HTMLHeadElement, HeaderProps>(({ onToggleSidebar
       </div>
     </header>
   );
-});
+};
 
 export default Header;
