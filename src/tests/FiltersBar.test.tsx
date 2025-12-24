@@ -1,17 +1,27 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import FiltersBar, { type Filters } from '../components/FiltersBar';
 
 const defaultFilters: Filters = {
   search: '',
   status: '',
+  statusInclude: [],
+  statusExclude: [],
   platform: '',
   dateFrom: '',
   dateTo: '',
 };
 
 describe('FiltersBar', () => {
-  test('calls onFiltersChange when search input changes', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test('calls onFiltersChange when search input changes after debounce', () => {
     const handleChange = vi.fn();
     render(
       <FiltersBar
@@ -24,6 +34,15 @@ describe('FiltersBar', () => {
     );
 
     fireEvent.change(screen.getByLabelText(/Search/i), { target: { value: 'frontend' } });
+
+    // Check it's not called immediately
+    expect(handleChange).not.toHaveBeenCalled();
+
+    // Fast-forward time
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
     expect(handleChange).toHaveBeenCalledWith({ ...defaultFilters, search: 'frontend' });
   });
 

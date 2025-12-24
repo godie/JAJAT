@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export interface Filters {
   search: string;
@@ -19,6 +19,27 @@ interface FiltersBarProps {
 }
 
 const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, availableStatuses, availablePlatforms, onClear }) => {
+  const [searchTerm, setSearchTerm] = useState(filters.search);
+
+  // ⚡ Bolt: Debounce search input to reduce re-renders on every keystroke.
+  // This improves performance by waiting until the user stops typing to apply the filter.
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      if (searchTerm !== filters.search) {
+        onFiltersChange({ ...filters, search: searchTerm });
+      }
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timerId);
+  }, [searchTerm, filters, onFiltersChange]);
+
+  // Sync local state if the parent filter is cleared externally
+  useEffect(() => {
+    if (filters.search !== searchTerm) {
+      setSearchTerm(filters.search);
+    }
+  }, [filters.search]);
+
   const handleChange = (key: keyof Filters) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     onFiltersChange({ ...filters, [key]: event.target.value });
   };
@@ -59,8 +80,8 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
           <input
             id="search"
             type="text"
-            value={filters.search}
-            onChange={handleChange('search')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by position, company, notes..."
             className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
           />
@@ -179,5 +200,3 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
 };
 
 export default FiltersBar;
-
-

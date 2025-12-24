@@ -180,14 +180,19 @@ describe('HomePage Core Functionality and Persistence', () => {
     const searchInput = screen.getByLabelText(/Search/i);
     fireEvent.change(searchInput, { target: { value: 'Frontend' } });
 
-    // Wait for filter to apply
+    // Wait for filter to apply - specifically for the unwanted item to disappear
     await waitFor(() => {
-      expect(screen.getByText(/Frontend Dev/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Backend Dev/i)).not.toBeInTheDocument();
     });
-    expect(screen.queryByText(/Backend Dev/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Frontend Dev/i)).toBeInTheDocument();
 
     // Clear search first, then filter by status using the new advanced filtering
     fireEvent.change(searchInput, { target: { value: '' } });
+
+    // Wait for "Backend Dev" to reappear after clearing search
+    await waitFor(() => {
+      expect(screen.getByText(/Backend Dev/i)).toBeInTheDocument();
+    });
     
     // Open the Include dropdown and select "Offer"
     const includeButton = screen.getByText(/Include/i);
