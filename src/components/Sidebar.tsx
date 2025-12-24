@@ -7,9 +7,10 @@ interface SidebarProps {
   currentPage?: PageType;
   onNavigate?: (page: PageType) => void;
   isOpen?: boolean;
+  headerHeight?: number;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentPage = 'applications', onNavigate, isOpen = true }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentPage = 'applications', onNavigate, isOpen = true, headerHeight = 64 }) => {
   const [opportunitiesCount, setOpportunitiesCount] = useState(0);
 
   useEffect(() => {
@@ -52,9 +53,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage = 'applications', onNavig
 
   return (
     <div
-      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col transition-transform duration-300 ease-in-out z-40 ${
+      className={`fixed left-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col transition-transform duration-300 ease-in-out z-40 ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } w-64`}
+      style={{ top: headerHeight, height: `calc(100vh - ${headerHeight}px)` }}
     >
       <nav className="flex-1">
         <ul>
