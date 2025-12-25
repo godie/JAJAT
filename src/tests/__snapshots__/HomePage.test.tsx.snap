@@ -483,7 +483,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
             godie
           </a>
            with cursor v
-          1.8.0
+          1.8.1
            (
           2025
           )

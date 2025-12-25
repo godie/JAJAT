@@ -1,5 +1,5 @@
 // src/components/ApplicationTable.tsx
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import type { JobApplication } from '../utils/localStorage';
 import { sanitizeUrl } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
@@ -144,4 +144,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
   );
 };
 
-export default ApplicationTable;
+// ⚡ Bolt: Memoizing the component to prevent unnecessary re-renders when parent state changes.
+// This is effective because the `data` prop is already memoized in the parent,
+// and `onEdit`/`onDelete` will be wrapped in useCallback.
+export default memo(ApplicationTable);
