@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export interface Filters {
   search: string;
@@ -19,6 +19,53 @@ interface FiltersBarProps {
 }
 
 const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, availableStatuses, availablePlatforms, onClear }) => {
+  const [searchTerm, setSearchTerm] = useState(filters.search);
+  
+  // Use refs to maintain stable references for the debounce effect
+  // Update refs synchronously during render to ensure they're always current
+  // This is safe because refs are mutable and don't trigger re-renders
+  const filtersRef = useRef(filters);
+  const onFiltersChangeRef = useRef(onFiltersChange);
+  const isMountedRef = useRef(false);
+  
+  filtersRef.current = filters;
+  onFiltersChangeRef.current = onFiltersChange;
+
+  // Debounce: when searchTerm changes, wait 300ms then call onFiltersChange
+  // Only update the search field, preserving other filter values
+  useEffect(() => {
+    // Skip debounce on mount to avoid unnecessary calls
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return;
+    }
+
+    // Capture the current searchTerm value at the time the effect runs
+    const currentSearchTerm = searchTerm;
+
+    const timerId = setTimeout(() => {
+      // Always update to ensure searchTerm is synced with parent filters
+      onFiltersChangeRef.current({ ...filtersRef.current, search: currentSearchTerm });
+    }, 300);
+
+    return () => clearTimeout(timerId);
+  }, [searchTerm]);
+
+  // Sync local state if the parent filter is cleared externally
+  // Skip on mount to avoid interfering with initial state
+  const hasMountedRef = useRef(false);
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    // Only sync if filters.search changed externally (not from our debounce)
+    // This prevents infinite loops when onFiltersChange updates filters.search
+    if (filters.search !== searchTerm && filters.search !== filtersRef.current.search) {
+      setSearchTerm(filters.search);
+    }
+  }, [filters.search, searchTerm]);
+
   const handleChange = (key: keyof Filters) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     onFiltersChange({ ...filters, [key]: event.target.value });
   };
@@ -59,8 +106,8 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
           <input
             id="search"
             type="text"
-            value={filters.search}
-            onChange={handleChange('search')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by position, company, notes..."
             className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
           />

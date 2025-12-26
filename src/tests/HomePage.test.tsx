@@ -180,14 +180,19 @@ describe('HomePage Core Functionality and Persistence', () => {
     const searchInput = screen.getByLabelText(/Search/i);
     fireEvent.change(searchInput, { target: { value: 'Frontend' } });
 
-    // Wait for filter to apply (may appear in both mobile and desktop views)
+    // Wait for debounce (300ms) and filter to apply (may appear in both mobile and desktop views)
     await waitFor(() => {
       expect(screen.getAllByText(/Frontend Dev/i).length).toBeGreaterThan(0);
-    });
-    expect(screen.queryAllByText(/Backend Dev/i).length).toBe(0);
+      expect(screen.queryAllByText(/Backend Dev/i).length).toBe(0);
+    }, { timeout: 1000 });
 
     // Clear search first, then filter by status using the new advanced filtering
     fireEvent.change(searchInput, { target: { value: '' } });
+    
+    // Wait for debounce to clear the search filter
+    await waitFor(() => {
+      expect(screen.getAllByText(/Backend Dev/i).length).toBeGreaterThan(0);
+    }, { timeout: 1000 });
     
     // Open the Include dropdown and select "Offer"
     const includeButton = screen.getByText(/Include/i);
@@ -205,8 +210,8 @@ describe('HomePage Core Functionality and Persistence', () => {
     // Wait for filter to apply (may appear in both mobile and desktop views)
     await waitFor(() => {
       expect(screen.getAllByText(/Backend Dev/i).length).toBeGreaterThan(0);
-    });
-    expect(screen.queryAllByText(/Frontend Dev/i).length).toBe(0);
+      expect(screen.queryAllByText(/Frontend Dev/i).length).toBe(0);
+    }, { timeout: 1000 });
   });
 
   test('Can switch between Kanban and Calendar views', async () => {

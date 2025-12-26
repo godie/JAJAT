@@ -8,6 +8,10 @@ This is a modern Job Application Tracker built using React, TypeScript, and Tail
 This project is feature-complete for its core functionality. Based on the project [recommendations](./RECOMMENDATIONS.md), 36 out of 38 planned features have been implemented and are fully tested. Recent additions include full dark mode support, improved UI with sidebar navigation, and comprehensive test coverage improvements.
 
 ## Recent Updates
+- **Search Filter Debounce Fix**: Fixed debounce implementation for search filter to prevent interference with sync logic
+  - Search debounce now properly skips on mount to avoid unnecessary calls
+  - Fixed sync logic to prevent infinite loops and interference with debounce
+  - All 308 tests now passing (28 test files)
 - **Mobile-First Responsive Design**: Complete mobile optimization with card-based views, compact metrics, and responsive header
   - Header adapts by screen size: logo icon (< 768px), "JAJAT" text (768-1023px), full title (≥ 1024px)
   - Login button shows Google "G" icon on mobile for space efficiency
@@ -22,7 +26,7 @@ This project is feature-complete for its core functionality. Based on the projec
 - **Default Preferences**: Updated DEFAULT_PREFERENCES to include all fields by default for better UX
 - **Dark Mode**: Full dark mode implementation with persistent theme preference
 - **Sidebar Navigation**: Clean sidebar navigation with theme toggle and opportunities badge
-- **Test Infrastructure**: Migrated from jsdom to happy-dom, achieving 100% test pass rate (285 tests passing)
+- **Test Infrastructure**: Migrated from jsdom to happy-dom, achieving 100% test pass rate (308 tests passing)
 - **UI Improvements**: All components now support dark mode with consistent styling
 
 ## Next Steps
@@ -474,8 +478,8 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 26 passed (26)
-Tests: 285 passed (285)
+Test Files: 28 passed (28)
+Tests: 308 passed (308)
 ```
 
 ### Test Coverage Includes:

@@ -1,5 +1,5 @@
 // src/components/ApplicationTable.tsx
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import type { JobApplication } from '../utils/localStorage';
 import { sanitizeUrl } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
@@ -245,4 +245,4 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
   );
 };
 
-export default ApplicationTable;
+export default memo(ApplicationTable);

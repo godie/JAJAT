@@ -189,9 +189,9 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     }
   }, [applications, showSuccess]);
 
-  const handleEdit = (appToEdit: JobApplication | null) => {
+  const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
-  }
+  },[]);
 
   const handleCreateNew = () => {
     setCurrentApplication({} as JobApplication); // Usar un objeto vacío (no nulo) para CREAR
