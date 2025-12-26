@@ -63,7 +63,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, currentPage, onNaviga
           </main>
         </div>
       </div>
-      <BottomNav currentPage={currentPage} onNavigate={onNavigate} />
+      <BottomNav currentPage={currentPage as PageType} onNavigate={onNavigate as (page: PageType) => void} />
     </div>
   );
 };

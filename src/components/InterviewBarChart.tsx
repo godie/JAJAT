@@ -5,17 +5,21 @@ import { VALUE_BY_STATUS } from '../utils/constants';
 
 interface InterviewBarChartProps {
   data: { name: string; value: number }[];
+  title?: string;
 }
 
-const InterviewBarChart: React.FC<InterviewBarChartProps> = ({ data }) => {
+const InterviewBarChart: React.FC<InterviewBarChartProps> = ({ data, title = "Interviews by Status" }) => {
+  // Only map status names when showing interviews by application status
+  const shouldMapStatus = title === "Interviews by Application Status" || title === "Interviews by Status";
+  
   const chartData = data.map(item => ({
     ...item,
-    name: VALUE_BY_STATUS[item.name] || item.name,
+    name: shouldMapStatus ? (VALUE_BY_STATUS[item.name] || item.name) : item.name,
   }));
 
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Interviews by Status</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">{title}</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />

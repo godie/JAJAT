@@ -48,14 +48,14 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
     ];
 
   return (
-    <section className="grid grid-cols-1 gap-4 my-8 sm:grid-cols-2 lg:grid-cols-3" data-testid="metrics-summary">
+    <section className="grid grid-cols-3 gap-2 sm:gap-4 my-8" data-testid="metrics-summary">
       {metrics.map((metric) => (
         <div 
           key={metric.label} 
-          className={`bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 ${metric.color} transition duration-300 hover:shadow-xl`}
+          className={`bg-white dark:bg-gray-800 p-2 sm:p-6 rounded-lg sm:rounded-xl shadow sm:shadow-lg border-l-4 ${metric.color} transition duration-300 hover:shadow-lg sm:hover:shadow-xl`}
         >
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{metric.label}</p>
-          <p className="mt-1 text-4xl font-extrabold text-gray-900 dark:text-white">{metric.value}</p>
+          <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">{metric.label}</p>
+          <p className="mt-0.5 sm:mt-1 text-xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">{metric.value}</p>
         </div>
       ))}
     </section>

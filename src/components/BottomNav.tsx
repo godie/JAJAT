@@ -22,7 +22,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate }) => {
         {navItems.map((item) => (
           <button
             key={item.page}
-            onClick={() => onNavigate(item.page)}
+            onClick={() => onNavigate(item.page  as PageType)}
             className={`flex flex-col items-center justify-center w-full h-full transition-colors group relative ${
               currentPage === item.page
                 ? 'text-indigo-600 dark:text-indigo-400'

@@ -6,47 +6,47 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
     class="max-w-7xl mx-auto"
   >
     <section
-      class="grid grid-cols-1 gap-4 my-8 sm:grid-cols-2 lg:grid-cols-3"
+      class="grid grid-cols-3 gap-2 sm:gap-4 my-8"
       data-testid="metrics-summary"
     >
       <div
-        class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-blue-500 transition duration-300 hover:shadow-xl"
+        class="bg-white dark:bg-gray-800 p-2 sm:p-6 rounded-lg sm:rounded-xl shadow sm:shadow-lg border-l-4 border-blue-500 transition duration-300 hover:shadow-lg sm:hover:shadow-xl"
       >
         <p
-          class="text-sm font-medium text-gray-500 dark:text-gray-400"
+          class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400"
         >
           Applications
         </p>
         <p
-          class="mt-1 text-4xl font-extrabold text-gray-900 dark:text-white"
+          class="mt-0.5 sm:mt-1 text-xl sm:text-4xl font-extrabold text-gray-900 dark:text-white"
         >
           0
         </p>
       </div>
       <div
-        class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-yellow-500 transition duration-300 hover:shadow-xl"
+        class="bg-white dark:bg-gray-800 p-2 sm:p-6 rounded-lg sm:rounded-xl shadow sm:shadow-lg border-l-4 border-yellow-500 transition duration-300 hover:shadow-lg sm:hover:shadow-xl"
       >
         <p
-          class="text-sm font-medium text-gray-500 dark:text-gray-400"
+          class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400"
         >
           Interviews
         </p>
         <p
-          class="mt-1 text-4xl font-extrabold text-gray-900 dark:text-white"
+          class="mt-0.5 sm:mt-1 text-xl sm:text-4xl font-extrabold text-gray-900 dark:text-white"
         >
           0
         </p>
       </div>
       <div
-        class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border-l-4 border-green-500 transition duration-300 hover:shadow-xl"
+        class="bg-white dark:bg-gray-800 p-2 sm:p-6 rounded-lg sm:rounded-xl shadow sm:shadow-lg border-l-4 border-green-500 transition duration-300 hover:shadow-lg sm:hover:shadow-xl"
       >
         <p
-          class="text-sm font-medium text-gray-500 dark:text-gray-400"
+          class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400"
         >
           Offers
         </p>
         <p
-          class="mt-1 text-4xl font-extrabold text-gray-900 dark:text-white"
+          class="mt-0.5 sm:mt-1 text-xl sm:text-4xl font-extrabold text-gray-900 dark:text-white"
         >
           0
         </p>
@@ -362,7 +362,17 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
       </button>
     </div>
     <div
-      class="overflow-x-auto shadow-xl rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800"
+      class="md:hidden space-y-3"
+      data-testid="application-cards"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 text-center text-gray-400 dark:text-gray-500 italic text-sm"
+      >
+        Use the "+ Add Entry" button to start tracking your applications!
+      </div>
+    </div>
+    <div
+      class="hidden md:block overflow-x-auto shadow-xl rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800"
     >
       <table
         class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs sm:text-sm"
@@ -483,7 +493,7 @@ exports[`HomePage renders correctly and matches snapshot 1`] = `
             godie
           </a>
            with cursor v
-          1.8.1
+          1.9.0
            (
           2025
           )
