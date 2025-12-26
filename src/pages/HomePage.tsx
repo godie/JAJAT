@@ -189,9 +189,11 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     }
   }, [applications, showSuccess]);
 
-  const handleEdit = (appToEdit: JobApplication | null) => {
+  // useCallback is used here to prevent ApplicationTable from re-rendering
+  // because the onEdit prop would otherwise be a new function on every render.
+  const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
-  }
+  }, []);
 
   const handleCreateNew = () => {
     setCurrentApplication({} as JobApplication); // Usar un objeto vacío (no nulo) para CREAR
