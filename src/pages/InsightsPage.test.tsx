@@ -1,5 +1,7 @@
 // src/pages/InsightsPage.test.tsx
+import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import InsightsPage from './InsightsPage';
 import * as storage from '../storage/applications';
 import type { JobApplication } from '../types/applications';
@@ -97,6 +99,12 @@ describe('InsightsPage', () => {
   it('renders both charts', () => {
     render(<InsightsPage />);
     expect(screen.getByText('Applications by Status')).toBeInTheDocument();
-    expect(screen.getByText('Interviews by Status')).toBeInTheDocument();
+    expect(screen.getByText('Interviews by Application Status')).toBeInTheDocument();
+  });
+
+  it('renders interviews by type chart when interview events exist', () => {
+    render(<InsightsPage />);
+    // The "Interviews by Type" chart should appear when there are interview events
+    expect(screen.getByText('Interviews by Type')).toBeInTheDocument();
   });
 });

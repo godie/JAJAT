@@ -144,8 +144,8 @@ describe('HomePage Core Functionality and Persistence', () => {
     expect(savedData[0].position).toBe('QA Tester');
     expect(savedData[0].status).toBe('Interviewing');
     
-    // 2. Verificación de Actualización de Tabla
-    expect(screen.getByText(/QA Tester/i)).toBeInTheDocument();
+    // 2. Verificación de Actualización de Tabla (may appear in both mobile and desktop views)
+    expect(screen.getAllByText(/QA Tester/i).length).toBeGreaterThan(0);
   });
 
   // 💡 NUEVO TEST: Agregar Múltiples Registros en un Loop
@@ -161,8 +161,8 @@ describe('HomePage Core Functionality and Persistence', () => {
     for (const [index, app] of testApplications.entries()) {
         await createAndSaveApplication(app);
         
-        // Verificación dentro del loop: asegurar que el nuevo registro aparece
-        expect(screen.getByText(app.position)).toBeInTheDocument();
+        // Verificación dentro del loop: asegurar que el nuevo registro aparece (may appear in both mobile and desktop views)
+        expect(screen.getAllByText(app.position).length).toBeGreaterThan(0);
         
         // La primera entrada es 1, la segunda es 2, etc.
         expect(localStorageMock.setItem).toHaveBeenCalledTimes(index + 1); 
@@ -180,11 +180,11 @@ describe('HomePage Core Functionality and Persistence', () => {
     const searchInput = screen.getByLabelText(/Search/i);
     fireEvent.change(searchInput, { target: { value: 'Frontend' } });
 
-    // Wait for filter to apply
+    // Wait for filter to apply (may appear in both mobile and desktop views)
     await waitFor(() => {
-      expect(screen.getByText(/Frontend Dev/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Frontend Dev/i).length).toBeGreaterThan(0);
     });
-    expect(screen.queryByText(/Backend Dev/i)).not.toBeInTheDocument();
+    expect(screen.queryAllByText(/Backend Dev/i).length).toBe(0);
 
     // Clear search first, then filter by status using the new advanced filtering
     fireEvent.change(searchInput, { target: { value: '' } });
@@ -202,11 +202,11 @@ describe('HomePage Core Functionality and Persistence', () => {
     const offerCheckboxes = screen.getAllByLabelText(/Offer/i);
     fireEvent.click(offerCheckboxes[0]); // Click the first one (from Include dropdown)
 
-    // Wait for filter to apply
+    // Wait for filter to apply (may appear in both mobile and desktop views)
     await waitFor(() => {
-      expect(screen.getByText(/Backend Dev/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Backend Dev/i).length).toBeGreaterThan(0);
     });
-    expect(screen.queryByText(/Frontend Dev/i)).not.toBeInTheDocument();
+    expect(screen.queryAllByText(/Frontend Dev/i).length).toBe(0);
   });
 
   test('Can switch between Kanban and Calendar views', async () => {

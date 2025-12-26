@@ -74,9 +74,29 @@ describe('Header Component', () => {
     document.documentElement.classList.remove('dark');
   });
 
-  test('should render the application title', () => {
+  test('should render the application title (desktop version)', () => {
     renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
-    expect(screen.getByText(/Just Another Job Application Tracker/i)).toBeInTheDocument();
+    // Desktop version should show full title (hidden on mobile via lg:block)
+    const desktopTitle = screen.getByTestId('app-title');
+    expect(desktopTitle).toBeInTheDocument();
+    expect(desktopTitle).toHaveTextContent('Just Another Job Application Tracker');
+  });
+
+  test('should render mobile logo image', () => {
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    // Mobile version should show logo (hidden on desktop via md:hidden)
+    const mobileLogo = screen.getByTestId('app-logo-mobile');
+    expect(mobileLogo).toBeInTheDocument();
+    expect(mobileLogo).toHaveAttribute('src', '/jajat-logo.png');
+    expect(mobileLogo).toHaveAttribute('alt', 'JAJAT');
+  });
+
+  test('should render tablet title "JAJAT"', () => {
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    // Tablet version should show "JAJAT" (hidden on mobile and desktop)
+    const tabletTitle = screen.getByTestId('app-title-tablet');
+    expect(tabletTitle).toBeInTheDocument();
+    expect(tabletTitle).toHaveTextContent('JAJAT');
   });
 
   test('should render sidebar toggle button', () => {
@@ -154,5 +174,35 @@ describe('Header Component', () => {
     fireEvent.click(loginButton);
     
     expect(mockGoogleLogin).toHaveBeenCalledTimes(1);
+  });
+
+  // --- Responsive Design Tests ---
+
+  test('should render Google icon SVG in mobile login button', () => {
+    localStorageStore['isLoggedIn'] = 'false';
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    
+    // Mobile version should show Google "G" icon (hidden on desktop via md:hidden)
+    const googleIcon = document.querySelector('svg[aria-hidden="true"]');
+    expect(googleIcon).toBeInTheDocument();
+    
+    // Desktop version should show text "Login with Google" (hidden on mobile)
+    const loginButton = screen.getByTestId('login-button');
+    expect(loginButton).toBeInTheDocument();
+    
+    // Should contain both mobile icon and desktop text
+    const desktopText = screen.getByText('Login with Google', { exact: false });
+    expect(desktopText).toBeInTheDocument();
+  });
+
+  test('should render full "Login with Google" text for desktop view', () => {
+    localStorageStore['isLoggedIn'] = 'false';
+    renderWithProviders(<Header onToggleSidebar={mockToggleSidebar} />);
+    
+    const loginButton = screen.getByTestId('login-button');
+    // Desktop text should be present (hidden on mobile via md:hidden class)
+    const desktopText = loginButton.querySelector('.hidden.md\\:inline');
+    expect(desktopText).toBeInTheDocument();
+    expect(desktopText).toHaveTextContent('Login with Google');
   });
 });

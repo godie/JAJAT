@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+import BottomNav from '../components/BottomNav';
 import { type PageType } from '../App';
 
 interface MainLayoutProps {
@@ -37,11 +38,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, currentPage, onNaviga
       
       {/* Main content area with sidebar */}
       <div className="flex flex-1 overflow-hidden mt-16">
-        <Sidebar 
-          currentPage={currentPage} 
-          onNavigate={onNavigate} 
-          isOpen={isSidebarOpen}
-        />
+        <div className="hidden md:block">
+          <Sidebar
+            currentPage={currentPage}
+            onNavigate={onNavigate}
+            isOpen={isSidebarOpen}
+          />
+        </div>
         {/* Overlay for mobile when sidebar is open */}
         {isSidebarOpen && (
           <div
@@ -55,11 +58,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, currentPage, onNaviga
             isSidebarOpen ? 'md:ml-64' : 'ml-0'
           }`}
         >
-          <main className="h-full overflow-y-auto p-8 bg-white dark:bg-gray-900">
+          <main className="h-full overflow-y-auto p-8 bg-white dark:bg-gray-900 pb-16 md:pb-8">
             {children}
           </main>
         </div>
       </div>
+      <BottomNav currentPage={currentPage as PageType} onNavigate={onNavigate as (page: PageType) => void} />
     </div>
   );
 };

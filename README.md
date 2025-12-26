@@ -8,6 +8,14 @@ This is a modern Job Application Tracker built using React, TypeScript, and Tail
 This project is feature-complete for its core functionality. Based on the project [recommendations](./RECOMMENDATIONS.md), 36 out of 38 planned features have been implemented and are fully tested. Recent additions include full dark mode support, improved UI with sidebar navigation, and comprehensive test coverage improvements.
 
 ## Recent Updates
+- **Mobile-First Responsive Design**: Complete mobile optimization with card-based views, compact metrics, and responsive header
+  - Header adapts by screen size: logo icon (< 768px), "JAJAT" text (768-1023px), full title (≥ 1024px)
+  - Login button shows Google "G" icon on mobile for space efficiency
+  - Metrics summary displays 3 cards in a single row on mobile with compact styling
+  - Application table switches to card view on mobile (< 768px) and table view on desktop
+- **Insights Page Improvements**: Fixed interview event detection logic and added new "Interviews by Type" chart
+  - Correctly identifies all interview event types (screener_call, technical_interview, hiring_manager, etc.)
+  - Added comprehensive interview type breakdown visualization
 - **Type System Improvements**: Unified FieldDefinition types, fixed TypeScript compatibility issues with verbatimModuleSyntax
 - **Storage Key Consistency**: Standardized storage keys (jobTrackerData) for production compatibility
 - **Test Fixes**: Fixed 3 failing tests related to field definitions and column expectations
@@ -124,7 +132,12 @@ In the project directory, you can run:
 - **Soft Delete with Confirmation**: Applications are marked as "Deleted" instead of being removed, with a custom confirmation dialog to prevent accidental deletions
 - **Kanban Sub-Status Grouping**: Applications in "Interviewing" status are automatically grouped by their current timeline stage (e.g., "Interviewing - First Contact", "Interviewing - Code Challenge")
 - **Calendar Enhancements**: Today's date is highlighted, and events show relative time indicators ("Today", "in 2 days", "3 days ago")
-- Responsive Design: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience with improved spacing on small screens
+- **Responsive Design**: Styled entirely with Tailwind CSS utility classes for an optimized, mobile-first experience:
+  - Adaptive header with logo/icon for mobile, compact text for tablets, full title for desktop
+  - Compact metrics cards (3 per row) on mobile with smaller text
+  - Card-based application view on mobile, full table view on desktop
+  - Mobile-optimized login button with Google icon
+  - Improved touch targets and spacing for mobile devices
 - Google OAuth Authentication: Implements secure Google authentication using `@react-oauth/google` library with backend cookie support for token storage
 - **Google Sheets Integration**: One-way sync to Google Sheets with automatic spreadsheet creation, sync status tracking, and error handling
 - **Chrome Extension**: Capture job opportunities from LinkedIn, Greenhouse, and AshbyHQ with automatic data extraction and sync with the web app
@@ -141,7 +154,12 @@ In the project directory, you can run:
 - **Legal Pages**: Bilingual Terms of Service and Privacy Policy pages with language switcher (English/Spanish, default: English)
 - **Minimalist UI with Sidebar**: A clean, minimalist UI with a sidebar for easy navigation between pages (Applications, Opportunities, Settings, Insights)
 - **Dark Theme Support**: Full dark mode implementation with persistent theme preference stored in localStorage. Theme toggle switch with sun/moon icons available in the sidebar. All components support dark mode styling.
-- **Insights Page**: A new page for displaying insights and analytics (coming soon)
+- **Insights Page**: Analytics dashboard with comprehensive statistics and visualizations:
+  - Total applications, interviews, rejections, and rejection percentage metrics
+  - Application status distribution chart
+  - Interview events by application status breakdown
+  - Interview events by type breakdown (screener calls, technical interviews, etc.)
+  - Proper interview event detection for all interview stage types
 
 ## Interview Timeline System
 
