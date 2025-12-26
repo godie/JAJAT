@@ -144,4 +144,5 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
   );
 };
 
-export default ApplicationTable;
+// Memoizing the component to prevent re-renders if props haven't changed.
+export default React.memo(ApplicationTable);
