@@ -63,7 +63,16 @@ if (!isset($_COOKIE[$cookieName]) || !is_string($_COOKIE[$cookieName]) || empty(
     ]);
     exit();
 }
-$accessToken = htmlspecialchars($_COOKIE[$cookieName], ENT_QUOTES, 'UTF-8');
+// Security: Validate the access token format. Using htmlspecialchars is incorrect
+// as it can corrupt the token. A validation ensures the token is well-formed
+// without modifying it. This helps prevent malformed data from being processed.
+$token = $_COOKIE[$cookieName];
+if (!preg_match('/^[a-zA-Z0-9\-\_]+\.[a-zA-Z0-9\-\_]+\.[a-zA-Z0-9\-\_]+$/', $token)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid token format.']);
+    exit();
+}
+$accessToken = $token;
 
 
 // --- Input Processing ---
