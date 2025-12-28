@@ -178,16 +178,23 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
   }, [applications]);
 
   const handleDeleteEntry = useCallback((id: string) => {
-    const appToDelete = applications.find(app => app.id === id);
-    const newApplications = applications.map(app => 
-      app.id === id ? { ...app, status: 'Deleted' } : app
-    );
-    setApplications(newApplications);
-    saveApplications(newApplications);
-    if (appToDelete) {
-      showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
-    }
-  }, [applications, showSuccess]);
+    // ⚡ Bolt: Optimized with functional update to prevent re-renders.
+    // By using the functional form of setApplications, we remove the `applications`
+    // dependency from useCallback. This stabilizes the function, preventing
+    // unnecessary re-renders of memoized child components like ApplicationTable
+    // that receive this function as a prop.
+    setApplications(prevApplications => {
+      const appToDelete = prevApplications.find(app => app.id === id);
+      const newApplications = prevApplications.map(app =>
+        app.id === id ? { ...app, status: 'Deleted' } : app
+      );
+      saveApplications(newApplications);
+      if (appToDelete) {
+        showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
+      }
+      return newApplications;
+    });
+  }, [showSuccess]);
 
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
