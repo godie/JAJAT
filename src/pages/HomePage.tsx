@@ -178,16 +178,19 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
   }, [applications]);
 
   const handleDeleteEntry = useCallback((id: string) => {
-    const appToDelete = applications.find(app => app.id === id);
-    const newApplications = applications.map(app => 
-      app.id === id ? { ...app, status: 'Deleted' } : app
-    );
-    setApplications(newApplications);
-    saveApplications(newApplications);
-    if (appToDelete) {
-      showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
-    }
-  }, [applications, showSuccess]);
+    // Use functional update to avoid including 'applications' in useCallback dependencies
+    setApplications(prevApplications => {
+      const appToDelete = prevApplications.find(app => app.id === id);
+      const newApplications = prevApplications.map(app =>
+        app.id === id ? { ...app, status: 'Deleted' } : app
+      );
+      saveApplications(newApplications);
+      if (appToDelete) {
+        showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
+      }
+      return newApplications;
+    });
+  }, [showSuccess]);
 
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
