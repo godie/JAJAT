@@ -154,47 +154,60 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
   }, []);
 
   const handleSaveEntry = useCallback((entryData: Omit<JobApplication, 'id'> | JobApplication) => {
-    let newApplications:JobApplication[];
-
-    if ('id' in entryData) {
-      newApplications = applications.map(app => 
-            app.id === entryData.id ? (entryData as JobApplication) : app
+    // By using the functional update form of setState, we avoid including `applications`
+    // in the dependency array. This prevents this callback from being recreated on every
+    // render, which in turn prevents re-rendering of child components like ApplicationTable.
+    setApplications(prevApplications => {
+      let newApplications: JobApplication[];
+      if ('id' in entryData) {
+        newApplications = prevApplications.map(app =>
+          app.id === entryData.id ? (entryData as JobApplication) : app
         );
-    }
-    else {
-       const newEntry: JobApplication = {
-      ...entryData,
-      id: generateId(), // Generar ID único
-      // Initialize timeline if not present
-      timeline: 'timeline' in entryData ? entryData.timeline : [],
-    } as JobApplication;
-    newApplications = [...applications, newEntry];
-    }
-   
-
-    setApplications(newApplications);
-    saveApplications(newApplications);
+      } else {
+        const newEntry: JobApplication = {
+          ...entryData,
+          id: generateId(),
+          timeline: 'timeline' in entryData ? entryData.timeline : [],
+        } as JobApplication;
+        newApplications = [...prevApplications, newEntry];
+      }
+      saveApplications(newApplications);
+      return newApplications;
+    });
     setCurrentApplication(null);
-  }, [applications]);
+  }, []);
 
   const handleDeleteEntry = useCallback((id: string) => {
-    const appToDelete = applications.find(app => app.id === id);
-    const newApplications = applications.map(app => 
-      app.id === id ? { ...app, status: 'Deleted' } : app
-    );
-    setApplications(newApplications);
-    saveApplications(newApplications);
+    // ⚡ Bolt: Optimized with functional update to prevent re-renders.
+    // By using the functional form of setApplications, we remove the `applications`
+    // dependency from useCallback. This stabilizes the function, preventing
+    // unnecessary re-renders of memoized child components like ApplicationTable
+    // that receive this function as a prop.
+    
+    // Get the application to delete before updating state to show message only once
+    const currentApplications = getApplications();
+    const appToDelete = currentApplications.find(app => app.id === id);
+    
+    setApplications(prevApplications => {
+      const newApplications = prevApplications.map(app =>
+        app.id === id ? { ...app, status: 'Deleted' } : app
+      );
+      saveApplications(newApplications);
+      return newApplications;
+    });
+    
+    // Show success message outside of setApplications callback to prevent duplicate messages
     if (appToDelete) {
       showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
     }
-  }, [applications, showSuccess]);
+  }, [showSuccess]);
 
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
   },[]);
 
   const handleCreateNew = () => {
-    setCurrentApplication({} as JobApplication); // Usar un objeto vacío (no nulo) para CREAR
+    setCurrentApplication({} as JobApplication);
   }
   const handleCancel = () => {
     setCurrentApplication(null);
