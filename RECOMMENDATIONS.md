@@ -562,5 +562,182 @@ export const useAppStore = create<AppState>((set) => ({
 - Chrome Extension support for additional job boards (Lever, Workday, Greenhouse, Indeed, Glassdoor, etc.)
 - Batch job capture from multiple sources
 - Direct application submission from extension
+- **Web Accessibility (WCAG 2.1 compliance)** - See section below for detailed status and recommendations
+- **User Profile Page** - Profile management page with basic user information:
+  - User name and email
+  - Current position or positions/job titles user is seeking
+  - Profile customization options
+- **Job Search Page** - Integrated job search functionality:
+  - Search vacancies across different company platforms and job boards
+  - Integration with multiple job search APIs (LinkedIn, Indeed, Glassdoor, etc.)
+  - Recommendation to install Chrome extension for easier job capture
+  - Direct conversion from search results to Opportunities or Applications
+  - One-click job application tracking from search results
 
 Your application is well-structured for these enhancements. The modular design makes it easy to add these features incrementally.
+
+---
+
+## 12. Web Accessibility (WCAG 2.1)
+
+### Current Status
+
+#### ✅ Implemented Features
+
+1. **ARIA Labels and Roles:**
+   - ✅ `aria-label` attributes on interactive buttons (delete buttons, pagination controls, accordion toggles)
+   - ✅ `aria-expanded` on accordion components (Timeline view)
+   - ✅ `aria-current="page"` on pagination active page indicators
+   - ✅ `aria-hidden="true"` on decorative SVG icons
+   - ✅ `role="switch"` on theme toggle button
+   - ✅ `aria-checked` on theme toggle switch
+   - ✅ `sr-only` class for screen reader only content (Actions column header)
+
+2. **Keyboard Navigation:**
+   - ✅ `useKeyboardEscape` hook for closing modals with Escape key
+   - ✅ Focus management on interactive elements
+   - ✅ Keyboard accessible buttons and links
+   - ✅ Disabled state styling for keyboard navigation (pagination buttons)
+
+3. **Semantic HTML:**
+   - ✅ Proper use of semantic HTML elements (`<header>`, `<nav>`, `<main>`, `<button>`, `<table>`, `<th>`, `<td>`)
+   - ✅ Proper heading hierarchy (h1, h2, h3)
+   - ✅ Form labels and input associations
+   - ✅ Table headers with `scope` attributes
+
+4. **Visual Accessibility:**
+   - ✅ Dark mode support for users sensitive to bright screens
+   - ✅ High contrast color schemes (indigo, green, red, yellow)
+   - ✅ Visual indicators for interactive states (hover, focus, disabled)
+   - ✅ Status indicators with both color and icons
+   - ✅ Responsive design for various screen sizes
+
+5. **Meta Information:**
+   - ✅ Meta description for SEO and screen reader context
+   - ✅ Language attribute on HTML element (`lang="en"`)
+
+#### ⚠️ Partially Implemented / Needs Improvement
+
+1. **Focus Management:**
+   - ⚠️ Modal focus trapping - modals may allow focus to escape
+   - ⚠️ Focus return after closing modals - focus may not return to trigger element
+   - ⚠️ Skip navigation link missing - no "skip to main content" link for keyboard users
+
+2. **Form Accessibility:**
+   - ⚠️ Error messages association - form errors may not be properly associated with inputs via `aria-describedby`
+   - ⚠️ Required field indicators - visual indicators exist but may need `aria-required` attributes
+   - ⚠️ Form validation announcements - screen readers may not announce validation errors immediately
+
+3. **Dynamic Content:**
+   - ⚠️ Live regions for updates - no `aria-live` regions for dynamic content updates (alerts, filter results)
+   - ⚠️ Loading states - loading indicators may not be announced to screen readers
+
+4. **Table Accessibility:**
+   - ⚠️ Sortable columns - if columns become sortable, need `aria-sort` attributes
+   - ⚠️ Complex tables - timeline/kanban views may need additional ARIA roles
+
+5. **Keyboard Shortcuts:**
+   - ⚠️ Limited keyboard shortcuts - only Escape key implemented
+   - ⚠️ No keyboard shortcut documentation or help menu
+
+#### ❌ Missing Features / Recommendations
+
+1. **WCAG 2.1 Level AA Compliance Gaps:**
+
+   **Perceivable:**
+   - ❌ **Alternative text for images** - Logo images need descriptive alt text (currently only has "JAJAT")
+   - ❌ **Color contrast ratio** - Some text may not meet 4.5:1 contrast ratio (needs audit)
+   - ❌ **Text resize** - No explicit text resize controls (relies on browser zoom)
+   - ❌ **Audio/video captions** - N/A for current features, but needed for future video tutorials
+
+   **Operable:**
+   - ❌ **Keyboard accessibility** - All functionality should be keyboard accessible
+     - Drag-and-drop in Kanban view may not be keyboard accessible
+     - Some complex interactions may require mouse
+   - ❌ **No keyboard traps** - Ensure users can navigate away from all components
+   - ❌ **Timing adjustable** - Auto-dismiss alerts have fixed timing (could be configurable)
+   - ❌ **Navigation** - Skip links missing for main content areas
+   - ❌ **Multiple ways to find content** - Currently only search/filter, could add tags/categories
+
+   **Understandable:**
+   - ❌ **Language identification** - Some content may not specify language (especially user-entered content)
+   - ❌ **Error identification** - Form errors need better labeling and association
+   - ❌ **Labels and instructions** - Some form fields may need more descriptive labels
+   - ❌ **Consistent navigation** - Navigation is mostly consistent, but could be improved
+
+   **Robust:**
+   - ❌ **Parsing** - HTML should validate (needs verification)
+   - ❌ **Name, role, value** - All UI components need proper ARIA attributes
+
+2. **Screen Reader Optimization:**
+   - ❌ **Landmark regions** - Missing `role="main"`, `role="complementary"`, `role="navigation"`
+   - ❌ **Live regions** - Need `aria-live="polite"` for non-critical updates and `aria-live="assertive"` for errors
+   - ❌ **State announcements** - Complex state changes (filters, sorting) need announcements
+   - ❌ **Descriptive link text** - Some links may have non-descriptive text (e.g., "click here")
+
+3. **Keyboard Navigation Improvements:**
+   - ❌ **Focus indicators** - Ensure all interactive elements have visible focus indicators
+   - ❌ **Tab order** - Verify logical tab order throughout application
+   - ❌ **Keyboard shortcuts** - Add common shortcuts (e.g., `/` for search, `n` for new entry, `?` for help)
+   - ❌ **Shortcut documentation** - Help menu or keyboard shortcuts overlay
+
+4. **Testing Recommendations:**
+   - ❌ **Automated testing** - Integrate accessibility testing tools (axe-core, Lighthouse CI)
+   - ❌ **Screen reader testing** - Test with NVDA, JAWS, VoiceOver
+   - ❌ **Keyboard-only testing** - Manual testing with keyboard only (no mouse)
+   - ❌ **Color contrast audit** - Use tools like WebAIM Contrast Checker
+
+### Recommended Implementation Plan
+
+#### Phase 1: Quick Wins (High Impact, Low Effort)
+1. Add skip navigation link
+2. Improve image alt text descriptions
+3. Add `aria-live` regions for alerts and dynamic updates
+4. Add landmark roles (`role="main"`, `role="navigation"`)
+5. Ensure all interactive elements have focus indicators
+
+#### Phase 2: Form Improvements
+1. Add `aria-describedby` to associate error messages with inputs
+2. Add `aria-required` to required fields
+3. Improve form validation announcements
+4. Add `aria-invalid` to inputs with errors
+
+#### Phase 3: Advanced Features
+1. Implement keyboard shortcuts with help menu
+2. Add focus trapping to modals
+3. Implement keyboard navigation for Kanban drag-and-drop
+4. Add ARIA roles for complex components (timeline, kanban)
+5. Color contrast audit and fixes
+
+#### Phase 4: Testing & Validation
+1. Set up automated accessibility testing (axe-core, Lighthouse)
+2. Conduct screen reader testing sessions
+3. Keyboard-only navigation testing
+4. WCAG 2.1 Level AA compliance audit
+5. Create accessibility documentation
+
+### Tools & Resources
+
+**Testing Tools:**
+- [axe DevTools](https://www.deque.com/axe/devtools/) - Browser extension for accessibility testing
+- [WAVE](https://wave.webaim.org/) - Web accessibility evaluation tool
+- [Lighthouse](https://developer.chrome.com/docs/lighthouse/accessibility/) - Built into Chrome DevTools
+- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) - Color contrast verification
+
+**Screen Readers:**
+- [NVDA](https://www.nvaccess.org/) - Free Windows screen reader
+- [JAWS](https://www.freedomscientific.com/products/software/jaws/) - Windows screen reader (commercial)
+- [VoiceOver](https://www.apple.com/accessibility/vision/) - Built into macOS/iOS
+
+**Documentation:**
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [MDN ARIA Documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA)
+- [WebAIM Resources](https://webaim.org/resources/)
+
+### Success Metrics
+
+- **WCAG 2.1 Level AA Compliance**: Target 95%+ compliance score
+- **Lighthouse Accessibility Score**: Target 95+ out of 100
+- **axe-core Violations**: Zero critical/high severity violations
+- **Keyboard Navigation**: 100% of functionality accessible via keyboard
+- **Screen Reader Compatibility**: Tested and working with major screen readers (NVDA, JAWS, VoiceOver)

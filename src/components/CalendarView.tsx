@@ -138,7 +138,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
           return (
             <div
               key={day.date.toISOString()}
-              className={`min-h-[110px] px-3 py-2 border-gray-200 ${
+              className={`min-h-[80px] sm:min-h-[110px] px-2 sm:px-3 py-1.5 sm:py-2 border-gray-200 ${
                 today
                   ? 'bg-indigo-50 border-2 border-indigo-400'
                   : day.isCurrentMonth
@@ -160,7 +160,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
                   <span className="text-[11px] font-semibold text-indigo-600">{day.events.length}</span>
                 )}
               </div>
-              <ul className="mt-1 space-y-1">
+              <ul className="mt-1 space-y-0.5 sm:space-y-1">
                 {day.events.slice(0, 3).map(({ application, event }) => {
                   const eventDate = parseLocalDate(event.date);
                   const relativeTime = formatRelativeTime(eventDate);
@@ -172,7 +172,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
                       <button
                         type="button"
                         onClick={() => onEdit?.(application)}
-                        className={`w-full text-left text-[11px] px-2 py-1 rounded transition ${
+                        className={`w-full text-left text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded transition ${
                           isPast
                             ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                             : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700'
@@ -181,7 +181,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
                         <span className="font-semibold block truncate">{application.position}</span>
                         <span className="block truncate capitalize">{event.type.replace(/_/g, ' ')}</span>
                         <span
-                          className={`block truncate text-[10px] mt-0.5 ${
+                          className={`block truncate text-[9px] sm:text-[10px] mt-0.5 ${
                             isPast ? 'text-gray-500' : 'text-indigo-600 font-medium'
                           }`}
                         >
@@ -192,7 +192,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
                   );
                 })}
                 {day.events.length > 3 && (
-                  <li className="text-[11px] text-gray-500">+{day.events.length - 3} more</li>
+                  <li className="text-[10px] sm:text-[11px] text-gray-500">+{day.events.length - 3} more</li>
                 )}
               </ul>
             </div>

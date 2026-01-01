@@ -80,7 +80,12 @@ describe('SettingsPage', () => {
           // Try to find checkbox by label text or by id
           const checkbox = screen.getByLabelText(new RegExp(field.label, 'i'));
           expect(checkbox).toBeInTheDocument();
-          expect(checkbox).toBeChecked(); // All fields enabled by default
+          // Notes field is not enabled by default
+          if (field.id === 'notes') {
+            expect(checkbox).not.toBeChecked();
+          } else {
+            expect(checkbox).toBeChecked();
+          }
         });
       });
     });
