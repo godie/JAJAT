@@ -28,7 +28,7 @@ export const DEFAULT_FIELDS: FieldDefinition[] = [
 ];
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
-  enabledFields: DEFAULT_FIELDS.map(field => field.id),
+  enabledFields: DEFAULT_FIELDS.filter(field => field.id !== 'notes').map(field => field.id),
   columnOrder: DEFAULT_FIELDS.map(field => field.id),
   customFields: [],
   defaultView: 'table',

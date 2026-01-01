@@ -82,9 +82,10 @@ const createAndSaveApplication = async (
 // =========================================================================
 
 // Configuración de columnas para evitar repetición - basado en DEFAULT_FIELDS
+// Notes is not shown by default, so it's excluded from required columns
 const requiredColumns = [
     'Position', 'Company', 'Status', 'Application Date', 'Timeline',
-    'Notes', 'Link', 'Platform', 'Salary', 'Contact', 'Follow Up'
+    'Link', 'Platform', 'Salary', 'Contact', 'Follow Up'
 ];
 
 test('HomePage renders correctly and matches snapshot', () => {

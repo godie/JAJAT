@@ -12,6 +12,10 @@ interface ApplicationTableProps {
     onDelete: (id: string) => void;
 }
 
+// Constants for notes column formatting
+const NOTES_TRUNCATE_LENGTH = 100; // Maximum characters before truncation
+const NOTES_WORD_WRAP_LENGTH = 50; // Minimum characters to trigger word-wrap
+
 // Map column names to JobApplication properties
 const columnToKeyMap: Record<string, keyof JobApplication> = {
   'position': 'position',
@@ -178,7 +182,42 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
                 {columns.map((column, index) => {
                   const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
                   const key = columnToKeyMap[normalizedColumn];
-                  const cellContent = key ? String(item[key] ?? '') : '';
+                  let cellContent = key ? String(item[key] ?? '') : '';
+                  const isNotes = key === 'notes';
+                  
+                  // Handle notes column: truncate and detect line breaks
+                  if (isNotes) {
+                    const originalLength = cellContent.length;
+                    const hasLineBreaks = /[\r\n]/.test(cellContent);
+                    
+                    // Truncate if longer than NOTES_TRUNCATE_LENGTH
+                    if (originalLength > NOTES_TRUNCATE_LENGTH) {
+                      cellContent = cellContent.substring(0, NOTES_TRUNCATE_LENGTH) + '...';
+                    }
+                    
+                    // Convert line breaks to <br> tags for proper rendering
+                    if (hasLineBreaks) {
+                      cellContent = cellContent.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>').replace(/\r/g, '<br>');
+                    }
+                    
+                    // Determine if word-wrap should be applied
+                    const shouldWrap = hasLineBreaks || originalLength > NOTES_WORD_WRAP_LENGTH;
+                    
+                    return (
+                      <td
+                        key={index}
+                        onClick={() => onEdit(item)}
+                        className={`px-4 sm:px-6 py-3 text-gray-900 dark:text-gray-100 border-r border-gray-100 dark:border-gray-700 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900 ${
+                          shouldWrap ? 'whitespace-normal' : 'whitespace-nowrap'
+                        } ${isNotes ? 'max-w-xs' : ''}`}
+                      >
+                        <span
+                          className={`block ${shouldWrap ? 'break-words' : 'truncate'} ${isNotes ? '' : 'max-w-[180px] sm:max-w-none'}`}
+                          dangerouslySetInnerHTML={createMarkup(cellContent)}
+                        />
+                      </td>
+                    );
+                  }
 
                   return (
                     <td
