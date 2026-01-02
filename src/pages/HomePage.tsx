@@ -361,6 +361,14 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     }
   };
 
+  const nonDeletedApplications = useMemo(() => {
+    // ⚡ Bolt: Memoize the list of non-deleted applications.
+    // This prevents the GoogleSheetsSync component from re-rendering every time
+    // the filters change, as it was receiving a new array instance on every render.
+    // Now, it only re-renders when the core `applications` data changes.
+    return applications.filter(app => app.status !== 'Deleted');
+  }, [applications]);
+
   return (
     <div className="max-w-7xl mx-auto">
           
@@ -369,7 +377,7 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
 
           {/* Google Sheets Sync */}
           <GoogleSheetsSync 
-            applications={applications.filter(app => app.status !== 'Deleted')}
+            applications={nonDeletedApplications}
             onSyncComplete={() => {
               // Refresh applications after sync if needed
               setApplications(getApplications());
