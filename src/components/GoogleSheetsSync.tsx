@@ -1,6 +1,6 @@
 // src/components/GoogleSheetsSync.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAlert } from './AlertProvider';
 import { checkLoginStatus } from '../utils/localStorage';
 import {
@@ -20,6 +20,11 @@ interface GoogleSheetsSyncProps {
 }
 
 const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyncComplete }) => {
+  // ⚡ Bolt: Use ref to store the latest applications without causing re-renders
+  // This allows handleSync to always use the most recent data without
+  // the component needing to re-render when applications array reference changes
+  const applicationsRef = useRef(applications);
+  applicationsRef.current = applications;
   const { showSuccess, showError } = useAlert();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
@@ -90,8 +95,13 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
     }
   };
 
-  const handleSync = async () => {
-    if (!isLoggedIn) {
+  // ⚡ Bolt: Memoize handleSync to prevent recreation on every render
+  // Use applicationsRef.current to always get the latest applications without
+  // causing re-renders when the applications prop changes
+  // Read isLoggedIn directly from checkLoginStatus() to avoid dependency on state
+  const handleSync = useCallback(async () => {
+    // Check login status directly instead of using state to avoid unnecessary recreations
+    if (!checkLoginStatus()) {
       showError('Please log in with Google first');
       return;
     }
@@ -104,7 +114,8 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
 
     setIsSyncing(true);
     try {
-      const result = await syncToGoogleSheets(applications, spreadsheetId);
+      // Use ref to get latest applications without dependency on applications prop
+      const result = await syncToGoogleSheets(applicationsRef.current, spreadsheetId);
       setSyncStatus(getSyncStatus());
       showSuccess(`Successfully synced ${result.rowsSynced} application${result.rowsSynced !== 1 ? 's' : ''} to Google Sheets!`);
       
@@ -119,7 +130,7 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [showError, showSuccess, onSyncComplete]);
 
   const handleOpenSheet = () => {
     if (spreadsheetUrl) {
@@ -324,5 +335,35 @@ const GoogleSheetsSync: React.FC<GoogleSheetsSyncProps> = ({ applications, onSyn
   );
 };
 
-export default GoogleSheetsSync;
+// ⚡ Bolt: Memoize component to prevent re-renders when applications array reference changes
+// but content is the same. Only re-render if applications length or IDs change.
+export default React.memo(GoogleSheetsSync, (prevProps, nextProps) => {
+  // Re-render if applications count changed
+  if (prevProps.applications.length !== nextProps.applications.length) {
+    return false; // Props changed, re-render
+  }
+  
+  // Re-render if any application ID changed (indicating data changed)
+  const prevIds = new Set(prevProps.applications.map(app => app.id));
+  const nextIds = new Set(nextProps.applications.map(app => app.id));
+  
+  if (prevIds.size !== nextIds.size) {
+    return false; // Props changed, re-render
+  }
+  
+  // Check if all IDs are the same
+  for (const id of prevIds) {
+    if (!nextIds.has(id)) {
+      return false; // Props changed, re-render
+    }
+  }
+  
+  // Re-render if onSyncComplete reference changed
+  if (prevProps.onSyncComplete !== nextProps.onSyncComplete) {
+    return false; // Props changed, re-render
+  }
+  
+  // Props are effectively the same, skip re-render
+  return true;
+});
 
