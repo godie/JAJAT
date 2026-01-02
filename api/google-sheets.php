@@ -200,7 +200,7 @@ function handleSyncData($accessToken, $data) {
 
     $range = 'Applications!A2:M1000';
     $clearUrl = "https://sheets.googleapis.com/v4/spreadsheets/{$spreadsheetId}/values/" . urlencode($range) . ":clear";
-    makeGoogleApiRequest($clearUrl, $accessToken, 'POST', []);
+    makeGoogleApiRequest($clearUrl, $accessToken, 'POST', new stdClass());
 
     if (!empty($values)) {
         $updateData = ['valueInputOption' => 'USER_ENTERED', 'data' => [['range' => 'Applications!A2', 'values' => $values]]];
