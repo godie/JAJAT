@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, memo } from 'react';
 import type { JobApplication } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
 import { parseLocalDate } from '../utils/date';
@@ -245,6 +245,10 @@ const KanbanView: React.FC<KanbanViewProps> = ({ applications, onEdit, onDelete 
   );
 };
 
-export default KanbanView;
+// ⚡ Bolt: Memoize KanbanView to prevent unnecessary re-renders.
+// This component can be expensive to render due to sorting and grouping.
+// React.memo ensures it only re-renders when its props (`applications`, `onEdit`, `onDelete`) change,
+// preventing updates when the parent component re-renders for unrelated reasons (e.g., filter changes).
+export default memo(KanbanView);
 
 
