@@ -183,23 +183,21 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     // dependency from useCallback. This stabilizes the function, preventing
     // unnecessary re-renders of memoized child components like ApplicationTable
     // that receive this function as a prop.
-    
-    // Get the application to delete before updating state to show message only once
-    const currentApplications = getApplications();
-    const appToDelete = currentApplications.find(app => app.id === id);
-    
+    // This also avoids a synchronous read from localStorage (`getApplications()`)
+    // by finding the application to delete from the existing state.
     setApplications(prevApplications => {
+      const appToDelete = prevApplications.find(app => app.id === id);
       const newApplications = prevApplications.map(app =>
         app.id === id ? { ...app, status: 'Deleted' } : app
       );
       saveApplications(newApplications);
+
+      if (appToDelete) {
+        showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
+      }
+
       return newApplications;
     });
-    
-    // Show success message outside of setApplications callback to prevent duplicate messages
-    if (appToDelete) {
-      showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
-    }
   }, [showSuccess]);
 
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
