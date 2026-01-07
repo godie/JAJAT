@@ -37,15 +37,20 @@ const defaultFilters: Filters = {
 
 // Componente Placeholder para la sección de métricas
 const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applications }) => {
-  const totalApplications = applications.length;
-  const interviews = applications.filter(a => a.interviewDate);
-  const offers = applications.filter(a => a.status === 'Offer');
+  // ⚡ Bolt: Memoize metric calculations.
+  // This prevents expensive filtering and array creation on every re-render.
+  // The metrics will only be recalculated when the `applications` prop changes.
+  const metrics = useMemo(() => {
+    const totalApplications = applications.length;
+    const interviews = applications.filter(a => a.interviewDate).length;
+    const offers = applications.filter(a => a.status === 'Offer').length;
 
-  const metrics = [
-        { label: 'Applications', value: totalApplications, color: 'border-blue-500' },
-        { label: 'Interviews', value: interviews.length, color: 'border-yellow-500' },
-        { label: 'Offers', value: offers.length, color: 'border-green-500' },
+    return [
+      { label: 'Applications', value: totalApplications, color: 'border-blue-500' },
+      { label: 'Interviews', value: interviews, color: 'border-yellow-500' },
+      { label: 'Offers', value: offers, color: 'border-green-500' },
     ];
+  }, [applications]);
 
   return (
     <section className="grid grid-cols-3 gap-2 sm:gap-4 my-8" data-testid="metrics-summary">
