@@ -35,8 +35,11 @@ const defaultFilters: Filters = {
   dateTo: '',
 };
 
-// Componente Placeholder para la sección de métricas
-const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applications }) => {
+// ⚡ Bolt: Memoize MetricsSummary to prevent re-renders.
+// This component was re-rendering whenever HomePage state changed, even if the
+// `applications` prop was identical. React.memo prevents this by performing a
+// shallow comparison of props, saving unnecessary re-renders.
+const MetricsSummary: React.FC<{ applications: JobApplication[] }> = React.memo(({ applications }) => {
   const totalApplications = applications.length;
   const interviews = applications.filter(a => a.interviewDate);
   const offers = applications.filter(a => a.status === 'Offer');
@@ -60,7 +63,7 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
       ))}
     </section>
   );
-};
+});
 
 import { type PageType } from '../App';
 
