@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface FooterProps {
   version: string;
@@ -23,5 +23,7 @@ const Footer: React.FC<FooterProps> = ({ version }) => {
   );
 };
 
-export default Footer;
+Footer.displayName = 'Footer';
+
+export default memo(Footer);
 

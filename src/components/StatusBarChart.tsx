@@ -1,5 +1,5 @@
 // src/components/StatusBarChart.tsx
-import React from 'react';
+import React, { memo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { VALUE_BY_STATUS } from '../utils/constants';
 
@@ -30,4 +30,6 @@ const StatusBarChart: React.FC<StatusBarChartProps> = ({ data }) => {
   );
 };
 
-export default StatusBarChart;
+StatusBarChart.displayName = 'StatusBarChart';
+
+export default memo(StatusBarChart);

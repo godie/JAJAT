@@ -1,5 +1,5 @@
 // src/components/TimelineView.tsx
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo } from 'react';
 import type { JobApplication, InterviewEvent } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
 import { parseLocalDate } from '../utils/date';
@@ -12,6 +12,7 @@ interface TimelineViewProps {
 
 const ITEMS_PER_PAGE = 10;
 
+// Memoized to prevent re-renders when filteredApplications reference changes but content is the same
 const TimelineView: React.FC<TimelineViewProps> = ({ applications, onEdit, onDelete }) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
     isOpen: false,
@@ -329,5 +330,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ applications, onEdit, onDel
   );
 };
 
-export default TimelineView;
+TimelineView.displayName = 'TimelineView';
+
+export default memo(TimelineView);
 

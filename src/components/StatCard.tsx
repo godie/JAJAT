@@ -1,5 +1,5 @@
 // src/components/StatCard.tsx
-import React from 'react';
+import React, { memo } from 'react';
 
 interface StatCardProps {
   title: string;
@@ -25,4 +25,6 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, compact = false }) =>
   );
 };
 
-export default StatCard;
+StatCard.displayName = 'StatCard';
+
+export default memo(StatCard);

@@ -1,5 +1,5 @@
 // src/components/InterviewBarChart.tsx
-import React from 'react';
+import React, { memo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { VALUE_BY_STATUS } from '../utils/constants';
 
@@ -34,4 +34,6 @@ const InterviewBarChart: React.FC<InterviewBarChartProps> = ({ data, title = "In
   );
 };
 
-export default InterviewBarChart;
+InterviewBarChart.displayName = 'InterviewBarChart';
+
+export default memo(InterviewBarChart);

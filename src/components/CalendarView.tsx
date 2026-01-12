@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, memo } from 'react';
 import type { JobApplication, InterviewEvent } from '../utils/localStorage';
 import { parseLocalDate } from '../utils/date';
 
@@ -55,6 +55,7 @@ const formatRelativeTime = (eventDate: Date): string => {
   }
 };
 
+// Memoized to prevent re-renders when filteredApplications reference changes but content is the same
 const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => {
   const [focusMonth, setFocusMonth] = useState(() => startOfMonth(new Date()));
 
@@ -209,6 +210,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ applications, onEdit }) => 
   );
 };
 
-export default CalendarView;
+CalendarView.displayName = 'CalendarView';
+
+export default memo(CalendarView);
 
 

@@ -4,7 +4,7 @@
 import { JobExtractor, JobData } from './JobExtractor';
 
 interface AshbyAppData {
-  posting?: {
+  posting?: Record<string, unknown> & {
     title?: string;
     locationName?: string;
     workplaceType?: string;
@@ -162,8 +162,13 @@ export class AshbyhqJobExtractor implements JobExtractor {
         }
       }
 
-      // Check isRemote flag
-      if (appData?.posting?.isRemote === true) {
+      // TypeScript fix: Check isRemote on type-safe object
+      // Some AshbyHQ job postings may use a (not always present) isRemote boolean
+      if (
+        appData &&
+        appData.posting &&
+        appData.posting.isRemote === true
+      ) {
         return 'Remote';
       }
     } catch {
@@ -255,16 +260,18 @@ export class AshbyhqJobExtractor implements JobExtractor {
       if (appData?.posting?.compensationTierSummary) {
         return appData.posting.compensationTierSummary;
       }
-      // Try compensationTiers array
-      if (appData?.posting?.compensationTiers && appData.posting.compensationTiers.length > 0) {
-        const tier = appData.posting.compensationTiers[0];
-        if (tier.tierSummary) {
+      // Try compensationTiers array (defensively access any possible appData.posting shape)
+      const compensationTiers = (appData?.posting as Record<string, unknown> & { compensationTiers?: unknown }).compensationTiers;
+      if (Array.isArray(compensationTiers) && compensationTiers.length > 0) {
+        const tier = compensationTiers[0] as { tierSummary?: string };
+        if (tier?.tierSummary) {
           return tier.tierSummary;
         }
       }
+      
       // Try scrapeableCompensationSalarySummary
       if (appData?.posting?.scrapeableCompensationSalarySummary) {
-        return appData.posting.scrapeableCompensationSalarySummary;
+        return appData.posting.scrapeableCompensationSalarySummary as string;
       }
     } catch {
       // Fallback to other methods

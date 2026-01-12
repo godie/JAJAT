@@ -27,16 +27,35 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
   const filtersRef = useRef(filters);
   const onFiltersChangeRef = useRef(onFiltersChange);
   const isMountedRef = useRef(false);
+  const lastSearchFromPropsRef = useRef(filters.search);
   
   filtersRef.current = filters;
   onFiltersChangeRef.current = onFiltersChange;
+
+  // Sync searchTerm with filters.search when component mounts or when filters.search changes externally
+  // This ensures the search field is restored when navigating back to the page
+  useEffect(() => {
+    // Always sync on mount to restore search term from localStorage
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      setSearchTerm(filters.search);
+      lastSearchFromPropsRef.current = filters.search;
+      return;
+    }
+    
+    // Sync if filters.search changed externally (e.g., from localStorage restore)
+    // Only update if it's different from our current searchTerm to avoid unnecessary updates
+    if (filters.search !== lastSearchFromPropsRef.current && filters.search !== searchTerm) {
+      setSearchTerm(filters.search);
+      lastSearchFromPropsRef.current = filters.search;
+    }
+  }, [filters.search, searchTerm]);
 
   // Debounce: when searchTerm changes, wait 300ms then call onFiltersChange
   // Only update the search field, preserving other filter values
   useEffect(() => {
     // Skip debounce on mount to avoid unnecessary calls
     if (!isMountedRef.current) {
-      isMountedRef.current = true;
       return;
     }
 
@@ -46,25 +65,11 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
     const timerId = setTimeout(() => {
       // Always update to ensure searchTerm is synced with parent filters
       onFiltersChangeRef.current({ ...filtersRef.current, search: currentSearchTerm });
+      lastSearchFromPropsRef.current = currentSearchTerm;
     }, 300);
 
     return () => clearTimeout(timerId);
   }, [searchTerm]);
-
-  // Sync local state if the parent filter is cleared externally
-  // Skip on mount to avoid interfering with initial state
-  const hasMountedRef = useRef(false);
-  useEffect(() => {
-    if (!hasMountedRef.current) {
-      hasMountedRef.current = true;
-      return;
-    }
-    // Only sync if filters.search changed externally (not from our debounce)
-    // This prevents infinite loops when onFiltersChange updates filters.search
-    if (filters.search !== searchTerm && filters.search !== filtersRef.current.search) {
-      setSearchTerm(filters.search);
-    }
-  }, [filters.search, searchTerm]);
 
   const handleChange = (key: keyof Filters) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     onFiltersChange({ ...filters, [key]: event.target.value });

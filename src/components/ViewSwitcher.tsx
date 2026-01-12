@@ -1,5 +1,5 @@
 // src/components/ViewSwitcher.tsx
-import React from 'react';
+import React, { memo } from 'react';
 
 export type ViewType = 'table' | 'timeline' | 'kanban' | 'calendar';
 
@@ -80,5 +80,7 @@ const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ currentView, onViewChange }
   );
 };
 
-export default ViewSwitcher;
+ViewSwitcher.displayName = 'ViewSwitcher';
+
+export default memo(ViewSwitcher);
 
