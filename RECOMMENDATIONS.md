@@ -388,7 +388,8 @@ export const migrateApplicationData = (oldApp: any): JobApplication => {
 - [x] Support for additional job boards:
   - [x] Greenhouse (greenhouse.io) ✅
   - [x] AshbyHQ (ashbyhq.com) ✅
-  - [ ] Lever (lever.co)
+  - [x] Workable (workable.com) ✅
+  - [x] Lever (lever.co) ✅
   - [ ] Workday (workday.com)
   - [ ] Indeed
   - [ ] Glassdoor
@@ -481,8 +482,12 @@ export const useAppStore = create<AppState>((set) => ({
 - When building collaborative features
 
 ### Performance
+- ✅ Component memoization with React.memo for presentational components
+  - ApplicationTable, KanbanView, TimelineView, CalendarView
+  - StatCard, ViewSwitcher, BottomNav, Footer
+  - StatusBarChart, InterviewBarChart
 - Virtualize long lists (react-window or react-virtualized)
-- Debounce search/filter inputs
+- Debounce search/filter inputs ✅
 - Lazy load views
 - IndexedDB for large datasets
 
@@ -494,7 +499,7 @@ export const useAppStore = create<AppState>((set) => ({
 - ✅ Dark mode functionality tests (Theme.test.tsx, DarkModeIntegration.test.tsx)
 - ✅ Sidebar navigation and theme toggle tests
 - ✅ Test infrastructure improvements (jsdom → happy-dom for better compatibility)
-- ✅ All tests passing (251 tests, 34 skipped)
+- ✅ All tests passing (348 tests)
 
 ### Security
 - Never store OAuth tokens in localStorage (use secure storage)
@@ -545,6 +550,9 @@ export const useAppStore = create<AppState>((set) => ({
 36. ✅ **MainLayout restructure** with sidebar and header separation
 37. ✅ **Mobile-first responsive design** with adaptive header, compact metrics, and card-based table view
 38. ✅ **Insights page improvements** with fixed interview detection and new visualizations
+39. ✅ **Chrome Extension - Workable support** with comprehensive extractor implementation
+40. ✅ **Chrome Extension - Lever.co support** with comprehensive extractor implementation and tests
+41. ✅ **Performance optimizations** with React.memo for presentational components (StatCard, ViewSwitcher, BottomNav, Footer, StatusBarChart, InterviewBarChart)
 
 **Immediate Next Steps:**
 1. **State Management Implementation** - Consider Context API or Zustand for centralized state management

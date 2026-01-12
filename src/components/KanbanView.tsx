@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, memo } from 'react';
 import type { JobApplication } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
 import { parseLocalDate } from '../utils/date';
@@ -77,6 +77,7 @@ const getInterviewingSubStatus = (app: JobApplication): string | null => {
   return null;
 };
 
+// Memoized to prevent re-renders when filteredApplications reference changes but content is the same
 const KanbanView: React.FC<KanbanViewProps> = ({ applications, onEdit, onDelete }) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
     isOpen: false,
@@ -245,6 +246,8 @@ const KanbanView: React.FC<KanbanViewProps> = ({ applications, onEdit, onDelete 
   );
 };
 
-export default KanbanView;
+KanbanView.displayName = 'KanbanView';
+
+export default memo(KanbanView);
 
 

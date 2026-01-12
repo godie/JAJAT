@@ -11,7 +11,7 @@ This project is feature-complete for its core functionality. Based on the projec
 - **Search Filter Debounce Fix**: Fixed debounce implementation for search filter to prevent interference with sync logic
   - Search debounce now properly skips on mount to avoid unnecessary calls
   - Fixed sync logic to prevent infinite loops and interference with debounce
-  - All 308 tests now passing (28 test files)
+  - All 348 tests now passing (30 test files)
 - **Mobile-First Responsive Design**: Complete mobile optimization with card-based views, compact metrics, and responsive header
   - Header adapts by screen size: logo icon (< 768px), "JAJAT" text (768-1023px), full title (≥ 1024px)
   - Login button shows Google "G" icon on mobile for space efficiency
@@ -26,7 +26,7 @@ This project is feature-complete for its core functionality. Based on the projec
 - **Default Preferences**: Updated DEFAULT_PREFERENCES to include all fields by default for better UX
 - **Dark Mode**: Full dark mode implementation with persistent theme preference
 - **Sidebar Navigation**: Clean sidebar navigation with theme toggle and opportunities badge
-- **Test Infrastructure**: Migrated from jsdom to happy-dom, achieving 100% test pass rate (308 tests passing)
+- **Test Infrastructure**: Migrated from jsdom to happy-dom, achieving 100% test pass rate (348 tests passing)
 - **UI Improvements**: All components now support dark mode with consistent styling
 
 ## Next Steps
@@ -204,12 +204,14 @@ These pages are accessible from the footer and are required for Google Cloud Con
 
 ## Chrome Extension - Multi-Platform Job Capture
 
-The project includes a Chrome extension for capturing job opportunities from multiple job boards. Currently supports LinkedIn, Greenhouse, and AshbyHQ, with more platforms coming soon.
+The project includes a Chrome extension for capturing job opportunities from multiple job boards. Currently supports LinkedIn, Greenhouse, AshbyHQ, Workable, and Lever.co, with more platforms coming soon.
 
 ### Supported Job Boards
 - **LinkedIn**: Full support for LinkedIn job postings
 - **Greenhouse**: Complete extraction from Greenhouse job boards
 - **AshbyHQ**: Full support for AshbyHQ job postings
+- **Workable**: Full support for Workable job postings
+- **Lever.co**: Full support for Lever.co job postings
 
 ### Features
 - **One-click capture**: Automatically extracts job details from supported job boards
@@ -225,13 +227,15 @@ The project includes a Chrome extension for capturing job opportunities from mul
 ### Quick Start
 1. Build the extension: `npm run build:extension`
 2. Load it in Chrome: Go to `chrome://extensions/`, enable Developer mode, and load the `chrome-extension/dist` folder
-3. Visit a job posting on LinkedIn, Greenhouse, or AshbyHQ and click the extension icon to capture it
+3. Visit a job posting on LinkedIn, Greenhouse, AshbyHQ, Workable, or Lever.co and click the extension icon to capture it
 4. Or add opportunities manually from the Opportunities page in the web app
 
 ### Supported URLs
 - LinkedIn: `https://www.linkedin.com/jobs/view/*`
 - Greenhouse: `https://boards.greenhouse.io/*`, `https://job-boards.greenhouse.io/*`
 - AshbyHQ: `https://jobs.ashbyhq.com/*`, `https://*.ashbyhq.com/*`
+- Workable: `https://apply.workable.com/*`, `https://workable.com/j/*`
+- Lever.co: `https://jobs.lever.co/*`, `https://*.lever.co/*`, `https://lever.co/*`
 
 ### Manual Opportunity Creation
 You don't need the extension to add opportunities! Simply:
@@ -409,6 +413,8 @@ job-application-tracker/
 │   │   ├── LinkedInJobExtractor.ts  // LinkedIn extractor
 │   │   ├── GreenhouseJobExtractor.ts // Greenhouse extractor
 │   │   ├── AshbyhqJobExtractor.ts   // AshbyHQ extractor
+│   │   ├── WorkableJobExtractor.ts  // Workable extractor
+│   │   ├── LeverJobExtractor.ts     // Lever.co extractor
 │   │   └── index.ts             // Extractor registry
 │   └── dist/                    // Built extension files (generated)
 ├── .env.local                   // Stores VITE_GOOGLE_CLIENT_ID (Ignored by Git).
@@ -478,8 +484,8 @@ The React app automatically calls these endpoints when:
 The project includes comprehensive test coverage:
 
 ```
-Test Files: 28 passed (28)
-Tests: 308 passed (308)
+Test Files: 30 passed (30)
+Tests: 348 passed (348)
 ```
 
 ### Test Coverage Includes:
@@ -493,7 +499,7 @@ Tests: 308 passed (308)
 - Filter and search functionality (including advanced status filtering)
 - Alert system and notifications
 - Chrome Extension components (content script, background, popup, webapp-content)
-- Job extractors (LinkedIn, Greenhouse, AshbyHQ) with comprehensive unit tests
+- Job extractors (LinkedIn, Greenhouse, AshbyHQ, Workable, Lever.co) with comprehensive unit tests
 - Opportunity management (creation, deletion, conversion)
 - Manual opportunity form validation and submission
 - **Dark mode functionality** (theme toggle, persistence, class application)

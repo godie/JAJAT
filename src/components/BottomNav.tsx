@@ -1,5 +1,5 @@
 // src/components/BottomNav.tsx
-import React from 'react';
+import React, { memo } from 'react';
 import { FaTable, FaLightbulb, FaCog, FaChartBar } from 'react-icons/fa';
 import { type PageType } from '../App';
 
@@ -39,4 +39,6 @@ const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate }) => {
   );
 };
 
-export default BottomNav;
+BottomNav.displayName = 'BottomNav';
+
+export default memo(BottomNav);

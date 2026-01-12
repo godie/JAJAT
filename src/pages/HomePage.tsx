@@ -1,5 +1,5 @@
 // src/pages/HomePage.tsx
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import Footer from '../components/Footer';
 import ApplicationTable from '../components/ApplicationTable';
 import TimelineView from '../components/TimelineView';
@@ -36,16 +36,19 @@ const defaultFilters: Filters = {
 };
 
 // Componente Placeholder para la sección de métricas
+// Memoized to prevent re-renders when filteredApplications reference changes but content is the same
 const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applications }) => {
-  const totalApplications = applications.length;
-  const interviews = applications.filter(a => a.interviewDate);
-  const offers = applications.filter(a => a.status === 'Offer');
+  const metrics = useMemo(() => {
+    const totalApplications = applications.length;
+    const interviews = applications.filter(a => a.interviewDate);
+    const offers = applications.filter(a => a.status === 'Offer');
 
-  const metrics = [
-        { label: 'Applications', value: totalApplications, color: 'border-blue-500' },
-        { label: 'Interviews', value: interviews.length, color: 'border-yellow-500' },
-        { label: 'Offers', value: offers.length, color: 'border-green-500' },
+    return [
+      { label: 'Applications', value: totalApplications, color: 'border-blue-500' },
+      { label: 'Interviews', value: interviews.length, color: 'border-yellow-500' },
+      { label: 'Offers', value: offers.length, color: 'border-green-500' },
     ];
+  }, [applications]);
 
   return (
     <section className="grid grid-cols-3 gap-2 sm:gap-4 my-8" data-testid="metrics-summary">
@@ -61,6 +64,11 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
     </section>
   );
 };
+
+MetricsSummary.displayName = 'MetricsSummary';
+
+// Export memoized version
+const MemoizedMetricsSummary = memo(MetricsSummary);
 
 import { type PageType } from '../App';
 
@@ -184,11 +192,13 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     // unnecessary re-renders of memoized child components like ApplicationTable
     // that receive this function as a prop.
     
-    // Get the application to delete before updating state to show message only once
-    const currentApplications = getApplications();
-    const appToDelete = currentApplications.find(app => app.id === id);
+    // Get the application to delete from current state (prevApplications) instead of
+    // reading from localStorage. This is more efficient and prevents duplicate messages.
+    // The callback executes synchronously, so appToDelete will be available immediately.
+    let appToDelete: JobApplication | undefined;
     
     setApplications(prevApplications => {
+      appToDelete = prevApplications.find(app => app.id === id);
       const newApplications = prevApplications.map(app =>
         app.id === id ? { ...app, status: 'Deleted' } : app
       );
@@ -204,7 +214,7 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
 
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
-  },[]);
+  }, []);
 
   const handleCreateNew = () => {
     setCurrentApplication({} as JobApplication);
@@ -373,7 +383,7 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     <div className="max-w-7xl mx-auto">
           
           {/* Summary Section */}
-          <MetricsSummary applications={filteredApplications} />
+          <MemoizedMetricsSummary applications={filteredApplications} />
 
           {/* Google Sheets Sync */}
           <GoogleSheetsSync 
