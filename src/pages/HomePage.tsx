@@ -212,6 +212,10 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     }
   }, [showSuccess]);
 
+  // ⚡ Bolt: Memoize the edit handler.
+  // This prevents the `onEdit` prop from changing on every render, which allows
+  // child components like `ApplicationTable` and `KanbanView` to skip re-rendering
+  // when other state (like filters) changes.
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
   }, []);
