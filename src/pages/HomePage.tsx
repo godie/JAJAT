@@ -39,14 +39,26 @@ const defaultFilters: Filters = {
 // Memoized to prevent re-renders when filteredApplications reference changes but content is the same
 const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applications }) => {
   const metrics = useMemo(() => {
-    const totalApplications = applications.length;
-    const interviews = applications.filter(a => a.interviewDate);
-    const offers = applications.filter(a => a.status === 'Offer');
+    // ⚡ Bolt: Replaced multiple .filter() calls with a single .reduce()
+    // This avoids iterating over the applications array multiple times to calculate
+    // aggregate stats, improving performance especially for large datasets.
+    const stats = applications.reduce(
+      (acc, app) => {
+        if (app.interviewDate) {
+          acc.interviews++;
+        }
+        if (app.status === 'Offer') {
+          acc.offers++;
+        }
+        return acc;
+      },
+      { interviews: 0, offers: 0 }
+    );
 
     return [
-      { label: 'Applications', value: totalApplications, color: 'border-blue-500' },
-      { label: 'Interviews', value: interviews.length, color: 'border-yellow-500' },
-      { label: 'Offers', value: offers.length, color: 'border-green-500' },
+      { label: 'Applications', value: applications.length, color: 'border-blue-500' },
+      { label: 'Interviews', value: stats.interviews, color: 'border-yellow-500' },
+      { label: 'Offers', value: stats.offers, color: 'border-green-500' },
     ];
   }, [applications]);
 
