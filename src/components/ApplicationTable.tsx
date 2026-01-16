@@ -31,6 +31,16 @@ const columnToKeyMap: Record<string, keyof JobApplication> = {
   'link': 'link',
 };
 
+// ⚡ Bolt: Moved getCellValue outside the component.
+// This function is pure and doesn't depend on component state, so defining it once
+// at the module level prevents it from being recreated on every render.
+// This reduces memory allocation and improves rendering performance.
+const getCellValue = (item: JobApplication, column: string): string => {
+  const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+  const key = columnToKeyMap[normalizedColumn];
+  return key ? String(item[key] ?? '') : '';
+};
+
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
@@ -42,12 +52,6 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
   // However, for defense-in-depth, we'll sanitize it again before rendering.
   const createMarkup = (htmlContent: string) => {
     return { __html: DOMPurify.sanitize(htmlContent) };
-  };
-
-  const getCellValue = (item: JobApplication, column: string): string => {
-    const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
-    const key = columnToKeyMap[normalizedColumn];
-    return key ? String(item[key] ?? '') : '';
   };
 
   // Get primary columns for mobile view (Position, Company, Status)
