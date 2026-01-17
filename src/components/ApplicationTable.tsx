@@ -16,7 +16,8 @@ interface ApplicationTableProps {
 const NOTES_TRUNCATE_LENGTH = 100; // Maximum characters before truncation
 const NOTES_WORD_WRAP_LENGTH = 50; // Minimum characters to trigger word-wrap
 
-// Map column names to JobApplication properties
+// Map column names to JobApplication properties for efficient lookup.
+// ⚡ Bolt: Moved outside the component to prevent re-declaration on every render.
 const columnToKeyMap: Record<string, keyof JobApplication> = {
   'position': 'position',
   'company': 'company',
@@ -31,6 +32,20 @@ const columnToKeyMap: Record<string, keyof JobApplication> = {
   'link': 'link',
 };
 
+/**
+ * Retrieves the cell value for a given application and column.
+ * ⚡ Bolt: Moved outside the component because it's a pure function.
+ * This prevents it from being recreated on every render, improving performance.
+ * @param item - The job application object.
+ * @param column - The column name.
+ * @returns The string value of the cell.
+ */
+const getCellValue = (item: JobApplication, column: string): string => {
+  const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+  const key = columnToKeyMap[normalizedColumn];
+  return key ? String(item[key] ?? '') : '';
+};
+
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
@@ -42,12 +57,6 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
   // However, for defense-in-depth, we'll sanitize it again before rendering.
   const createMarkup = (htmlContent: string) => {
     return { __html: DOMPurify.sanitize(htmlContent) };
-  };
-
-  const getCellValue = (item: JobApplication, column: string): string => {
-    const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
-    const key = columnToKeyMap[normalizedColumn];
-    return key ? String(item[key] ?? '') : '';
   };
 
   // Get primary columns for mobile view (Position, Company, Status)
