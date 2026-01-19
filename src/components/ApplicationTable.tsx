@@ -31,6 +31,23 @@ const columnToKeyMap: Record<string, keyof JobApplication> = {
   'link': 'link',
 };
 
+// ⚡ Bolt: Moved `getCellValue` outside the component.
+// This is a pure function that doesn't depend on component state or props,
+// so moving it here prevents it from being redeclared on every render.
+const getCellValue = (item: JobApplication, column: string): string => {
+  const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+  const key = columnToKeyMap[normalizedColumn];
+  return key ? String(item[key] ?? '') : '';
+};
+
+// ⚡ Bolt: Moved `getPrimaryColumns` outside the component.
+// This pure function now takes `columns` as an argument, preventing
+// redeclaration on each render and making dependencies explicit.
+const getPrimaryColumns = (columns: string[]): string[] => {
+  const primary = ['Position', 'Company', 'Status'];
+  return columns.filter(col => primary.includes(col)).slice(0, 3);
+};
+
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
@@ -44,19 +61,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
     return { __html: DOMPurify.sanitize(htmlContent) };
   };
 
-  const getCellValue = (item: JobApplication, column: string): string => {
-    const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
-    const key = columnToKeyMap[normalizedColumn];
-    return key ? String(item[key] ?? '') : '';
-  };
-
-  // Get primary columns for mobile view (Position, Company, Status)
-  const getPrimaryColumns = (): string[] => {
-    const primary = ['Position', 'Company', 'Status'];
-    return columns.filter(col => primary.includes(col)).slice(0, 3);
-  };
-
-  const primaryColumns = getPrimaryColumns();
+  const primaryColumns = getPrimaryColumns(columns);
   const otherColumns = columns.filter(col => !primaryColumns.includes(col));
 
   return (
