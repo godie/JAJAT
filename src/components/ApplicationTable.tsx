@@ -16,6 +16,11 @@ interface ApplicationTableProps {
 const NOTES_TRUNCATE_LENGTH = 100; // Maximum characters before truncation
 const NOTES_WORD_WRAP_LENGTH = 50; // Minimum characters to trigger word-wrap
 
+// ⚡ Bolt: Moved static helpers outside the component.
+// `columnToKeyMap` and `getCellValue` are pure and don't depend on component state.
+// By defining them here, we prevent them from being redeclared on every render,
+// which is a small but meaningful performance optimization.
+
 // Map column names to JobApplication properties
 const columnToKeyMap: Record<string, keyof JobApplication> = {
   'position': 'position',
@@ -31,6 +36,12 @@ const columnToKeyMap: Record<string, keyof JobApplication> = {
   'link': 'link',
 };
 
+const getCellValue = (item: JobApplication, column: string): string => {
+  const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+  const key = columnToKeyMap[normalizedColumn];
+  return key ? String(item[key] ?? '') : '';
+};
+
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
@@ -42,12 +53,6 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
   // However, for defense-in-depth, we'll sanitize it again before rendering.
   const createMarkup = (htmlContent: string) => {
     return { __html: DOMPurify.sanitize(htmlContent) };
-  };
-
-  const getCellValue = (item: JobApplication, column: string): string => {
-    const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
-    const key = columnToKeyMap[normalizedColumn];
-    return key ? String(item[key] ?? '') : '';
   };
 
   // Get primary columns for mobile view (Position, Company, Status)
