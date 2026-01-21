@@ -31,6 +31,22 @@ const columnToKeyMap: Record<string, keyof JobApplication> = {
   'link': 'link',
 };
 
+// ⚡ Bolt: Moved static helpers outside the component.
+// These functions do not depend on component state or props, so defining them
+// outside prevents them from being recreated on every render. This reduces
+// garbage collection pressure and improves rendering performance.
+const getCellValue = (item: JobApplication, column: string): string => {
+  const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+  const key = columnToKeyMap[normalizedColumn];
+  return key ? String(item[key] ?? '') : '';
+};
+
+// Get primary columns for mobile view (Position, Company, Status)
+const getPrimaryColumns = (columns: string[]): string[] => {
+  const primary = ['Position', 'Company', 'Status'];
+  return columns.filter(col => primary.includes(col)).slice(0, 3);
+};
+
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
@@ -44,19 +60,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
     return { __html: DOMPurify.sanitize(htmlContent) };
   };
 
-  const getCellValue = (item: JobApplication, column: string): string => {
-    const normalizedColumn = column.toLowerCase().replace(/ /g, '').replace(/-/g, '');
-    const key = columnToKeyMap[normalizedColumn];
-    return key ? String(item[key] ?? '') : '';
-  };
-
-  // Get primary columns for mobile view (Position, Company, Status)
-  const getPrimaryColumns = (): string[] => {
-    const primary = ['Position', 'Company', 'Status'];
-    return columns.filter(col => primary.includes(col)).slice(0, 3);
-  };
-
-  const primaryColumns = getPrimaryColumns();
+  const primaryColumns = getPrimaryColumns(columns);
   const otherColumns = columns.filter(col => !primaryColumns.includes(col));
 
   return (
