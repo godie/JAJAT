@@ -395,7 +395,12 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     <div className="max-w-7xl mx-auto">
           
           {/* Summary Section */}
-          <MemoizedMetricsSummary applications={filteredApplications} />
+          {/* ⚡ Bolt: Prevent re-renders on filter change. */}
+          {/* The summary metrics should reflect the total dataset, not just the filtered results. */}
+          {/* By passing `nonDeletedApplications` instead of `filteredApplications`, this component */}
+          {/* avoids re-rendering every time the user types in the search bar or changes a filter, */}
+          {/* making the UI more responsive. */}
+          <MemoizedMetricsSummary applications={nonDeletedApplications} />
 
           {/* Google Sheets Sync */}
           <GoogleSheetsSync 

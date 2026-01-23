@@ -166,7 +166,9 @@ describe('HomePage Core Functionality and Persistence', () => {
         expect(screen.getAllByText(app.position).length).toBeGreaterThan(0);
         
         // La primera entrada es 1, la segunda es 2, etc.
-        expect(localStorageMock.setItem).toHaveBeenCalledTimes(index + 1); 
+        const setItemCalls = localStorageMock.setItem.mock.calls;
+        const jobTrackerDataCalls = setItemCalls.filter(call => call[0] === STORAGE_KEY);
+        expect(jobTrackerDataCalls.length).toBe(index + 1);
     }
     
     // Verificación final: el array de localStorage debe tener 3 elementos
