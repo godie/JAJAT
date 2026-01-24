@@ -9,18 +9,15 @@ import ViewSwitcher, { type ViewType } from '../components/ViewSwitcher';
 import FiltersBar, { type Filters } from '../components/FiltersBar';
 import { useAlert } from '../components/AlertProvider';
 import {
-  getApplications,
-  saveApplications,
-  generateId,
-  getPreferences,
   DEFAULT_FIELDS,
   type JobApplication,
-  type UserPreferences,
 } from '../utils/localStorage';
 import AddJobForm from '../components/AddJobComponent';
 import GoogleSheetsSync from '../components/GoogleSheetsSync';
 import packageJson from '../../package.json';
 import { parseLocalDate } from '../utils/date';
+import { useApplicationsStore } from '../stores/applicationsStore';
+import { usePreferencesStore } from '../stores/preferencesStore';
 
 const VIEW_STORAGE_KEY = 'preferredView';
 const FILTERS_STORAGE_KEY = 'applicationFilters';
@@ -78,16 +75,27 @@ interface HomePageContentProps {
 
 const HomePageContent: React.FC<HomePageContentProps> = () => {
   const { showSuccess } = useAlert();
-  const [applications, setApplications] = useState<JobApplication[]>([]);
+  
+  // Use Zustand stores
+  const applications = useApplicationsStore((state) => state.applications);
+  const addApplication = useApplicationsStore((state) => state.addApplication);
+  const updateApplication = useApplicationsStore((state) => state.updateApplication);
+  const deleteApplication = useApplicationsStore((state) => state.deleteApplication);
+  const refreshApplications = useApplicationsStore((state) => state.refreshApplications);
+  const loadApplications = useApplicationsStore((state) => state.loadApplications);
+  
+  const preferences = usePreferencesStore((state) => state.preferences);
+  const loadPreferences = usePreferencesStore((state) => state.loadPreferences);
+  
   const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null);
   const [currentView, setCurrentView] = useState<ViewType>('table');
   const [filters, setFilters] = useState<Filters>(defaultFilters);
-  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const isFormOpen = currentApplication !== null;
 
+  // Load data on mount
   useEffect(() => {
-    setApplications(getApplications());
-    setPreferences(getPreferences());
+    loadApplications();
+    loadPreferences();
     
     // Listen for new opportunities from Chrome extension
     const handleMessage = (event: MessageEvent) => {
@@ -103,16 +111,15 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [showSuccess]);
+  }, [loadApplications, loadPreferences, showSuccess]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Use default view from preferences, fallback to localStorage for backward compatibility
-      const prefs = getPreferences();
-      if (prefs.defaultView) {
-        setCurrentView(prefs.defaultView);
+      if (preferences?.defaultView) {
+        setCurrentView(preferences.defaultView);
         // Also update localStorage for backward compatibility
-        window.localStorage.setItem(VIEW_STORAGE_KEY, prefs.defaultView);
+        window.localStorage.setItem(VIEW_STORAGE_KEY, preferences.defaultView);
       } else {
         const storedView = window.localStorage.getItem(VIEW_STORAGE_KEY) as ViewType | null;
         if (storedView) {
@@ -130,7 +137,7 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
         }
       }
     }
-  }, []);
+  }, [preferences?.defaultView]);
   
   // Update view when preferences change
   useEffect(() => {
@@ -162,55 +169,28 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
   }, []);
 
   const handleSaveEntry = useCallback((entryData: Omit<JobApplication, 'id'> | JobApplication) => {
-    // By using the functional update form of setState, we avoid including `applications`
-    // in the dependency array. This prevents this callback from being recreated on every
-    // render, which in turn prevents re-rendering of child components like ApplicationTable.
-    setApplications(prevApplications => {
-      let newApplications: JobApplication[];
-      if ('id' in entryData) {
-        newApplications = prevApplications.map(app =>
-          app.id === entryData.id ? (entryData as JobApplication) : app
-        );
-      } else {
-        const newEntry: JobApplication = {
-          ...entryData,
-          id: generateId(),
-          timeline: 'timeline' in entryData ? entryData.timeline : [],
-        } as JobApplication;
-        newApplications = [...prevApplications, newEntry];
-      }
-      saveApplications(newApplications);
-      return newApplications;
-    });
+    if ('id' in entryData) {
+      // Update existing application
+      updateApplication(entryData.id, entryData);
+    } else {
+      // Add new application
+      addApplication(entryData);
+    }
     setCurrentApplication(null);
-  }, []);
+  }, [addApplication, updateApplication]);
 
   const handleDeleteEntry = useCallback((id: string) => {
-    // ⚡ Bolt: Optimized with functional update to prevent re-renders.
-    // By using the functional form of setApplications, we remove the `applications`
-    // dependency from useCallback. This stabilizes the function, preventing
-    // unnecessary re-renders of memoized child components like ApplicationTable
-    // that receive this function as a prop.
+    // Get the application to delete before deleting
+    const appToDelete = applications.find(app => app.id === id);
     
-    // Get the application to delete from current state (prevApplications) instead of
-    // reading from localStorage. This is more efficient and prevents duplicate messages.
-    // The callback executes synchronously, so appToDelete will be available immediately.
-    let appToDelete: JobApplication | undefined;
+    // Delete using store action
+    deleteApplication(id);
     
-    setApplications(prevApplications => {
-      appToDelete = prevApplications.find(app => app.id === id);
-      const newApplications = prevApplications.map(app =>
-        app.id === id ? { ...app, status: 'Deleted' } : app
-      );
-      saveApplications(newApplications);
-      return newApplications;
-    });
-    
-    // Show success message outside of setApplications callback to prevent duplicate messages
+    // Show success message
     if (appToDelete) {
       showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
     }
-  }, [showSuccess]);
+  }, [applications, deleteApplication, showSuccess]);
 
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
@@ -390,7 +370,7 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
             applications={nonDeletedApplications}
             onSyncComplete={() => {
               // Refresh applications after sync if needed
-              setApplications(getApplications());
+              refreshApplications();
             }}
           />
 

@@ -1,8 +1,9 @@
 // src/components/TimelineEditor.tsx
 import React, { useState, useMemo } from 'react';
 import type { InterviewEvent, InterviewStageType, EventStatus } from '../utils/localStorage';
-import { generateId, getPreferences } from '../utils/localStorage';
+import { generateId } from '../utils/localStorage';
 import { parseLocalDate } from '../utils/date';
+import { usePreferencesStore } from '../stores/preferencesStore';
 
 interface TimelineEditorProps {
   events: InterviewEvent[];
@@ -13,7 +14,7 @@ const TimelineEditor: React.FC<TimelineEditorProps> = ({ events, onChange }) => 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const preferences = getPreferences();
+  const preferences = usePreferencesStore((state) => state.preferences);
 
   const stageOptions: { value: InterviewStageType | string; label: string; isCustom?: boolean }[] = useMemo(() => {
     const baseOptions: { value: InterviewStageType; label: string }[] = [

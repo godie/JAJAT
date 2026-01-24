@@ -1,7 +1,7 @@
 // src/components/Sidebar.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { type PageType } from '../App';
-import { getOpportunities } from '../utils/localStorage';
+import { useOpportunitiesStore } from '../stores/opportunitiesStore';
 
 interface SidebarProps {
   currentPage?: PageType;
@@ -10,32 +10,31 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ currentPage = 'applications', onNavigate, isOpen = true }) => {
-  const [opportunitiesCount, setOpportunitiesCount] = useState(0);
+  const opportunities = useOpportunitiesStore((state) => state.opportunities);
+  const loadOpportunities = useOpportunitiesStore((state) => state.loadOpportunities);
+  const refreshOpportunities = useOpportunitiesStore((state) => state.refreshOpportunities);
+  const opportunitiesCount = opportunities.length;
 
   useEffect(() => {
-    updateOpportunitiesCount();
+    loadOpportunities();
     
     // Listen for storage changes
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'jobOpportunities' || e.key === null) {
-        updateOpportunitiesCount();
+        refreshOpportunities();
       }
     };
     
     window.addEventListener('storage', handleStorageChange);
     
     // Poll for changes (in case extension uses chrome.storage.local)
-    const interval = setInterval(updateOpportunitiesCount, 2000);
+    const interval = setInterval(refreshOpportunities, 2000);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(interval);
     };
-  }, []);
-
-  const updateOpportunitiesCount = () => {
-    setOpportunitiesCount(getOpportunities().length);
-  };
+  }, [loadOpportunities, refreshOpportunities]);
 
   const handleNavigation = (page: PageType) => {
     if (onNavigate) {

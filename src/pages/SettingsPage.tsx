@@ -3,17 +3,14 @@ import Footer from '../components/Footer';
 import { useAlert } from '../components/AlertProvider';
 import {
   DEFAULT_FIELDS,
-  DEFAULT_PREFERENCES,
-  getPreferences,
-  savePreferences,
   type FieldDefinition,
-  type UserPreferences,
   type ViewType,
   type DateFormat,
   type CustomInterviewEvent,
   generateId,
 } from '../utils/localStorage';
 import packageJson from '../../package.json';
+import { usePreferencesStore } from '../stores/preferencesStore';
 
 import { type PageType } from '../App';
 
@@ -23,7 +20,13 @@ interface SettingsPageProps {
 
 const SettingsPageContent: React.FC<SettingsPageProps> = () => {
   const { showSuccess } = useAlert();
-  const [preferences, setPreferences] = useState<UserPreferences>(DEFAULT_PREFERENCES);
+  
+  // Use Zustand store
+  const preferences = usePreferencesStore((state) => state.preferences);
+  const loadPreferences = usePreferencesStore((state) => state.loadPreferences);
+  const updatePreferences = usePreferencesStore((state) => state.updatePreferences);
+  const resetPreferences = usePreferencesStore((state) => state.resetPreferences);
+  
   const [hasChanges, setHasChanges] = useState(false);
   const [activeSection, setActiveSection] = useState<'fields' | 'view' | 'date' | 'custom' | 'interviewing'>('fields');
   const [editingCustomField, setEditingCustomField] = useState<FieldDefinition | null>(null);
@@ -39,50 +42,41 @@ const SettingsPageContent: React.FC<SettingsPageProps> = () => {
   });
 
   useEffect(() => {
-    const loaded = getPreferences();
-    setPreferences(loaded);
-  }, []);
+    loadPreferences();
+  }, [loadPreferences]);
 
   const allFields: FieldDefinition[] = [...DEFAULT_FIELDS, ...(preferences.customFields || [])];
 
   const handleToggleField = (fieldId: string) => {
-    setPreferences((prev) => {
-      const isEnabled = prev.enabledFields.includes(fieldId);
-      const enabledFields = isEnabled
-        ? prev.enabledFields.filter((id) => id !== fieldId)
-        : [...prev.enabledFields, fieldId];
-      setHasChanges(true);
-      return { ...prev, enabledFields };
-    });
+    const isEnabled = preferences.enabledFields.includes(fieldId);
+    const enabledFields = isEnabled
+      ? preferences.enabledFields.filter((id) => id !== fieldId)
+      : [...preferences.enabledFields, fieldId];
+    updatePreferences({ enabledFields });
+    setHasChanges(true);
   };
 
   const handleMoveField = (fieldId: string, direction: 'up' | 'down') => {
-    setPreferences((prev) => {
-      const order = [...prev.columnOrder];
-      const index = order.indexOf(fieldId);
-      if (index === -1) return prev;
+    const order = [...preferences.columnOrder];
+    const index = order.indexOf(fieldId);
+    if (index === -1) return;
 
-      const targetIndex = direction === 'up' ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= order.length) return prev;
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= order.length) return;
 
-      [order[index], order[targetIndex]] = [order[targetIndex], order[index]];
-      setHasChanges(true);
-      return { ...prev, columnOrder: order };
-    });
+    [order[index], order[targetIndex]] = [order[targetIndex], order[index]];
+    updatePreferences({ columnOrder: order });
+    setHasChanges(true);
   };
 
   const handleDefaultViewChange = (view: ViewType) => {
-    setPreferences((prev) => {
-      setHasChanges(true);
-      return { ...prev, defaultView: view };
-    });
+    updatePreferences({ defaultView: view });
+    setHasChanges(true);
   };
 
   const handleDateFormatChange = (format: DateFormat) => {
-    setPreferences((prev) => {
-      setHasChanges(true);
-      return { ...prev, dateFormat: format };
-    });
+    updatePreferences({ dateFormat: format });
+    setHasChanges(true);
   };
 
   const handleAddCustomField = () => {
@@ -96,13 +90,11 @@ const SettingsPageContent: React.FC<SettingsPageProps> = () => {
       options: customFieldForm.type === 'select' ? (customFieldForm.options || []) : undefined,
     };
 
-    setPreferences((prev) => {
-      const customFields = [...(prev.customFields || []), newField];
-      const enabledFields = [...prev.enabledFields, newField.id];
-      const columnOrder = [...prev.columnOrder, newField.id];
-      setHasChanges(true);
-      return { ...prev, customFields, enabledFields, columnOrder };
-    });
+    const customFields = [...(preferences.customFields || []), newField];
+    const enabledFields = [...preferences.enabledFields, newField.id];
+    const columnOrder = [...preferences.columnOrder, newField.id];
+    updatePreferences({ customFields, enabledFields, columnOrder });
+    setHasChanges(true);
 
     setCustomFieldForm({ label: '', type: 'text', required: false, options: [] });
     setEditingCustomField(null);
@@ -121,34 +113,30 @@ const SettingsPageContent: React.FC<SettingsPageProps> = () => {
   const handleUpdateCustomField = () => {
     if (!editingCustomField || !customFieldForm.label) return;
 
-    setPreferences((prev) => {
-      const customFields = (prev.customFields || []).map((field) =>
-        field.id === editingCustomField.id
-          ? {
-              ...field,
-              label: customFieldForm.label!,
-              type: customFieldForm.type as FieldDefinition['type'],
-              required: customFieldForm.required || false,
-              options: customFieldForm.type === 'select' ? (customFieldForm.options || []) : undefined,
-            }
-          : field
-      );
-      setHasChanges(true);
-      return { ...prev, customFields };
-    });
+    const customFields = (preferences.customFields || []).map((field) =>
+      field.id === editingCustomField.id
+        ? {
+            ...field,
+            label: customFieldForm.label!,
+            type: customFieldForm.type as FieldDefinition['type'],
+            required: customFieldForm.required || false,
+            options: customFieldForm.type === 'select' ? (customFieldForm.options || []) : undefined,
+          }
+        : field
+    );
+    updatePreferences({ customFields });
+    setHasChanges(true);
 
     setCustomFieldForm({ label: '', type: 'text', required: false, options: [] });
     setEditingCustomField(null);
   };
 
   const handleDeleteCustomField = (fieldId: string) => {
-    setPreferences((prev) => {
-      const customFields = (prev.customFields || []).filter((f) => f.id !== fieldId);
-      const enabledFields = prev.enabledFields.filter((id) => id !== fieldId);
-      const columnOrder = prev.columnOrder.filter((id) => id !== fieldId);
-      setHasChanges(true);
-      return { ...prev, customFields, enabledFields, columnOrder };
-    });
+    const customFields = (preferences.customFields || []).filter((f) => f.id !== fieldId);
+    const enabledFields = preferences.enabledFields.filter((id) => id !== fieldId);
+    const columnOrder = preferences.columnOrder.filter((id) => id !== fieldId);
+    updatePreferences({ customFields, enabledFields, columnOrder });
+    setHasChanges(true);
   };
 
   const handleAddInterviewEvent = () => {
@@ -159,11 +147,9 @@ const SettingsPageContent: React.FC<SettingsPageProps> = () => {
       label: interviewEventForm.label,
     };
 
-    setPreferences((prev) => {
-      const customInterviewEvents = [...(prev.customInterviewEvents || []), newEvent];
-      setHasChanges(true);
-      return { ...prev, customInterviewEvents };
-    });
+    const customInterviewEvents = [...(preferences.customInterviewEvents || []), newEvent];
+    updatePreferences({ customInterviewEvents });
+    setHasChanges(true);
 
     setInterviewEventForm({ label: '' });
     setEditingInterviewEvent(null);
@@ -179,33 +165,29 @@ const SettingsPageContent: React.FC<SettingsPageProps> = () => {
   const handleUpdateInterviewEvent = () => {
     if (!editingInterviewEvent || !interviewEventForm.label) return;
 
-    setPreferences((prev) => {
-      const customInterviewEvents = (prev.customInterviewEvents || []).map((event) =>
-        event.id === editingInterviewEvent.id
-          ? {
-              ...event,
-              label: interviewEventForm.label!,
-            }
-          : event
-      );
-      setHasChanges(true);
-      return { ...prev, customInterviewEvents };
-    });
+    const customInterviewEvents = (preferences.customInterviewEvents || []).map((event) =>
+      event.id === editingInterviewEvent.id
+        ? {
+            ...event,
+            label: interviewEventForm.label!,
+          }
+        : event
+    );
+    updatePreferences({ customInterviewEvents });
+    setHasChanges(true);
 
     setInterviewEventForm({ label: '' });
     setEditingInterviewEvent(null);
   };
 
   const handleDeleteInterviewEvent = (eventId: string) => {
-    setPreferences((prev) => {
-      const customInterviewEvents = (prev.customInterviewEvents || []).filter((e) => e.id !== eventId);
-      setHasChanges(true);
-      return { ...prev, customInterviewEvents };
-    });
+    const customInterviewEvents = (preferences.customInterviewEvents || []).filter((e) => e.id !== eventId);
+    updatePreferences({ customInterviewEvents });
+    setHasChanges(true);
   };
 
   const handleReset = () => {
-    setPreferences(DEFAULT_PREFERENCES);
+    resetPreferences();
     setHasChanges(true);
     setCustomFieldForm({ label: '', type: 'text', required: false, options: [] });
     setEditingCustomField(null);
@@ -214,7 +196,7 @@ const SettingsPageContent: React.FC<SettingsPageProps> = () => {
   };
 
   const handleSave = () => {
-    savePreferences(preferences);
+    // Preferences are already saved automatically by the store
     setHasChanges(false);
     showSuccess('Settings saved successfully!');
   };

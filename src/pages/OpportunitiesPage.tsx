@@ -3,18 +3,15 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Footer from '../components/Footer';
 import { useAlert } from '../components/AlertProvider';
 import { 
-  getOpportunities, 
-  addOpportunity,
-  deleteOpportunity, 
   convertOpportunityToApplication,
-  saveApplications,
-  getApplications,
   sanitizeUrl,
   type JobOpportunity 
 } from '../utils/localStorage';
 import OpportunityForm from '../components/OpportunityForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 import packageJson from '../../package.json';
+import { useOpportunitiesStore } from '../stores/opportunitiesStore';
+import { useApplicationsStore } from '../stores/applicationsStore';
 
 import { type PageType } from '../App';
 
@@ -24,7 +21,16 @@ interface OpportunitiesPageContentProps {
 
 const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = () => {
   const { showSuccess, showError } = useAlert();
-  const [opportunities, setOpportunities] = useState<JobOpportunity[]>([]);
+  
+  // Use Zustand stores
+  const opportunities = useOpportunitiesStore((state) => state.opportunities);
+  const loadOpportunities = useOpportunitiesStore((state) => state.loadOpportunities);
+  const addOpportunity = useOpportunitiesStore((state) => state.addOpportunity);
+  const deleteOpportunity = useOpportunitiesStore((state) => state.deleteOpportunity);
+  const refreshOpportunities = useOpportunitiesStore((state) => state.refreshOpportunities);
+  
+  const addApplication = useApplicationsStore((state) => state.addApplication);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -41,21 +47,21 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = () => 
     // Listen for storage changes (from Chrome extension)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'jobOpportunities' || e.key === null) {
-        loadOpportunities();
+        refreshOpportunities();
       }
     };
     
-        // Listen for custom event from webapp-content script
-        const handleOpportunitiesUpdate = () => {
-          loadOpportunities();
-        };
+    // Listen for custom event from webapp-content script
+    const handleOpportunitiesUpdate = () => {
+      refreshOpportunities();
+    };
     
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('jobOpportunitiesUpdated', handleOpportunitiesUpdate as EventListener);
     
     // Also poll for changes (in case extension uses chrome.storage.local)
     const interval = setInterval(() => {
-      loadOpportunities();
+      refreshOpportunities();
     }, 2000);
     
     return () => {
@@ -63,25 +69,18 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = () => 
       window.removeEventListener('jobOpportunitiesUpdated', handleOpportunitiesUpdate as EventListener);
       clearInterval(interval);
     };
-  }, []);
-
-  const loadOpportunities = () => {
-    setOpportunities(getOpportunities());
-  };
+  }, [loadOpportunities, refreshOpportunities]);
 
   const handleApply = (opportunity: JobOpportunity) => {
     try {
       // Convert to application
       const application = convertOpportunityToApplication(opportunity);
       
-      // Save application
-      const applications = getApplications();
-      applications.push(application);
-      saveApplications(applications);
+      // Add application using store
+      addApplication(application);
       
       // Remove opportunity
       deleteOpportunity(opportunity.id);
-      loadOpportunities();
       
       showSuccess(`"${opportunity.position}" at ${opportunity.company} has been added to your applications!`);
     } catch (error) {
@@ -112,7 +111,6 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = () => 
         console.error('Error sending delete message to extension:', error);
       }
       
-      loadOpportunities();
       showSuccess(`Opportunity "${opportunity.position}" has been deleted.`);
       setDeleteConfirm({ isOpen: false, opportunity: null });
     }
@@ -121,7 +119,6 @@ const OpportunitiesPageContent: React.FC<OpportunitiesPageContentProps> = () => 
   const handleAddOpportunity = (opportunityData: Omit<JobOpportunity, 'id' | 'capturedDate'>) => {
     try {
       const newOpportunity = addOpportunity(opportunityData);
-      loadOpportunities();
       showSuccess(`Opportunity "${opportunityData.position}" at ${opportunityData.company} has been added!`);
       
       // Also sync to chrome.storage.local if extension is available
