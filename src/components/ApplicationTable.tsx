@@ -1,10 +1,9 @@
 // src/components/ApplicationTable.tsx
 import React, { useState, memo, useCallback } from 'react';
-import type { JobApplication } from '../utils/localStorage';
+import type { JobApplication } from '../types/applications';
 import ConfirmDialog from './ConfirmDialog';
 import ApplicationTableRow from './ApplicationTableRow';
 import ApplicationCard from './ApplicationCard';
-import { sanitizeUrl } from '../utils/localStorage';
 
 interface ApplicationTableProps {
     columns: string[];
@@ -13,9 +12,6 @@ interface ApplicationTableProps {
     onDelete: (id: string) => void;
 }
 
-// Constants for notes column formatting
-const NOTES_TRUNCATE_LENGTH = 100; // Maximum characters before truncation
-const NOTES_WORD_WRAP_LENGTH = 50; // Minimum characters to trigger word-wrap
 
 // Map column names to JobApplication properties
 const columnToKeyMap: Record<string, keyof JobApplication> = {

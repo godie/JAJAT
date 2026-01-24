@@ -165,8 +165,12 @@ describe('HomePage Core Functionality and Persistence', () => {
         // Verificación dentro del loop: asegurar que el nuevo registro aparece (may appear in both mobile and desktop views)
         expect(screen.getAllByText(app.position).length).toBeGreaterThan(0);
         
-        // La primera entrada es 1, la segunda es 2, etc.
-        expect(localStorageMock.setItem).toHaveBeenCalledTimes(index + 1); 
+        // Cada aplicación guardada debe generar al menos una escritura en STORAGE_KEY.
+        // Puede haber más llamadas por filters, view, preferences, etc.
+        const storageKeyCalls = localStorageMock.setItem.mock.calls.filter(
+          (call: [string, string]) => call[0] === STORAGE_KEY
+        );
+        expect(storageKeyCalls.length).toBe(index + 1);
     }
     
     // Verificación final: el array de localStorage debe tener 3 elementos

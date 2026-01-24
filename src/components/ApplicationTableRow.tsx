@@ -1,6 +1,6 @@
 // src/components/ApplicationTableRow.tsx
 import React, { memo } from 'react';
-import type { JobApplication } from '../utils/localStorage';
+import type { JobApplication } from '../types/applications';
 import { sanitizeUrl } from '../utils/localStorage';
 import DOMPurify from 'dompurify';
 

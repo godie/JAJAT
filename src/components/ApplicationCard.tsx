@@ -1,6 +1,6 @@
 // src/components/ApplicationCard.tsx
 import React, { memo } from 'react';
-import type { JobApplication } from '../utils/localStorage';
+import type { JobApplication } from '../types/applications';
 import { sanitizeUrl } from '../utils/localStorage';
 import DOMPurify from 'dompurify';
 
@@ -19,7 +19,6 @@ interface ApplicationCardProps {
 // (e.g., opening a confirmation dialog for another card).
 const ApplicationCard: React.FC<ApplicationCardProps> = ({
   item,
-  primaryColumns,
   otherColumns,
   onEdit,
   onDeleteRequest,
