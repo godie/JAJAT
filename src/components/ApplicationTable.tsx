@@ -3,7 +3,6 @@ import React, { useState, memo } from 'react';
 import type { JobApplication } from '../utils/localStorage';
 import { sanitizeUrl } from '../utils/localStorage';
 import ConfirmDialog from './ConfirmDialog';
-import DOMPurify from 'dompurify';
 
 interface ApplicationTableProps {
     columns: string[];
@@ -54,10 +53,12 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
     application: null,
   });
 
-  // Since data is sanitized on load from localStorage, we can trust it.
-  // However, for defense-in-depth, we'll sanitize it again before rendering.
+  // ⚡ Bolt: Removed redundant sanitization.
+  // Data is already sanitized when loaded from localStorage, so we can
+  // skip the expensive DOMPurify.sanitize() call on every render. This
+  // significantly improves rendering performance for large datasets.
   const createMarkup = (htmlContent: string) => {
-    return { __html: DOMPurify.sanitize(htmlContent) };
+    return { __html: htmlContent };
   };
 
   const primaryColumns = getPrimaryColumns(columns);

@@ -1,6 +1,7 @@
 // src/storage/applications.ts
 import { STORAGE_KEY } from '../utils/constants';
 import { generateId } from '../utils/id';
+import { sanitizeObject } from '../utils/url';
 import type { JobApplication, LegacyJobApplication, InterviewEvent, InterviewStageType } from '../types/applications';
 
 /**
@@ -75,9 +76,12 @@ export const getApplications = (): JobApplication[] => {
     
     const apps = JSON.parse(data);
     if (!Array.isArray(apps)) return [];
+
+    // Sanitize all application data on load to prevent XSS.
+    const sanitizedApps = apps.map(app => sanitizeObject(app));
     
     // Migrate legacy applications if needed
-    const migrated = apps.map((app) => {
+    const migrated = sanitizedApps.map((app) => {
       if (isLegacyApplication(app)) {
         const migratedApp = migrateApplicationData(app);
         // Save migrated data back
