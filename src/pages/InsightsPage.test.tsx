@@ -1,9 +1,8 @@
 // src/pages/InsightsPage.test.tsx
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import InsightsPage from './InsightsPage';
-import * as storage from '../storage/applications';
 import type { JobApplication } from '../types/applications';
 
 const mockApplications: JobApplication[] = [
@@ -57,6 +56,11 @@ const mockApplications: JobApplication[] = [
   },
 ];
 
+vi.mock('../stores/applicationsStore', () => ({
+  useApplicationsStore: (selector: (state: { applications: JobApplication[] }) => unknown) =>
+    selector({ applications: mockApplications }),
+}));
+
 vi.mock('recharts', async () => {
   const OriginalRecharts = await vi.importActual('recharts');
   return {
@@ -68,12 +72,8 @@ vi.mock('recharts', async () => {
 });
 
 describe('InsightsPage', () => {
-  beforeEach(() => {
-    vi.spyOn(storage, 'getApplications').mockReturnValue(mockApplications);
-  });
-
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders insights title', () => {

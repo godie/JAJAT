@@ -83,11 +83,11 @@ export const storeSpreadsheetId = (spreadsheetId: string): void => {
 };
 
 /**
- * Create a new Google Sheet
+ * Create a new Google Sheet (Laravel POST /api/google-sheets).
  */
 export const createSpreadsheet = async (title: string = 'Job Application Tracker'): Promise<SheetInfo> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/google-sheets.php`, {
+    const response = await fetch(`${API_BASE_URL}/google-sheets`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ export const syncToGoogleSheets = async (
   try {
     saveSyncStatus({ isSyncing: true, lastSyncError: null });
 
-    const response = await fetch(`${API_BASE_URL}/google-sheets.php`, {
+    const response = await fetch(`${API_BASE_URL}/google-sheets`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ export const setSpreadsheetId = async (spreadsheetIdOrUrl: string): Promise<Shee
  */
 export const getSpreadsheetInfo = async (spreadsheetId: string): Promise<Record<string, unknown>> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/google-sheets.php`, {
+    const response = await fetch(`${API_BASE_URL}/google-sheets`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

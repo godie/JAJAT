@@ -1,9 +1,9 @@
 // src/pages/InsightsPage.tsx
 import React from 'react';
-import { getApplications } from '../storage/applications';
 import StatCard from '../components/StatCard';
 import StatusBarChart from '../components/StatusBarChart';
 import InterviewBarChart from '../components/InterviewBarChart';
+import { useApplicationsStore } from '../stores/applicationsStore';
 
 /**
  * Check if an event type is considered an interview event
@@ -42,7 +42,7 @@ const getInterviewTypeDisplayName = (eventType: string): string => {
 };
 
 const InsightsPage: React.FC = () => {
-  const applications = getApplications();
+  const applications = useApplicationsStore((state) => state.applications);
 
   // Get all interview events
   const allInterviewEvents = applications.flatMap(app => 

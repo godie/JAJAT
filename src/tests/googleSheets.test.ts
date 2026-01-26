@@ -230,7 +230,7 @@ describe('Google Sheets Utilities', () => {
 
       expect(result.rowsSynced).toBe(1);
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/google-sheets.php'),
+        expect.stringContaining('/api/google-sheets'),
         expect.objectContaining({
           method: 'POST',
           body: expect.stringContaining('sync_data'),
