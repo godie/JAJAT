@@ -9,7 +9,7 @@ interface ApplicationTableProps {
     columns: string[];
     data: JobApplication[];
     onEdit: (application: JobApplication) => void;
-    onDelete: (id: string) => void;
+    onDelete: (application: JobApplication) => void;
 }
 
 
@@ -142,7 +142,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
         type="warning"
         onConfirm={() => {
           if (deleteConfirm.application) {
-            onDelete(deleteConfirm.application.id);
+            onDelete(deleteConfirm.application);
           }
           setDeleteConfirm({ isOpen: false, application: null });
         }}

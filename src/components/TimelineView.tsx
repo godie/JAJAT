@@ -7,7 +7,7 @@ import { parseLocalDate } from '../utils/date';
 interface TimelineViewProps {
   applications: JobApplication[];
   onEdit?: (application: JobApplication) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (application: JobApplication) => void;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -320,7 +320,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({ applications, onEdit, onDel
         type="warning"
         onConfirm={() => {
           if (deleteConfirm.application && onDelete) {
-            onDelete(deleteConfirm.application.id);
+            onDelete(deleteConfirm.application);
           }
           setDeleteConfirm({ isOpen: false, application: null });
         }}

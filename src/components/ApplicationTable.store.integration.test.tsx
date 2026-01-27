@@ -131,7 +131,7 @@ describe('ApplicationTable + Zustand store integration', () => {
     const dialogConfirm = confirmButtons[confirmButtons.length - 1];
     fireEvent.click(dialogConfirm);
 
-    expect(mockOnDelete).toHaveBeenCalledWith('store-1');
+    expect(mockOnDelete).toHaveBeenCalledWith(mockApplications[0]);
   });
 
   it('shows empty state when store has no applications', () => {
