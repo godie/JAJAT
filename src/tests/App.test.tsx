@@ -16,8 +16,12 @@ vi.mock('@react-oauth/google', () => ({
 }));
 
 describe('App', () => {
-  it('renders the MainLayout component', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('renders the landing page by default', () => {
     render(<App />);
-    expect(screen.getByTestId('main-layout')).toBeInTheDocument();
+    expect(screen.getByText(/Master Your Job Search/i)).toBeInTheDocument();
   });
 });
