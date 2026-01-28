@@ -6,27 +6,37 @@ import HomePage from './pages/HomePage';
 import OpportunitiesPage from './pages/OpportunitiesPage';
 import SettingsPage from './pages/SettingsPage';
 import InsightsPage from './pages/InsightsPage';
+import LandingPage from './pages/LandingPage';
 import MainLayout from './layouts/MainLayout';
+import { useApplicationsStore } from './stores/applicationsStore';
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+// ⚡ Bolt: Provide a dummy client ID if not present to prevent crash in dev/test environments
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'dummy-client-id.apps.googleusercontent.com';
 
-export type PageType = 'applications' | 'opportunities' | 'settings' | 'insights';
+export type PageType = 'landing' | 'applications' | 'opportunities' | 'settings' | 'insights';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<PageType>('applications');
-
-  useEffect(() => {
+  const [currentPage, setCurrentPage] = useState<PageType>(() => {
     // Load page preference from localStorage
-    const savedPage = localStorage.getItem('currentPage') as PageType | null;
-    if (savedPage) {
-      setCurrentPage(savedPage);
+    if (typeof window !== 'undefined') {
+      const savedPage = localStorage.getItem('currentPage') as PageType | null;
+      // If first time visiting, show landing page
+      return savedPage || 'landing';
     }
-  }, []);
+    return 'landing';
+  });
+
+  const loadApplications = useApplicationsStore((state) => state.loadApplications);
 
   useEffect(() => {
     // Save page preference
     localStorage.setItem('currentPage', currentPage);
-  }, [currentPage]);
+
+    // ⚡ Bolt: Ensure data is loaded when navigating away from landing page
+    if (currentPage !== 'landing') {
+      loadApplications();
+    }
+  }, [currentPage, loadApplications]);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -38,17 +48,25 @@ function App() {
         return <SettingsPage onNavigate={setCurrentPage} />;
       case 'insights':
         return <InsightsPage />;
+      case 'landing':
+        return <LandingPage onNavigate={setCurrentPage} />;
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }
   };
 
+  const content = renderPage();
+
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AlertProvider>
-        <MainLayout currentPage={currentPage} onNavigate={setCurrentPage}>
-          {renderPage()}
-      </MainLayout>
+        {currentPage === 'landing' ? (
+          content
+        ) : (
+          <MainLayout currentPage={currentPage} onNavigate={setCurrentPage}>
+            {content}
+          </MainLayout>
+        )}
       </AlertProvider>
     </GoogleOAuthProvider>
   );
