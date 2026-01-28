@@ -6,7 +6,7 @@ import { parseLocalDate } from '../utils/date';
 interface KanbanViewProps {
   applications: JobApplication[];
   onEdit?: (application: JobApplication) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (application: JobApplication) => void;
 }
 
 const DEFAULT_STATUS_ORDER = [
@@ -236,7 +236,7 @@ const KanbanView: React.FC<KanbanViewProps> = ({ applications, onEdit, onDelete 
         type="warning"
         onConfirm={() => {
           if (deleteConfirm.application && onDelete) {
-            onDelete(deleteConfirm.application.id);
+            onDelete(deleteConfirm.application);
           }
           setDeleteConfirm({ isOpen: false, application: null });
         }}

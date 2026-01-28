@@ -67,7 +67,7 @@ describe('KanbanView', () => {
     const confirmButton = confirmButtons[confirmButtons.length - 1];
     fireEvent.click(confirmButton);
     
-    expect(onDelete).toHaveBeenCalledWith('app-1');
+    expect(onDelete).toHaveBeenCalledWith(applications[0]);
   });
 
   test('groups Interviewing applications by timeline sub-status', () => {

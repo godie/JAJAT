@@ -191,18 +191,18 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     setCurrentApplication(null);
   }, [addApplication, updateApplication]);
 
-  const handleDeleteEntry = useCallback((id: string) => {
-    // Get the application to delete before deleting
-    const appToDelete = applications.find(app => app.id === id);
-    
+  const handleDeleteEntry = useCallback((appToDelete: JobApplication) => {
     // Delete using store action
-    deleteApplication(id);
+    deleteApplication(appToDelete.id);
     
     // Show success message
-    if (appToDelete) {
-      showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
-    }
-  }, [applications, deleteApplication, showSuccess]);
+    // ⚡ Bolt: By passing the full application object from the child component,
+    // we avoid searching the `applications` array here. This allows us to remove
+    // `applications` from the useCallback dependency array, stabilizing this
+    // function and preventing unnecessary re-renders of child components like
+    // ApplicationTable, KanbanView, and TimelineView.
+    showSuccess(`Application "${appToDelete.position}" at ${appToDelete.company} has been marked as deleted.`);
+  }, [deleteApplication, showSuccess]);
 
   const handleEdit = useCallback((appToEdit: JobApplication | null) => {
     setCurrentApplication(appToEdit);
