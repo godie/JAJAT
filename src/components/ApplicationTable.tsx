@@ -1,5 +1,5 @@
 // src/components/ApplicationTable.tsx
-import React, { useState, memo, useCallback } from 'react';
+import React, { useState, memo, useCallback, useMemo } from 'react';
 import type { JobApplication } from '../types/applications';
 import ConfirmDialog from './ConfirmDialog';
 import ApplicationTableRow from './ApplicationTableRow';
@@ -51,8 +51,13 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
     application: null,
   });
 
-  const primaryColumns = getPrimaryColumns(columns);
-  const otherColumns = columns.filter(col => !primaryColumns.includes(col));
+  // ⚡ Bolt: Memoize column calculations.
+  // By wrapping these calculations in useMemo, we ensure they are only
+  // re-computed when the `columns` prop changes. This prevents unnecessary
+  // array filtering on every render, which is a small but meaningful
+  // optimization, especially if the component re-renders frequently.
+  const primaryColumns = useMemo(() => getPrimaryColumns(columns), [columns]);
+  const otherColumns = useMemo(() => columns.filter(col => !primaryColumns.includes(col)), [columns, primaryColumns]);
 
   const handleDeleteRequest = useCallback((application: JobApplication) => {
     setDeleteConfirm({ isOpen: true, application });
