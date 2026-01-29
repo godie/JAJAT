@@ -237,12 +237,24 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [applications]);
 
+  // ⚡ Bolt: Pre-parse application dates to optimize filtering.
+  // By converting date strings to Date objects once and memoizing the result,
+  // we avoid calling the expensive `parseLocalDate` function inside the filter
+  // loop on every re-render. This significantly improves performance when
+  // filtering by date, especially with a large number of applications.
+  const applicationsWithParsedDates = useMemo(() => {
+    return applications.map(app => ({
+      ...app,
+      parsedApplicationDate: app.applicationDate ? parseLocalDate(app.applicationDate) : null,
+    }));
+  }, [applications]);
+
   const filteredApplications = useMemo(() => {
     const normalizedSearch = filters.search.trim().toLowerCase();
     const fromDate = filters.dateFrom ? parseLocalDate(filters.dateFrom) : null;
     const toDate = filters.dateTo ? parseLocalDate(filters.dateTo) : null;
 
-    return applications.filter(app => {
+    return applicationsWithParsedDates.filter(app => {
       // Exclude deleted applications by default
       if (app.status === 'Deleted') {
         return false;
@@ -284,25 +296,16 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
       let matchesDateTo = true;
 
       if (fromDate) {
-        if (!app.applicationDate) {
-          matchesDateFrom = false;
-        } else {
-          matchesDateFrom = parseLocalDate(app.applicationDate) >= fromDate;
-        }
+        matchesDateFrom = app.parsedApplicationDate ? app.parsedApplicationDate >= fromDate : false;
       }
 
       if (toDate) {
-        if (!app.applicationDate) {
-          matchesDateTo = false;
-        } else {
-          const appDate = parseLocalDate(app.applicationDate);
-          matchesDateTo = appDate <= toDate;
-        }
+        matchesDateTo = app.parsedApplicationDate ? app.parsedApplicationDate <= toDate : false;
       }
 
       return matchesSearch && matchesStatus && matchesPlatform && matchesDateFrom && matchesDateTo;
     });
-  }, [applications, filters]);
+  }, [applicationsWithParsedDates, filters]);
 
   const tableColumns = useMemo(() => {
     if (!preferences) {
