@@ -35,11 +35,14 @@ const defaultFilters: Filters = {
 // Componente Placeholder para la sección de métricas
 // Memoized to prevent re-renders when filteredApplications reference changes but content is the same
 const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applications }) => {
-  const metrics = useMemo(() => {
-    // ⚡ Bolt: Replaced multiple .filter() calls with a single .reduce()
-    // This avoids iterating over the applications array multiple times to calculate
-    // aggregate stats, improving performance especially for large datasets.
-    const stats = applications.reduce(
+  // ⚡ Bolt: Separated stat calculation from metric array creation.
+  // By memoizing the aggregated stats object first, we can use its primitive
+  // values (interviews, offers) as dependencies for the final metrics array.
+  // This prevents the metrics array from being recalculated when the
+  // `applications` array reference changes but the actual numbers haven't,
+  // making the memoization more precise and effective.
+  const stats = useMemo(() => {
+    return applications.reduce(
       (acc, app) => {
         if (app.interviewDate) {
           acc.interviews++;
@@ -51,13 +54,15 @@ const MetricsSummary: React.FC<{ applications: JobApplication[] }> = ({ applicat
       },
       { interviews: 0, offers: 0 }
     );
+  }, [applications]);
 
+  const metrics = useMemo(() => {
     return [
       { label: 'Applications', value: applications.length, color: 'border-blue-500' },
       { label: 'Interviews', value: stats.interviews, color: 'border-yellow-500' },
       { label: 'Offers', value: stats.offers, color: 'border-green-500' },
     ];
-  }, [applications]);
+  }, [applications.length, stats.interviews, stats.offers]);
 
   return (
     <section className="grid grid-cols-3 gap-2 sm:gap-4 my-8" data-testid="metrics-summary">
