@@ -47,6 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage = 'applications', onNavig
     { page: 'opportunities', label: 'Opportunities', showBadge: true },
     { page: 'settings', label: 'Settings' },
     { page: 'insights', label: 'Insights' },
+    { page: 'support', label: 'Support' },
     { page: 'landing', label: 'About' },
   ];
 

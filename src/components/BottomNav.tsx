@@ -1,6 +1,6 @@
 // src/components/BottomNav.tsx
 import React, { memo } from 'react';
-import { FaTable, FaLightbulb, FaCog, FaChartBar, FaInfoCircle } from 'react-icons/fa';
+import { FaTable, FaLightbulb, FaCog, FaChartBar, FaInfoCircle, FaHeart } from 'react-icons/fa';
 import { type PageType } from '../App';
 
 interface BottomNavProps {
@@ -14,6 +14,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate }) => {
     { page: 'opportunities', label: 'Opportunities', icon: <FaLightbulb size={24} /> },
     { page: 'settings', label: 'Settings', icon: <FaCog size={24} /> },
     { page: 'insights', label: 'Insights', icon: <FaChartBar size={24} /> },
+    { page: 'support', label: 'Support', icon: <FaHeart size={24} /> },
     { page: 'landing', label: 'About', icon: <FaInfoCircle size={24} /> },
   ];
 
