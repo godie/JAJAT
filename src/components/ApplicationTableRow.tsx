@@ -1,5 +1,6 @@
 // src/components/ApplicationTableRow.tsx
 import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { JobApplication } from '../types/applications';
 import { sanitizeUrl } from '../utils/localStorage';
 import DOMPurify from 'dompurify';
@@ -31,6 +32,7 @@ const ApplicationTableRow: React.FC<ApplicationTableRowProps> = ({
   onMouseLeave,
   getCellValue,
 }) => {
+  const { t } = useTranslation();
   const createMarkup = (htmlContent: string) => {
     return { __html: DOMPurify.sanitize(htmlContent) };
   };
@@ -43,8 +45,16 @@ const ApplicationTableRow: React.FC<ApplicationTableRowProps> = ({
       data-testid={`row-${item.id}`}
     >
       {columns.map((column, index) => {
-        const cellContent = getCellValue(item, column);
-        const isNotes = column.toLowerCase() === 'notes';
+        let cellContent = getCellValue(item, column);
+        const columnLower = column.toLowerCase();
+
+        if (columnLower === 'status' && cellContent) {
+          cellContent = t(`statuses.${cellContent.toLowerCase()}`, cellContent);
+        } else if (columnLower === 'platform' && cellContent) {
+          cellContent = t(`form.platforms.${cellContent}`, cellContent);
+        }
+
+        const isNotes = columnLower === 'notes';
 
         if (isNotes) {
           const originalLength = cellContent.length;
@@ -111,10 +121,10 @@ const ApplicationTableRow: React.FC<ApplicationTableRowProps> = ({
               onDeleteRequest(item);
             }}
             className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 bg-red-50 dark:bg-red-900 px-3 py-1 rounded-full transition"
-            aria-label={`Delete application for ${item.position}`}
+          aria-label={t('home.deleteConfirm.titleFor', { position: item.position, company: item.company })}
             data-testid={`delete-btn-${item.id}`}
           >
-            <span>Delete</span>
+            <span>{t('common.delete')}</span>
           </button>
         )}
       </td>

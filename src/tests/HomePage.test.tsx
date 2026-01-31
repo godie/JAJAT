@@ -103,7 +103,7 @@ describe('HomePage Core Requirements (Static Content)', () => {
   test('renders the add entry button', () => {
     // El título y login button ahora están en el Header que está en MainLayout
     // Solo verificamos que el botón de agregar entrada esté presente
-    expect(screen.getByRole('button', { name: "Add new application entry" })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: "+ Add Entry" })).toBeInTheDocument();
   });
 
   test('renders the table with all required columns', () => {
