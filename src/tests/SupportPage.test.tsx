@@ -20,9 +20,9 @@ describe('SupportPage', () => {
       </AlertProvider>
     );
 
-    expect(screen.getByText('Comunidad y Soporte')).toBeInTheDocument();
-    expect(screen.getByText('Donaciones')).toBeInTheDocument();
-    expect(screen.getByText('Sugerencias')).toBeInTheDocument();
+    expect(screen.getByText('Community and Support')).toBeInTheDocument();
+    expect(screen.getByText('Donations')).toBeInTheDocument();
+    expect(screen.getByText('Suggestions')).toBeInTheDocument();
     expect(screen.getByText('Buy Me a Coffee')).toBeInTheDocument();
   });
 
@@ -49,7 +49,7 @@ describe('SupportPage', () => {
       </AlertProvider>
     );
 
-    const textarea = screen.getByPlaceholderText(/Cuéntanos más sobre tu idea/i);
+    const textarea = screen.getByPlaceholderText(/Tell us more about your idea/i);
     fireEvent.change(textarea, { target: { value: 'Nueva funcionalidad increíble' } });
 
     expect(textarea).toHaveValue('Nueva funcionalidad increíble');
@@ -62,20 +62,20 @@ describe('SupportPage', () => {
       </AlertProvider>
     );
 
-    const textarea = screen.getByPlaceholderText(/Cuéntanos más sobre tu idea/i);
+    const textarea = screen.getByPlaceholderText(/Tell us more about your idea/i);
     fireEvent.change(textarea, { target: { value: 'Mejorar el diseño' } });
 
     const uiuxCheckbox = screen.getByLabelText('UI/UX');
     fireEvent.click(uiuxCheckbox);
 
-    const copyButton = screen.getByText('Copiar para Jules');
+    const copyButton = screen.getByText('Copy for Jules');
     fireEvent.click(copyButton);
 
     expect(mockWriteText).toHaveBeenCalledWith(
-      expect.stringContaining('Tipo: UI/UX')
+      expect.stringContaining('Type: UI/UX')
     );
     expect(mockWriteText).toHaveBeenCalledWith(
-      expect.stringContaining('Explicación: Mejorar el diseño')
+      expect.stringContaining('Explanation: Mejorar el diseño')
     );
   });
 });

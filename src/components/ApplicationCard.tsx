@@ -1,5 +1,6 @@
 // src/components/ApplicationCard.tsx
 import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { JobApplication } from '../types/applications';
 import { sanitizeUrl } from '../utils/localStorage';
 import DOMPurify from 'dompurify';
@@ -24,6 +25,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
   onDeleteRequest,
   getCellValue,
 }) => {
+  const { t } = useTranslation();
   const createMarkup = (htmlContent: string) => {
     return { __html: DOMPurify.sanitize(htmlContent) };
   };
@@ -40,13 +42,15 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
           <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">
             {getCellValue(item, 'Position') || 'No Position'}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 truncate mt-0.5">
+          <h4 className="text-sm text-gray-600 dark:text-gray-400 truncate mt-0.5">
             {getCellValue(item, 'Company') || 'No Company'}
-          </p>
+          </h4>
         </div>
         <div className="ml-3 flex-shrink-0">
           <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200">
-            {getCellValue(item, 'Status') || 'N/A'}
+            {getCellValue(item, 'Status')
+              ? t(`statuses.${getCellValue(item, 'Status').toLowerCase()}`, getCellValue(item, 'Status'))
+              : 'N/A'}
           </span>
         </div>
       </div>
@@ -54,7 +58,10 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
       {/* Other Important Info */}
       <div className="space-y-2 text-xs text-gray-600 dark:text-gray-400">
         {otherColumns.slice(0, 3).map((column) => {
-          const value = getCellValue(item, column);
+          let value = getCellValue(item, column);
+          if (column.toLowerCase() === 'platform') {
+            value = t(`form.platforms.${value}`, value);
+          }
           if (!value) return null;
           const isLink = column.toLowerCase() === 'link';
 
@@ -91,10 +98,10 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
             onDeleteRequest(item);
           }}
           className="text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 px-3 py-1 rounded transition"
-          aria-label={`Delete application for ${item.position}`}
+          aria-label={t('home.deleteConfirm.titleFor', { position: item.position, company: item.company })}
           data-testid={`delete-btn-${item.id}`}
         >
-          Delete
+          {t('common.delete')}
         </button>
       </div>
     </div>

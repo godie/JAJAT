@@ -1,5 +1,6 @@
 // src/components/ApplicationTable.tsx
 import React, { useState, memo, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { JobApplication } from '../types/applications';
 import ConfirmDialog from './ConfirmDialog';
 import ApplicationTableRow from './ApplicationTableRow';
@@ -45,6 +46,7 @@ const getPrimaryColumns = (columns: string[]): string[] => {
 };
 
 const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEdit, onDelete }) => {
+  const { t } = useTranslation();
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; application: JobApplication | null }>({
     isOpen: false,
@@ -77,7 +79,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
       <div className="md:hidden space-y-3" data-testid="application-cards">
         {data.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 text-center text-gray-400 dark:text-gray-500 italic text-sm">
-            Use the "+ Add Entry" button to start tracking your applications!
+            {t('home.noApplications')}
           </div>
         ) : (
           data.map((item) => (
@@ -109,7 +111,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
               </th>
             ))}
             <th scope="col" className="relative px-4 sm:px-6 py-3 w-1">
-              <span className="sr-only">Actions</span>
+              <span className="sr-only">{t('common.actions')}</span>
             </th>
           </tr>
         </thead>
@@ -117,7 +119,7 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
           {data.length === 0 ? (
             <tr>
               <td colSpan={columns.length + 1} className="px-4 sm:px-6 py-10 text-center text-gray-400 dark:text-gray-500 italic text-sm">
-                Use the "+ Add Entry" button to start tracking your applications!
+                {t('home.noApplications')}
               </td>
             </tr>
           ) : (
@@ -140,10 +142,13 @@ const ApplicationTable: React.FC<ApplicationTableProps> = ({ columns, data, onEd
       </div>
       <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
-        title="Delete Application"
-        message={`Are you sure you want to delete the application for "${deleteConfirm.application?.position}" at ${deleteConfirm.application?.company}? This action will mark it as deleted.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t('home.deleteConfirm.title')}
+        message={t('home.deleteConfirm.message', {
+          position: deleteConfirm.application?.position,
+          company: deleteConfirm.application?.company
+        })}
+        confirmText={t('common.delete')}
+        cancelText={t('common.cancel')}
         type="warning"
         onConfirm={() => {
           if (deleteConfirm.application) {
