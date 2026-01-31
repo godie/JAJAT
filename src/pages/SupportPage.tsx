@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { FaCoffee, FaHeart, FaClipboard, FaCheckCircle } from 'react-icons/fa';
 import { useAlert } from '../components/AlertProvider';
 
 const SupportPage: React.FC = () => {
+  const { t } = useTranslation();
   const { showSuccess } = useAlert();
   const [suggestionType, setSuggestionType] = useState<string[]>([]);
   const [explanation, setExplanation] = useState('');
   const [isCopied, setIsCopied] = useState(false);
 
   const suggestionTypes = [
-    { id: 'ui-ux', label: 'UI/UX' },
-    { id: 'funcionalidad', label: 'Funcionalidad' },
-    { id: 'bug', label: 'Bug' },
-    { id: 'feature', label: 'Feature' },
-    { id: 'mejoras', label: 'Mejoras' },
+    { id: 'ui-ux', label: t('support.types.ui-ux') },
+    { id: 'funcionalidad', label: t('support.types.functionality') },
+    { id: 'bug', label: t('support.types.bug') },
+    { id: 'feature', label: t('support.types.feature') },
+    { id: 'mejoras', label: t('support.types.improvements') },
   ];
 
   const handleTypeChange = (type: string) => {
@@ -24,16 +26,16 @@ const SupportPage: React.FC = () => {
 
   const generatePrompt = () => {
     const typesStr = suggestionType.length > 0 ? suggestionType.join(', ') : 'General';
-    return `Hola Jules, tengo una sugerencia para el Job Application Tracker.
-Tipo: ${typesStr}
-Explicación: ${explanation}`;
+    return `${t('support.promptPrefix')}
+${t('support.promptType')}: ${typesStr}
+${t('support.promptExplanation')}: ${explanation}`;
   };
 
   const handleCopyPrompt = () => {
     const prompt = generatePrompt();
     navigator.clipboard.writeText(prompt);
     setIsCopied(true);
-    showSuccess('¡Prompt copiado al portapapeles! Puedes enviármelo ahora.');
+    showSuccess(t('support.copied'));
     setTimeout(() => setIsCopied(false), 3000);
   };
 
@@ -49,7 +51,7 @@ Explicación: ${explanation}`;
     };
     localStorage.setItem('user_suggestions', JSON.stringify([...suggestions, newSuggestion]));
 
-    showSuccess('Sugerencia guardada localmente. ¡No olvides enviármela!');
+    showSuccess(t('support.saveLocally'));
     setSuggestionType([]);
     setExplanation('');
   };
@@ -57,9 +59,9 @@ Explicación: ${explanation}`;
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-24">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Comunidad y Soporte</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">{t('support.title')}</h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Ayúdanos a mejorar la herramienta o apoya el desarrollo.
+          {t('support.subtitle')}
         </p>
       </header>
 
@@ -70,10 +72,10 @@ Explicación: ${explanation}`;
             <div className="p-2 bg-pink-100 dark:bg-pink-900 rounded-lg text-pink-600 dark:text-pink-300">
               <FaHeart size={24} />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Donaciones</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">{t('support.donations')}</h2>
           </div>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Si esta herramienta te ha sido útil y quieres apoyar su mantenimiento y nuevas funcionalidades, considera invitarnos a un café.
+            {t('support.donationsDesc')}
           </p>
           <a
             href="https://www.buymeacoffee.com"
@@ -82,10 +84,10 @@ Explicación: ${explanation}`;
             className="flex items-center justify-center gap-3 w-full py-4 bg-[#FFDD00] hover:bg-[#FFCC00] text-black font-bold rounded-xl transition-transform hover:scale-105 shadow-lg"
           >
             <FaCoffee size={24} />
-            <span>Buy Me a Coffee</span>
+            <span>{t('support.buyMeACoffee')}</span>
           </a>
           <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-4">
-            ¡Cualquier aporte es enormemente agradecido! ❤️
+            {t('common.anyAport')}
           </p>
         </section>
 
@@ -95,16 +97,16 @@ Explicación: ${explanation}`;
             <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg text-indigo-600 dark:text-indigo-300">
               <FaClipboard size={24} />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Sugerencias</h2>
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">{t('support.suggestions')}</h2>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Tus ideas se convierten en "prompts" que puedes enviarme (Jules) para implementar mejoras.
+            {t('support.suggestionsDesc')}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Tipo de sugerencia
+                {t('support.suggestionType')}
               </label>
               <div className="flex flex-wrap gap-3">
                 {suggestionTypes.map((type) => (
@@ -130,14 +132,14 @@ Explicación: ${explanation}`;
 
             <div>
               <label htmlFor="explanation" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Explicación
+                {t('support.explanation')}
               </label>
               <textarea
                 id="explanation"
                 rows={4}
                 value={explanation}
                 onChange={(e) => setExplanation(e.target.value)}
-                placeholder="Cuéntanos más sobre tu idea o el problema que encontraste..."
+                placeholder={t('support.explanationPlaceholder')}
                 className="w-full px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none"
                 required
               />
@@ -148,7 +150,7 @@ Explicación: ${explanation}`;
                 type="submit"
                 className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold py-2 px-4 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition"
               >
-                Guardar localmente
+                {t('support.saveLocally')}
               </button>
               <button
                 type="button"
@@ -161,7 +163,7 @@ Explicación: ${explanation}`;
                 }`}
               >
                 {isCopied ? <FaCheckCircle /> : <FaClipboard />}
-                <span>Copiar para Jules</span>
+                <span>{t('support.copyForJules')}</span>
               </button>
             </div>
           </form>
@@ -170,11 +172,13 @@ Explicación: ${explanation}`;
 
       {/* Info Section */}
       <section className="mt-12 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-900/30">
-        <h3 className="text-lg font-bold text-indigo-800 dark:text-indigo-300 mb-2">¿Cómo funciona?</h3>
+        <h3 className="text-lg font-bold text-indigo-800 dark:text-indigo-300 mb-2">{t('support.howItWorks')}</h3>
         <p className="text-indigo-700 dark:text-indigo-400 text-sm">
-          Como no tengo una base de datos centralizada, tus sugerencias se guardan en tu navegador.
-          Al pulsar <strong>"Copiar para Jules"</strong>, se generará un texto especial que puedes pegarme en nuestra próxima interacción.
-          ¡Así podré entender exactamente qué necesitas!
+          <Trans i18nKey="support.howItWorksDesc">
+            Como no tengo una base de datos centralizada, tus sugerencias se guardan en tu navegador.
+            Al pulsar <strong>"Copiar para Jules"</strong>, se generará un texto especial que puedes pegarme en nuestra próxima interacción.
+            ¡Así podré entender exactamente qué necesitas!
+          </Trans>
         </p>
       </section>
     </div>
