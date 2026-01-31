@@ -2,7 +2,6 @@
 import React, { memo } from 'react';
 import type { JobApplication } from '../types/applications';
 import { sanitizeUrl } from '../utils/localStorage';
-import DOMPurify from 'dompurify';
 
 interface ApplicationCardProps {
   item: JobApplication;
@@ -24,10 +23,6 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
   onDeleteRequest,
   getCellValue,
 }) => {
-  const createMarkup = (htmlContent: string) => {
-    return { __html: DOMPurify.sanitize(htmlContent) };
-  };
-
   return (
     <div
       onClick={() => onEdit(item)}
@@ -70,13 +65,15 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({
                   rel="noopener noreferrer"
                   className="flex-1 truncate text-indigo-600 dark:text-indigo-400 hover:underline"
                   onClick={(e) => e.stopPropagation()}
-                  dangerouslySetInnerHTML={createMarkup(value)}
-                />
+                >
+                  {/* ⚡ Bolt: Removed DOMPurify and dangerouslySetInnerHTML for performance and security. */}
+                  {value}
+                </a>
               ) : (
-                <span
-                  className="flex-1 truncate"
-                  dangerouslySetInnerHTML={createMarkup(value)}
-                />
+                <span className="flex-1 truncate">
+                  {/* ⚡ Bolt: Removed DOMPurify and dangerouslySetInnerHTML for performance and security. */}
+                  {value}
+                </span>
               )}
             </div>
           );
