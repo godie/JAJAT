@@ -222,36 +222,49 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
 
   //useKeyboardEscape(handleCancel, isFormOpen);
 
-  const availableStatuses = useMemo(() => {
-    const set = new Set<string>();
-    applications.forEach((app) => {
-      if (app.status) {
-        set.add(app.status);
-      }
-    });
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [applications]);
+  // ⚡ Bolt: Combined multiple application processing loops into a single pass.
+  // We were previously iterating over the entire applications array 4 separate times
+  // (to parse dates, extract statuses, extract platforms, and filter non-deleted apps).
+  // By combining these into a single O(n) loop, we significantly reduce overhead,
+  // especially as the number of applications grows.
+  const {
+    applicationsWithParsedDates,
+    availableStatuses,
+    availablePlatforms,
+    nonDeletedApplications
+  } = useMemo(() => {
+    const parsed = [];
+    const statuses = new Set<string>();
+    const platforms = new Set<string>();
+    const nonDeleted = [];
 
-  const availablePlatforms = useMemo(() => {
-    const set = new Set<string>();
-    applications.forEach((app) => {
-      if (app.platform) {
-        set.add(app.platform);
-      }
-    });
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [applications]);
+    for (let i = 0; i < applications.length; i++) {
+      const app = applications[i];
 
-  // ⚡ Bolt: Pre-parse application dates to optimize filtering.
-  // By converting date strings to Date objects once and memoizing the result,
-  // we avoid calling the expensive `parseLocalDate` function inside the filter
-  // loop on every re-render. This significantly improves performance when
-  // filtering by date, especially with a large number of applications.
-  const applicationsWithParsedDates = useMemo(() => {
-    return applications.map(app => ({
-      ...app,
-      parsedApplicationDate: app.applicationDate ? parseLocalDate(app.applicationDate) : null,
-    }));
+      // 1. Parsed dates for filtering
+      parsed.push({
+        ...app,
+        parsedApplicationDate: app.applicationDate ? parseLocalDate(app.applicationDate) : null,
+      });
+
+      // 2. Extract unique statuses for filters
+      if (app.status) statuses.add(app.status);
+
+      // 3. Extract unique platforms for filters
+      if (app.platform) platforms.add(app.platform);
+
+      // 4. Filter non-deleted applications for Google Sheets Sync
+      if (app.status !== 'Deleted') {
+        nonDeleted.push(app);
+      }
+    }
+
+    return {
+      applicationsWithParsedDates: parsed,
+      availableStatuses: Array.from(statuses).sort((a, b) => a.localeCompare(b)),
+      availablePlatforms: Array.from(platforms).sort((a, b) => a.localeCompare(b)),
+      nonDeletedApplications: nonDeleted,
+    };
   }, [applications]);
 
   const filteredApplications = useMemo(() => {
@@ -370,14 +383,6 @@ const HomePageContent: React.FC<HomePageContentProps> = () => {
         );
     }
   };
-
-  const nonDeletedApplications = useMemo(() => {
-    // ⚡ Bolt: Memoize the list of non-deleted applications.
-    // This prevents the GoogleSheetsSync component from re-rendering every time
-    // the filters change, as it was receiving a new array instance on every render.
-    // Now, it only re-renders when the core `applications` data changes.
-    return applications.filter(app => app.status !== 'Deleted');
-  }, [applications]);
 
   return (
     <div className="max-w-7xl mx-auto">

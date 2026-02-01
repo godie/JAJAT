@@ -1,9 +1,14 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import CalendarView from '../components/CalendarView';
 import type { JobApplication } from '../utils/localStorage';
 
-const todayISO = new Date().toISOString().slice(0, 10);
+// Mock today as 2024-06-15 to ensure stable tests
+// June 15, 2024 is a Saturday. The calendar grid for June 2024 will start from May 26.
+// Past date (3 days ago) will be June 12, which is visible.
+// Future date (3 days ahead) will be June 18, which is visible.
+const MOCK_TODAY = new Date('2024-06-15T12:00:00');
+const todayISO = MOCK_TODAY.toISOString().slice(0, 10);
 
 const applicationWithEvent: JobApplication = {
   id: 'app-1',
@@ -32,6 +37,15 @@ const applicationWithEvent: JobApplication = {
 };
 
 describe('CalendarView', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(MOCK_TODAY);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test('renders calendar header and events for current month', () => {
     render(<CalendarView applications={[applicationWithEvent]} />);
 
