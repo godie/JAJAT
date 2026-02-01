@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 
 export interface Filters {
   search: string;
@@ -230,6 +230,6 @@ const FiltersBar: React.FC<FiltersBarProps> = ({ filters, onFiltersChange, avail
   );
 };
 
-export default FiltersBar;
+export default memo(FiltersBar);
 
 
